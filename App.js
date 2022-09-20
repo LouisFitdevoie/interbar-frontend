@@ -1,8 +1,16 @@
 import { StyleSheet, View } from "react-native";
 import AppButton from "./app/components/AppButton";
+import * as Yup from "yup";
 
+import SubmitButton from "./app/components/forms/SubmitButton";
 import AppText from "./app/components/AppText";
+import AppForm from "./app/components/forms/AppForm";
+import AppFormField from "./app/components/forms/AppFormField";
 import Screen from "./app/components/Screen";
+
+const validationSchema = Yup.object().shape({
+  test: Yup.string().required().min(1).label("Test"),
+});
 
 export default function App() {
   return (
@@ -12,6 +20,14 @@ export default function App() {
         title="Rejoindre l'évènement"
         onPress={() => console.log("Tapped")}
       />
+      <AppForm
+        initialValues={{ test: "" }}
+        onSubmit={(values) => console.log(values)}
+        validationSchema={validationSchema}
+      >
+        <AppFormField name="Test" placeholder="Test" />
+        <SubmitButton title="Rejoindre l'évènement" />
+      </AppForm>
     </Screen>
   );
 }

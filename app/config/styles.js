@@ -23,4 +23,17 @@ export default {
     borderRadius: 15,
     marginVertical: 10,
   },
+  textInputDefaultText: {
+    color: colors.primaryLight,
+    fontSize: 18,
+    fontFamily: Platform.OS === "android" ? "Roboto" : "System",
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+  },
+  textInputDefaultContainer: {
+    borderColor: colors.primaryLight,
+    borderWidth: 2,
+    borderRadius: 15,
+    marginVertical: 10,
+  },
 };
