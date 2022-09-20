@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { ImageBackground, StyleSheet, View } from "react-native";
 import AppButton from "./app/components/AppButton";
 import * as Yup from "yup";
 
@@ -14,21 +14,27 @@ const validationSchema = Yup.object().shape({
 
 export default function App() {
   return (
-    <Screen style={styles.container}>
-      <AppText>Open up App.js to start working on your app!</AppText>
-      <AppButton
-        title="Rejoindre l'évènement"
-        onPress={() => console.log("Tapped")}
-      />
-      <AppForm
-        initialValues={{ test: "" }}
-        onSubmit={(values) => console.log(values)}
-        validationSchema={validationSchema}
-      >
-        <AppFormField name="Test" placeholder="Test" />
-        <SubmitButton title="Rejoindre l'évènement" />
-      </AppForm>
-    </Screen>
+    <ImageBackground
+      source={require("./app/assets/splashscreen/splashscreen-light.png")}
+      resizeMode="cover"
+      style={{ flex: 1 }}
+    >
+      <Screen style={styles.container}>
+        <AppText>Open up App.js to start working on your app!</AppText>
+        <AppButton
+          title="Rejoindre l'évènement"
+          onPress={() => console.log("Tapped")}
+        />
+        <AppForm
+          initialValues={{ test: "" }}
+          onSubmit={(values) => console.log(values)}
+          validationSchema={validationSchema}
+        >
+          <AppFormField name="Test" placeholder="Test" registration />
+          <SubmitButton title="Rejoindre l'évènement" />
+        </AppForm>
+      </Screen>
+    </ImageBackground>
   );
 }
 
