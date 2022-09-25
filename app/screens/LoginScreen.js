@@ -40,7 +40,6 @@ function LoginScreen(props) {
           initialValues={{ email: "", password: "" }}
           onSubmit={(values) => console.log(values)}
           validationSchema={validationSchema}
-          style={styles.form}
         >
           <ErrorMessage
             error="Invalid email and/or password."
@@ -49,6 +48,7 @@ function LoginScreen(props) {
           <AppFormField
             autoCapitalize="none"
             autoCorrect={false}
+            keyboardAppearance={colors.colorScheme}
             keyboardType="email-address"
             name="email"
             placeholder="Adresse email"
@@ -58,6 +58,7 @@ function LoginScreen(props) {
           <AppFormField
             autoCapitalize="none"
             autoCorrect={false}
+            keyboardAppearance={colors.colorScheme}
             name="password"
             placeholder="Mot de passe"
             registration
