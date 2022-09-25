@@ -24,14 +24,22 @@ const validationSchema = Yup.object().shape({
 function LoginScreen(props) {
   return (
     <ImageBackground
-      source={require("../assets/splashscreen/splashscreen-light.png")}
+      source={
+        colors.colorScheme === "light"
+          ? require("../assets/splashscreen/splashscreen-light.png")
+          : require("../assets/splashscreen/splashscreen-dark.png")
+      }
       resizeMode="cover"
       style={{ flex: 1 }}
     >
       <Screen style={styles.container}>
         <View style={styles.logoView}>
           <Image
-            source={require("../assets/splashscreen/logo-light.png")}
+            source={
+              colors.colorScheme === "light"
+                ? require("../assets/splashscreen/logo-light.png")
+                : require("../assets/splashscreen/logo-dark.png")
+            }
             style={styles.logo}
             resizeMode="contain"
           />
@@ -107,7 +115,7 @@ const styles = StyleSheet.create({
   },
   registerBtn: {
     fontSize: 14,
-    color: colors.primaryLight,
+    color: colors.primary,
     textDecorationLine: "underline",
     marginLeft: 10,
   },

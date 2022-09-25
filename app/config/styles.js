@@ -24,14 +24,14 @@ export default {
     marginVertical: 10,
   },
   textInputDefaultText: {
-    color: colors.primaryLight,
+    color: colors.primary,
     fontSize: 18,
     fontFamily: Platform.OS === "android" ? "Roboto" : "System",
     paddingVertical: 10,
     paddingHorizontal: 15,
   },
   textInputDefaultContainer: {
-    borderColor: colors.primaryLight,
+    borderColor: colors.primary,
     borderWidth: 2,
     borderRadius: 15,
     marginVertical: 10,
