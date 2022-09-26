@@ -18,7 +18,7 @@ export default {
   },
   textInputRegistrationContainer: {
     backgroundColor: "#70B7C325",
-    borderColor: "#FFFFFF50",
+    borderColor: "#FFFFFF90",
     borderWidth: 2,
     borderRadius: 15,
     marginVertical: 10,

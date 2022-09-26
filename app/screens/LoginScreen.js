@@ -17,7 +17,6 @@ import {
   SubmitButton,
 } from "../components/forms";
 import colors from "../config/colors";
-import AppButton from "../components/AppButton";
 
 const validationSchema = Yup.object().shape({
   email: Yup.string()
@@ -51,44 +50,46 @@ function LoginScreen(props) {
             resizeMode="contain"
           />
         </View>
-        <AppForm
-          initialValues={{ email: "", password: "" }}
-          onSubmit={(values) => console.log(values)}
-          validationSchema={validationSchema}
-        >
-          <ErrorMessage
-            error="Invalid email and/or password."
-            visible={false}
-          />
-          <AppFormField
-            autoCapitalize="none"
-            autoCorrect={false}
-            keyboardAppearance={colors.colorScheme}
-            keyboardType="email-address"
-            name="email"
-            placeholder="Adresse email"
-            registration
-            textContentType="emailAddress"
-          />
-          <AppFormField
-            autoCapitalize="none"
-            autoCorrect={false}
-            keyboardAppearance={colors.colorScheme}
-            name="password"
-            placeholder="Mot de passe"
-            registration
-            secureTextEntry
-            textContentType="password"
-          />
-          <SubmitButton title="Connexion" />
-        </AppForm>
-        <View style={styles.registerContainer}>
-          <AppText style={styles.register}>
-            Vous n'avez pas encore de compte ?
-          </AppText>
-          <TouchableOpacity onPress={() => console.log("Register touched")}>
-            <AppText style={styles.registerBtn}>Créer un compte</AppText>
-          </TouchableOpacity>
+        <View style={styles.formContainer}>
+          <AppForm
+            initialValues={{ email: "", password: "" }}
+            onSubmit={(values) => console.log(values)}
+            validationSchema={validationSchema}
+          >
+            <ErrorMessage
+              error="Invalid email and/or password."
+              visible={false}
+            />
+            <AppFormField
+              autoCapitalize="none"
+              autoCorrect={false}
+              keyboardAppearance={colors.colorScheme}
+              keyboardType="email-address"
+              name="email"
+              placeholder="Adresse email"
+              registration
+              textContentType="emailAddress"
+            />
+            <AppFormField
+              autoCapitalize="none"
+              autoCorrect={false}
+              keyboardAppearance={colors.colorScheme}
+              name="password"
+              placeholder="Mot de passe"
+              registration
+              secureTextEntry
+              textContentType="password"
+            />
+            <SubmitButton title="Connexion" />
+          </AppForm>
+          <View style={styles.registerContainer}>
+            <AppText style={styles.register}>
+              Vous n'avez pas encore de compte ?
+            </AppText>
+            <TouchableOpacity onPress={() => console.log("Register touched")}>
+              <AppText style={styles.registerBtn}>Créer un compte</AppText>
+            </TouchableOpacity>
+          </View>
         </View>
       </Screen>
     </ImageBackground>
@@ -103,34 +104,40 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     width: "100%",
   },
-  form: {
-    backgroundColor: colors.white,
+  formContainer: {
+    alignItems: "center",
+    flex: 1,
+    height: "100%",
+    justifyContent: "flex-end",
+    marginBottom: 100,
+    width: "100%",
   },
   logo: {
     height: "100%",
     width: "100%",
   },
   logoView: {
+    alignItems: "center",
+    height: "9%",
+    justifyContent: "center",
     position: "absolute",
     top: 75,
-    alignItems: "center",
-    justifyContent: "center",
-    height: "9%",
     width: "85%",
   },
   register: {
-    fontSize: 14,
     color: colors.white,
+    fontSize: 14,
   },
   registerBtn: {
-    fontSize: 14,
     color: colors.primary,
-    textDecorationLine: "underline",
+    fontSize: 14,
     marginLeft: 5,
+    textDecorationLine: "underline",
   },
   registerContainer: {
-    flexDirection: "row",
     alignItems: "center",
+    flexDirection: "row",
+    marginTop: 10,
   },
 });
 
