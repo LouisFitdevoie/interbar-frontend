@@ -8,13 +8,14 @@ import AppForm from "./app/components/forms/AppForm";
 import AppFormField from "./app/components/forms/AppFormField";
 import Screen from "./app/components/Screen";
 import LoginScreen from "./app/screens/LoginScreen";
+import RegisterScreen from "./app/screens/RegisterScreen";
 
 const validationSchema = Yup.object().shape({
   test: Yup.string().required().min(1).label("Test"),
 });
 
 export default function App() {
-  return <LoginScreen />;
+  return <RegisterScreen />;
 }
 
 const styles = StyleSheet.create({

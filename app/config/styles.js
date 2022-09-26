@@ -21,7 +21,7 @@ export default {
     borderColor: "#FFFFFF90",
     borderWidth: 2,
     borderRadius: 15,
-    marginVertical: 10,
+    marginVertical: 5,
   },
   textInputDefaultText: {
     color: colors.primary,
