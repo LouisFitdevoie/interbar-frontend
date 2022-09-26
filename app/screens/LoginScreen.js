@@ -1,5 +1,11 @@
 import React from "react";
-import { Image, ImageBackground, View, StyleSheet } from "react-native";
+import {
+  Image,
+  ImageBackground,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import * as Yup from "yup";
 
 import Screen from "../components/Screen";
@@ -11,6 +17,7 @@ import {
   SubmitButton,
 } from "../components/forms";
 import colors from "../config/colors";
+import AppButton from "../components/AppButton";
 
 const validationSchema = Yup.object().shape({
   email: Yup.string()
@@ -79,7 +86,9 @@ function LoginScreen(props) {
           <AppText style={styles.register}>
             Vous n'avez pas encore de compte ?
           </AppText>
-          <AppText style={styles.registerBtn}>Créer un compte</AppText>
+          <TouchableOpacity onPress={() => console.log("Register touched")}>
+            <AppText style={styles.registerBtn}>Créer un compte</AppText>
+          </TouchableOpacity>
         </View>
       </Screen>
     </ImageBackground>
@@ -117,7 +126,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.primary,
     textDecorationLine: "underline",
-    marginLeft: 10,
+    marginLeft: 5,
   },
   registerContainer: {
     flexDirection: "row",
