@@ -5,20 +5,24 @@ specifiers:
   '@babel/preset-env': ^7.1.6
   expo: ~46.0.9
   expo-constants: ^13.2.4
+  expo-dev-client: ~1.2.1
   expo-status-bar: ~1.4.0
   formik: ^2.2.9
   react: 18.0.0
   react-native: 0.69.5
+  react-native-date-picker: ^4.2.5
   yup: ^0.32.11
 
 dependencies:
   '@babel/preset-env': 7.18.10_@babel+core@7.18.13
   expo: 46.0.10_@babel+core@7.18.13
   expo-constants: 13.2.4_expo@46.0.10
+  expo-dev-client: 1.2.1_expo@46.0.10
   expo-status-bar: 1.4.0
   formik: 2.2.9_react@18.0.0
   react: 18.0.0
   react-native: 0.69.5_6iplzvqeiudpi4sy52vugn7nxq
+  react-native-date-picker: 4.2.5
   yup: 0.32.11
 
 devDependencies:
@@ -3225,6 +3229,57 @@ packages:
       - supports-color
     dev: false
 
+  /expo-dev-client/1.2.1_expo@46.0.10:
+    resolution: {integrity: sha512-LKFfReJbUDF3r3cSjt4PLmykKsfMonT1kdCc1Cepz82/btMzL/RASnRYjk7eGd+fcq06lethEQ+w2MLo/70hDQ==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      '@expo/config-plugins': 5.0.1
+      expo: 46.0.10_@babel+core@7.18.13
+      expo-dev-launcher: 1.2.1_expo@46.0.10
+      expo-dev-menu: 1.2.1_expo@46.0.10
+      expo-dev-menu-interface: 0.7.2_expo@46.0.10
+      expo-manifests: 0.3.1
+      expo-updates-interface: 0.7.0_expo@46.0.10
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
+  /expo-dev-launcher/1.2.1_expo@46.0.10:
+    resolution: {integrity: sha512-q1BBnC69mTlbpHpiaezoHJ5rQgkvdvl6NH9rNSrg0tUfNRMNLDhjHwQWSpDGGIww7rVJ354ysjQp8E35OKOEJw==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      '@expo/config-plugins': 5.0.1
+      expo: 46.0.10_@babel+core@7.18.13
+      expo-dev-menu: 1.2.1_expo@46.0.10
+      resolve-from: 5.0.0
+      semver: 7.3.7
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
+  /expo-dev-menu-interface/0.7.2_expo@46.0.10:
+    resolution: {integrity: sha512-Ym0IFsgBj9bdInjRcxv6xfczdTCKfPKUAsLZ1sD5twpOs7oBViMnTC0+KTGkkYHG4EapWbu9yApPmbV3N10Zcg==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      expo: 46.0.10_@babel+core@7.18.13
+    dev: false
+
+  /expo-dev-menu/1.2.1_expo@46.0.10:
+    resolution: {integrity: sha512-QurTAJitgIIXQKsZCEW+aY4y3RZFFR0ygP17p1odeoiCwsxKnoIkksKGOL46sdcLzONiVGZBu6z58Mg2JymfIQ==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      '@expo/config-plugins': 5.0.1
+      expo: 46.0.10_@babel+core@7.18.13
+      expo-dev-menu-interface: 0.7.2_expo@46.0.10
+      semver: 7.3.7
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
   /expo-error-recovery/3.2.0_expo@46.0.10:
     resolution: {integrity: sha512-XZ630ks5HNxa9oc2Ya1hEn1ez031Cy4VnyxerPC2o9fKNKSrD/64cRqGF9NkGM3X2uf8+PCB9adxVflAIXBf6w==}
     requiresBuild: true
@@ -3256,12 +3311,22 @@ packages:
       fontfaceobserver: 2.3.0
     dev: false
 
+  /expo-json-utils/0.3.0:
+    resolution: {integrity: sha512-ceo0pWFJqRAsNjZWX3rVDhy+NDzmrBNFOdvW+HE4EHqlt+OEUu9INIYKO8fU+g3ifI0VcKqHfvvj5wKsSpvPBw==}
+    dev: false
+
   /expo-keep-awake/10.2.0_expo@46.0.10:
     resolution: {integrity: sha512-kIRtO4Hmrvxh4E45IPWG/NiUZsuRe1AQwBT09pq+kx8nm6tUS4B9TeL6+1NFy+qVBLbGKDqoQD5Ez7XYTFtBeQ==}
     peerDependencies:
       expo: '*'
     dependencies:
       expo: 46.0.10_@babel+core@7.18.13
+    dev: false
+
+  /expo-manifests/0.3.1:
+    resolution: {integrity: sha512-zv2a4pzhbvxVjrTO4XEiP5THt4RwtxyJjfixFhDNfHtDQR7fS4h9sZSGX9ind+IS5SQJQ2ykfVAi8xnwP6zHaw==}
+    dependencies:
+      expo-json-utils: 0.3.0
     dev: false
 
   /expo-modules-autolinking/0.10.3:
@@ -3284,6 +3349,14 @@ packages:
 
   /expo-status-bar/1.4.0:
     resolution: {integrity: sha512-vh98g8qMIjig/2XTBsoAWS6Vo2dIIwDWjB3/GiuZ9Lazpxc9GO/APfJ4dar7MibzIDUKIrjotrcL6rLdPH13Ew==}
+    dev: false
+
+  /expo-updates-interface/0.7.0_expo@46.0.10:
+    resolution: {integrity: sha512-saThnbrYDSjKxfMFFguAvh5o5KGabvAOHItkJRwq2L3c0T/3q26Q0kM83880h/+TTtAVsl1+Vhny9d+ImD3yvQ==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      expo: 46.0.10_@babel+core@7.18.13
     dev: false
 
   /expo/46.0.10_@babel+core@7.18.13:
@@ -5450,6 +5523,14 @@ packages:
       sisteransi: 1.0.5
     dev: false
 
+  /prop-types/15.8.1:
+    resolution: {integrity: sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==}
+    dependencies:
+      loose-envify: 1.4.0
+      object-assign: 4.1.1
+      react-is: 16.13.1
+    dev: false
+
   /property-expr/2.0.5:
     resolution: {integrity: sha512-IJUkICM5dP5znhCckHSv30Q4b5/JA5enCtkRHYaOVOAocnH/1BQEYTC5NMfT3AVl/iXKdr3aqQbQn9DxyWknwA==}
     dev: false
@@ -5540,6 +5621,12 @@ packages:
     transitivePeerDependencies:
       - '@babel/preset-env'
       - supports-color
+    dev: false
+
+  /react-native-date-picker/4.2.5:
+    resolution: {integrity: sha512-YjwiMpZEnVVS+ymLvmJDicVZ3pSR+nJHgtAhctMl6fO8f7iRNcYhY427gemlTBf2Ji+XIAK0Agyl255DhaemFw==}
+    dependencies:
+      prop-types: 15.8.1
     dev: false
 
   /react-native-gradle-plugin/0.0.7:

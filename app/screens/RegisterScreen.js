@@ -1,10 +1,12 @@
 import React from "react";
-import { ImageBackground, View, StyleSheet } from "react-native";
+import { ImageBackground, View, StyleSheet, Keyboard } from "react-native";
 import * as Yup from "yup";
 
 import Screen from "../components/Screen";
 import { AppForm, AppFormField, SubmitButton } from "../components/forms";
 import colors from "../config/colors";
+import AppButton from "../components/AppButton";
+import AppText from "../components/AppText";
 
 const validationSchema = Yup.object().shape({
   lastName: Yup.string()
@@ -85,6 +87,14 @@ function RegisterScreen(props) {
             />
 
             {/* Add the date picker to select birth date */}
+            <AppFormField
+              autoCapitalize="none"
+              autoCorrect={false}
+              onPress={() => Keyboard.dismiss()}
+              name="birthDate"
+              placeholder="Date de naissance"
+              registration
+            />
 
             <AppFormField
               autoCapitalize="none"
