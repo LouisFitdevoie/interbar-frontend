@@ -76,6 +76,17 @@ function RegisterScreen(props) {
               textContentType="none"
             />
             <AppFormField
+              birthDate
+              autoCapitalize="none"
+              autoCorrect={false}
+              keyboardAppearance={colors.colorScheme}
+              keyboardType="number-pad"
+              name="birthDate"
+              placeholder="Date de naissance (JJ/MM/AAAA)"
+              registration
+              textContentType="none"
+            />
+            <AppFormField
               autoCapitalize="none"
               autoCorrect={false}
               keyboardAppearance={colors.colorScheme}
@@ -84,16 +95,6 @@ function RegisterScreen(props) {
               placeholder="Adresse email"
               registration
               textContentType="emailAddress"
-            />
-
-            {/* Add the date picker to select birth date */}
-            <AppFormField
-              autoCapitalize="none"
-              autoCorrect={false}
-              onPress={() => Keyboard.dismiss()}
-              name="birthDate"
-              placeholder="Date de naissance"
-              registration
             />
 
             <AppFormField
