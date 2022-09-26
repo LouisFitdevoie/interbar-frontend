@@ -15,6 +15,7 @@ const styles = StyleSheet.create({
   error: {
     color: colors.danger,
     fontSize: 14,
+    marginBottom: 5,
   },
 });
 

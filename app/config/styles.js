@@ -22,6 +22,7 @@ export default {
     borderWidth: 2,
     borderRadius: 15,
     marginVertical: 5,
+    overflow: "hidden",
   },
   textInputDefaultText: {
     color: colors.primary,
@@ -35,5 +36,6 @@ export default {
     borderWidth: 2,
     borderRadius: 15,
     marginVertical: 10,
+    overflow: "hidden",
   },
 };

@@ -1,21 +1,9 @@
 import React from "react";
-import {
-  Image,
-  ImageBackground,
-  View,
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native";
+import { ImageBackground, View, StyleSheet } from "react-native";
 import * as Yup from "yup";
 
 import Screen from "../components/Screen";
-import AppText from "../components/AppText";
-import {
-  AppForm,
-  AppFormField,
-  ErrorMessage,
-  SubmitButton,
-} from "../components/forms";
+import { AppForm, AppFormField, SubmitButton } from "../components/forms";
 import colors from "../config/colors";
 
 const validationSchema = Yup.object().shape({
@@ -67,7 +55,7 @@ function RegisterScreen(props) {
           >
             <AppFormField
               autoCapitalize="words"
-              autoCorrect={false}
+              autoCorrect={true}
               keyboardAppearance={colors.colorScheme}
               keyboardType="default"
               name="lastName"
@@ -77,7 +65,7 @@ function RegisterScreen(props) {
             />
             <AppFormField
               autoCapitalize="words"
-              autoCorrect={false}
+              autoCorrect={true}
               keyboardAppearance={colors.colorScheme}
               keyboardType="default"
               name="firstName"
@@ -95,6 +83,9 @@ function RegisterScreen(props) {
               registration
               textContentType="emailAddress"
             />
+
+            {/* Add the date picker to select birth date */}
+
             <AppFormField
               autoCapitalize="none"
               autoCorrect={false}
