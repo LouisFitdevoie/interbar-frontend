@@ -18,7 +18,9 @@ const validationSchema = Yup.object().shape({
   email: Yup.string()
     .required("L'adresse email est requise")
     .email("L'adresse email est invalide"),
-  birthDate: Yup.string().required("La date de naissance est requise"),
+  birthDate: Yup.string()
+    .required("La date de naissance est requise")
+    .length(10, "La date de naissance doit être au format JJ/MM/AAAA"),
   password: Yup.string()
     .required("Le mot de passe est requis")
     .min(8, "Le mot de passe doit être de 8 caractères minimum"),
@@ -80,7 +82,7 @@ function RegisterScreen(props) {
               autoCapitalize="none"
               autoCorrect={false}
               keyboardAppearance={colors.colorScheme}
-              keyboardType="number-pad"
+              keyboardType="default"
               name="birthDate"
               placeholder="Date de naissance (JJ/MM/AAAA)"
               registration
@@ -96,7 +98,6 @@ function RegisterScreen(props) {
               registration
               textContentType="emailAddress"
             />
-
             <AppFormField
               autoCapitalize="none"
               autoCorrect={false}

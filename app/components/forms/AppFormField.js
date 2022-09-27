@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useFormikContext } from "formik";
+import isDate from "date-fns/isDate";
 
 import AppTextInput from "../AppTextInput";
 import ErrorMessage from "./ErrorMessage";
@@ -29,15 +30,33 @@ function AppFormField({
       </>
     );
   } else {
+    const [errorDate, setErrorDate] = useState(false);
     const handleTextChange = (date) => {
-      console.log(date);
-      // TODO : ajouter usestate pour date
-      // TODO : vérifier caractère entré -> si valide, ajouter au state sinon rien
-      // TODO : après 2 premiers caractères, ajouter "/" et ajouter au state
-      // TODO : après 5 premiers caractères, ajouter "/" et ajouter au state
-      // TODO : vérifier que date est correcte
-      // TODO : si date correcte, ajouter au state
-      // TODO : setFieldValue(name, date)
+      if (
+        parseInt(date.slice(date.length - 1, date.length), 10) ||
+        date.slice(date.length - 1, date.length) === "0" ||
+        date.slice(date.length - 1, date.length) === "/"
+      ) {
+        setFieldValue(name, date);
+      } else {
+        date = date.slice(0, date.length - 1);
+        setFieldValue(name, date);
+      }
+      if (date.length > 10) {
+        date = date.slice(0, 10);
+        setFieldValue(name, date);
+      } else if (date.length === 10) {
+        const dateToVerify = new Date(
+          date.slice(6, 10) + "-" + date.slice(3, 5) + "-" + date.slice(0, 2)
+        );
+        if (!isNaN(dateToVerify)) {
+          setErrorDate(false);
+        } else {
+          setErrorDate(true);
+        }
+      } else {
+        setErrorDate(false);
+      }
     };
     return (
       <>
@@ -50,6 +69,10 @@ function AppFormField({
           {...otherProperties}
         />
         <ErrorMessage error={errors[name]} visible={touched[name]} />
+        <ErrorMessage
+          error="La date de naissance n'est pas une date correcte"
+          visible={errorDate}
+        />
       </>
     );
   }
