@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useFormikContext } from "formik";
-import isDate from "date-fns/isDate";
 
 import AppTextInput from "../AppTextInput";
 import ErrorMessage from "./ErrorMessage";

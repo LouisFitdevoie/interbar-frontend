@@ -1,11 +1,16 @@
 import React from "react";
-import { ImageBackground, View, StyleSheet, Keyboard } from "react-native";
+import {
+  ImageBackground,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import * as Yup from "yup";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import Screen from "../components/Screen";
 import { AppForm, AppFormField, SubmitButton } from "../components/forms";
 import colors from "../config/colors";
-import AppButton from "../components/AppButton";
 import AppText from "../components/AppText";
 
 const validationSchema = Yup.object().shape({
@@ -120,6 +125,19 @@ function RegisterScreen(props) {
             />
             <SubmitButton title="Inscription" />
           </AppForm>
+          <TouchableOpacity
+            onPress={() => console.log("To data usage informations")}
+            style={styles.dataUsageContainer}
+          >
+            <MaterialCommunityIcons
+              name="information-outline"
+              size={22}
+              color={colors.primary}
+            />
+            <AppText style={styles.dataUsageText}>
+              Comment sont utilisées mes données ?
+            </AppText>
+          </TouchableOpacity>
         </View>
       </Screen>
     </ImageBackground>
@@ -134,6 +152,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 10,
     width: "100%",
+  },
+  dataUsageContainer: {
+    flexDirection: "row",
+  },
+  dataUsageText: {
+    color: colors.primary,
+    marginLeft: 5,
+    textDecorationLine: "underline",
   },
   formContainer: {
     alignItems: "center",
