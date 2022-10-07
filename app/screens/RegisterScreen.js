@@ -132,7 +132,7 @@ function RegisterScreen(props) {
             <MaterialCommunityIcons
               name="information-outline"
               size={22}
-              color={colors.primary}
+              color={colors.buttonPrimary}
             />
             <AppText style={styles.dataUsageText}>
               Comment sont utilisées mes données ?
@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   dataUsageText: {
-    color: colors.primary,
+    color: colors.buttonPrimary,
     marginLeft: 5,
     textDecorationLine: "underline",
   },

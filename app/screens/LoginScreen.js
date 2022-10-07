@@ -27,7 +27,7 @@ const validationSchema = Yup.object().shape({
     .min(8, "Le mot de passe doit être de 8 caractères minimum"),
 });
 
-function LoginScreen(props) {
+function LoginScreen({ navigation }) {
   return (
     <ImageBackground
       source={
@@ -86,7 +86,7 @@ function LoginScreen(props) {
             <AppText style={styles.register}>
               Vous n'avez pas encore de compte ?
             </AppText>
-            <TouchableOpacity onPress={() => console.log("Register touched")}>
+            <TouchableOpacity onPress={() => navigation.navigate("Register")}>
               <AppText style={styles.registerBtn}>Créer un compte</AppText>
             </TouchableOpacity>
           </View>
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   registerBtn: {
-    color: colors.primary,
+    color: colors.buttonPrimary,
     fontSize: 14,
     marginLeft: 5,
     textDecorationLine: "underline",

@@ -1,4 +1,4 @@
-import { ImageBackground, StyleSheet, View } from "react-native";
+import { ImageBackground, StyleSheet, View, Text } from "react-native";
 import AppButton from "./app/components/AppButton";
 import * as Yup from "yup";
 import { NavigationContainer } from "@react-navigation/native";
@@ -11,6 +11,7 @@ import AppFormField from "./app/components/forms/AppFormField";
 import Screen from "./app/components/Screen";
 import LoginScreen from "./app/screens/LoginScreen";
 import RegisterScreen from "./app/screens/RegisterScreen";
+import colors from "./app/config/colors";
 
 const validationSchema = Yup.object().shape({
   test: Yup.string().required().min(1).label("Test"),
@@ -19,7 +20,6 @@ const validationSchema = Yup.object().shape({
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-  // return <RegisterScreen />;
   return (
     <NavigationContainer>
       <Stack.Navigator>
@@ -31,7 +31,16 @@ export default function App() {
         <Stack.Screen
           name="Register"
           component={RegisterScreen}
-          options={{ headerShown: false }}
+          options={{
+            headerTitle: "Inscription",
+            headerTitleStyle: {
+              fontSize: 22,
+            },
+            headerBackTitle: "Connexion",
+            headerBackTitleVisible: false,
+            headerTransparent: true,
+            headerTintColor: colors.white,
+          }}
         />
       </Stack.Navigator>
     </NavigationContainer>
