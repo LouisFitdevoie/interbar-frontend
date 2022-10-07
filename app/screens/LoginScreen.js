@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   Image,
   ImageBackground,
@@ -17,6 +17,7 @@ import {
   SubmitButton,
 } from "../components/forms";
 import colors from "../config/colors";
+import { AuthContext } from "../auth/AuthContext";
 
 const validationSchema = Yup.object().shape({
   email: Yup.string()
@@ -28,6 +29,13 @@ const validationSchema = Yup.object().shape({
 });
 
 function LoginScreen({ navigation }) {
+  const { login } = useContext(AuthContext);
+
+  const handleSubmit = (values) => {
+    console.log(values);
+    login();
+  };
+
   return (
     <ImageBackground
       source={
@@ -53,7 +61,7 @@ function LoginScreen({ navigation }) {
         <View style={styles.formContainer}>
           <AppForm
             initialValues={{ email: "", password: "" }}
-            onSubmit={(values) => console.log(values)}
+            onSubmit={(values) => handleSubmit(values)}
             validationSchema={validationSchema}
           >
             <ErrorMessage

@@ -1,13 +1,13 @@
 import { StyleSheet, View, Text } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
 
-import AuthStack from "./app/navigation/AuthStack.navigation";
+import { AuthProvider } from "./app/auth/AuthContext";
+import AppNavigation from "./app/navigation/AppNavigation.navigation";
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <AuthStack />
-    </NavigationContainer>
+    <AuthProvider>
+      <AppNavigation />
+    </AuthProvider>
   );
 }
 
