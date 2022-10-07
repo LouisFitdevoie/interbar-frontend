@@ -19,6 +19,15 @@ import {
 import colors from "../config/colors";
 import { AuthContext } from "../auth/AuthContext";
 
+const backgroundImage =
+  colors.colorScheme === "light"
+    ? require("../assets/splashscreen/splashscreen-light.png")
+    : require("../assets/splashscreen/splashscreen-dark.png");
+const logo =
+  colors.colorScheme === "light"
+    ? require("../assets/splashscreen/logo-light.png")
+    : require("../assets/splashscreen/logo-dark.png");
+
 const validationSchema = Yup.object().shape({
   email: Yup.string()
     .required("L'adresse email est requise")
@@ -38,25 +47,13 @@ function LoginScreen({ navigation }) {
 
   return (
     <ImageBackground
-      source={
-        colors.colorScheme === "light"
-          ? require("../assets/splashscreen/splashscreen-light.png")
-          : require("../assets/splashscreen/splashscreen-dark.png")
-      }
+      source={backgroundImage}
       resizeMode="cover"
       style={{ flex: 1 }}
     >
       <Screen style={styles.container}>
         <View style={styles.logoView}>
-          <Image
-            source={
-              colors.colorScheme === "light"
-                ? require("../assets/splashscreen/logo-light.png")
-                : require("../assets/splashscreen/logo-dark.png")
-            }
-            style={styles.logo}
-            resizeMode="contain"
-          />
+          <Image source={logo} style={styles.logo} resizeMode="contain" />
         </View>
         <View style={styles.formContainer}>
           <AppForm

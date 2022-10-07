@@ -13,6 +13,11 @@ import { AppForm, AppFormField, SubmitButton } from "../components/forms";
 import colors from "../config/colors";
 import AppText from "../components/AppText";
 
+const backgroundImage =
+  colors.colorScheme === "light"
+    ? require("../assets/splashscreen/splashscreen-light.png")
+    : require("../assets/splashscreen/splashscreen-dark.png");
+
 const validationSchema = Yup.object().shape({
   lastName: Yup.string()
     .required("Le nom est requis")
@@ -40,11 +45,7 @@ const validationSchema = Yup.object().shape({
 function RegisterScreen(props) {
   return (
     <ImageBackground
-      source={
-        colors.colorScheme === "light"
-          ? require("../assets/splashscreen/splashscreen-light.png")
-          : require("../assets/splashscreen/splashscreen-dark.png")
-      }
+      source={backgroundImage}
       resizeMode="cover"
       style={{ flex: 1 }}
     >
