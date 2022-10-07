@@ -7,6 +7,7 @@ export const AuthProvider = ({ children }) => {
   const [userToken, setUserToken] = useState(null);
 
   const login = () => {
+    setIsLoading(true);
     setUserToken("asdf");
     setIsLoading(false);
   };
