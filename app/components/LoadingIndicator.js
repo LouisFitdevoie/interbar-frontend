@@ -16,15 +16,12 @@ function LoadingIndicator(props) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 100,
+    position: "absolute",
   },
   background: {
     padding: 10,
     borderRadius: 20,
-    backgroundColor: "#00000010",
+    backgroundColor: "#00000025",
   },
   indicator: {
     width: 50,

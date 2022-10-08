@@ -9,6 +9,7 @@ import {
 import * as Yup from "yup";
 
 import Screen from "../components/Screen";
+import LoadingIndicator from "../components/LoadingIndicator";
 import AppText from "../components/AppText";
 import {
   AppForm,
@@ -38,11 +39,10 @@ const validationSchema = Yup.object().shape({
 });
 
 function LoginScreen({ navigation }) {
-  const { login } = useContext(AuthContext);
+  const { login, isLoading } = useContext(AuthContext);
 
-  const handleSubmit = (values) => {
-    console.log(values);
-    login();
+  const handleSubmit = ({ email, password }) => {
+    login(email, password);
   };
 
   return (
@@ -96,6 +96,7 @@ function LoginScreen({ navigation }) {
             </TouchableOpacity>
           </View>
         </View>
+        {isLoading && <LoadingIndicator />}
       </Screen>
     </ImageBackground>
   );

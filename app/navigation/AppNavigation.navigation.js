@@ -11,9 +11,6 @@ import LoadingIndicator from "../components/LoadingIndicator.js";
 function AppNavigation(props) {
   const { isLoading, userToken } = useContext(AuthContext);
 
-  if (isLoading) {
-    return <LoadingIndicator />;
-  }
   return (
     <NavigationContainer>
       {userToken !== null ? <AppStack /> : <AuthStack />}
