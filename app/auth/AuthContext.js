@@ -9,6 +9,7 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [userToken, setUserToken] = useState(null);
+  const [userLoggedIn, setUserLoggedIn] = useState(null);
   const [error, setError] = useState(false);
 
   const login = (emailAddress, password) => {
@@ -22,6 +23,7 @@ export const AuthProvider = ({ children }) => {
       .then((res) => {
         console.log(res.data);
         setUserToken(res.data.accessToken);
+        setUserLoggedIn(res.data.user);
         AsyncStorage.setItem("userToken", res.data.accessToken);
       })
       .catch((e) => {
@@ -58,7 +60,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ login, logout, isLoading, userToken, error }}
+      value={{ login, logout, isLoading, userToken, userLoggedIn, error }}
     >
       {children}
     </AuthContext.Provider>

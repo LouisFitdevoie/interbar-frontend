@@ -3,11 +3,18 @@ import { View, StyleSheet } from "react-native";
 import AppButton from "../components/AppButton";
 
 import { AuthContext } from "../auth/AuthContext";
+import AppText from "../components/AppText";
 
 function AppStack(props) {
-  const { logout, userToken } = useContext(AuthContext);
+  const { logout, userToken, userLoggedIn } = useContext(AuthContext);
+  console.log(userLoggedIn);
   return (
     <View style={styles.container}>
+      <AppText>
+        Bonjour{" "}
+        {userLoggedIn.firstName.charAt(0).toUpperCase() +
+          userLoggedIn.firstName.slice(1)}
+      </AppText>
       <AppButton
         title="Logout"
         onPress={() => logout(userToken)}
