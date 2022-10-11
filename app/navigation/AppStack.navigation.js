@@ -5,12 +5,12 @@ import AppButton from "../components/AppButton";
 import { AuthContext } from "../auth/AuthContext";
 
 function AppStack(props) {
-  const { logout } = useContext(AuthContext);
+  const { logout, userToken } = useContext(AuthContext);
   return (
     <View style={styles.container}>
       <AppButton
         title="Logout"
-        onPress={() => logout()}
+        onPress={() => logout(userToken)}
         style={{ width: "90%" }}
       />
     </View>

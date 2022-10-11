@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+
 import { BASE_URL } from "../api/config.api";
 
 export const AuthContext = createContext();
@@ -8,8 +9,10 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [userToken, setUserToken] = useState(null);
+  const [error, setError] = useState(false);
 
   const login = (emailAddress, password) => {
+    setError(false);
     setIsLoading(true);
     axios
       .post(`${BASE_URL}/login`, {
@@ -22,12 +25,16 @@ export const AuthProvider = ({ children }) => {
         AsyncStorage.setItem("userToken", res.data.accessToken);
       })
       .catch((e) => {
-        console.log(`Login error ${e}`);
+        if (e.response.status === 400) {
+          setError(true);
+        } else {
+          console.log(e);
+        }
       });
     setIsLoading(false);
   };
 
-  const logout = () => {
+  const logout = (token) => {
     setIsLoading(true);
     AsyncStorage.removeItem("userToken");
     setUserToken(null);
@@ -50,7 +57,9 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ login, logout, isLoading, userToken }}>
+    <AuthContext.Provider
+      value={{ login, logout, isLoading, userToken, error }}
+    >
       {children}
     </AuthContext.Provider>
   );

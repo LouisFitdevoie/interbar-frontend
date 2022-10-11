@@ -39,7 +39,7 @@ const validationSchema = Yup.object().shape({
 });
 
 function LoginScreen({ navigation }) {
-  const { login, isLoading } = useContext(AuthContext);
+  const { login, isLoading, error } = useContext(AuthContext);
 
   const handleSubmit = ({ email, password }) => {
     login(email, password);
@@ -62,8 +62,8 @@ function LoginScreen({ navigation }) {
             validationSchema={validationSchema}
           >
             <ErrorMessage
-              error="Invalid email and/or password."
-              visible={false}
+              error="Email ou mot de passe incorrect"
+              visible={error}
             />
             <AppFormField
               autoCapitalize="none"
