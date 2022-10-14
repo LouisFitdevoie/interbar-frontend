@@ -16,16 +16,20 @@ export const AuthProvider = ({ children }) => {
   const login = (emailAddress, password) => {
     setError(false);
     setIsLoading(true);
-    axios
-      .post(`${BASE_URL}/login`, {
+    axios({
+      method: "post",
+      url: `${BASE_URL}/login`,
+      data: {
         emailAddress,
         password,
-      })
+      },
+    })
       .then((res) => {
         setUserAccessToken(res.data.accessToken);
         setUserRefreshToken(res.data.refreshToken);
         AsyncStorage.setItem("userAccessToken", res.data.accessToken);
         AsyncStorage.setItem("userRefreshToken", res.data.refreshToken);
+        setIsLoading(false);
       })
       .catch((e) => {
         if (e.response.status) {
@@ -36,7 +40,6 @@ export const AuthProvider = ({ children }) => {
           console.log("Erreur : " + e);
         }
       });
-    setIsLoading(false);
   };
 
   const logout = (userRefreshToken) => {
