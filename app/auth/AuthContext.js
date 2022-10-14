@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import jwt_decode from "jwt-decode";
 
 import { BASE_URL } from "../api/config.api";
 
@@ -8,8 +9,7 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [userToken, setUserToken] = useState(null);
-  const [userLoggedIn, setUserLoggedIn] = useState(null);
+  const [userAccessToken, setUserAccessToken] = useState(null);
   const [error, setError] = useState(false);
 
   const login = (emailAddress, password) => {
@@ -21,25 +21,41 @@ export const AuthProvider = ({ children }) => {
         password,
       })
       .then((res) => {
-        console.log(res.data);
-        setUserToken(res.data.accessToken);
-        setUserLoggedIn(res.data.user);
+        setUserAccessToken(res.data.accessToken);
+        console.log("Access token decoded : ");
+        console.log(jwt_decode(res.data.accessToken));
         AsyncStorage.setItem("userToken", res.data.accessToken);
       })
       .catch((e) => {
-        if (e.response.status === 400) {
-          setError(true);
+        if (e.response.status) {
+          if (e.response.status === 400) {
+            setError(true);
+          }
         } else {
-          console.log(e);
+          console.log("Erreur : " + e);
         }
       });
     setIsLoading(false);
   };
 
-  const logout = (token) => {
+  const logout = (userAccessToken) => {
     setIsLoading(true);
+    // axios
+    //   .post(`${BASE_URL}/logout`, {
+    //     token,
+    //   })
+    //   .then((res) => {
+    //     console.log("Logout : " + res.data);
+    //     setUserToken(null);
+    //     AsyncStorage.removeItem("userToken");
+    //     setUserToken(null);
+    //   })
+    //   .catch((error) => {
+    //     console.log(`Logout error ${error}`);
+    //   });
+    console.log("Logout : " + userAccessToken);
     AsyncStorage.removeItem("userToken");
-    setUserToken(null);
+    setUserAccessToken(null);
     setIsLoading(false);
   };
 
@@ -47,7 +63,7 @@ export const AuthProvider = ({ children }) => {
     try {
       setIsLoading(true);
       let userTokenFromAS = await AsyncStorage.getItem("userToken");
-      setUserToken(userTokenFromAS);
+      setUserAccessToken(userTokenFromAS);
       setIsLoading(false);
     } catch (e) {
       console.log("Error while trying to get userToken from AsyncStorage: ", e);
@@ -60,7 +76,13 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ login, logout, isLoading, userToken, userLoggedIn, error }}
+      value={{
+        login,
+        logout,
+        isLoading,
+        userAccessToken,
+        error,
+      }}
     >
       {children}
     </AuthContext.Provider>

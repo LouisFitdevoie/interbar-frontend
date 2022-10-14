@@ -1,23 +1,25 @@
 import React, { useContext } from "react";
 import { View, StyleSheet } from "react-native";
 import AppButton from "../components/AppButton";
+import jwt_decode from "jwt-decode";
 
 import { AuthContext } from "../auth/AuthContext";
 import AppText from "../components/AppText";
 
 function AppStack(props) {
-  const { logout, userToken, userLoggedIn } = useContext(AuthContext);
-  console.log(userLoggedIn);
+  const { logout, userAccessToken } = useContext(AuthContext);
+  const userInfos = jwt_decode(userAccessToken);
+  console.log(userInfos);
   return (
     <View style={styles.container}>
       <AppText>
         Bonjour{" "}
-        {userLoggedIn.firstName.charAt(0).toUpperCase() +
-          userLoggedIn.firstName.slice(1)}
+        {userInfos.firstName.charAt(0).toUpperCase() +
+          userInfos.firstName.slice(1)}
       </AppText>
       <AppButton
         title="Logout"
-        onPress={() => logout(userToken)}
+        onPress={() => logout(userAccessToken)}
         style={{ width: "90%" }}
       />
     </View>

@@ -7,10 +7,12 @@ specifiers:
   '@react-native-material/core': ^1.3.7
   '@react-navigation/native': ^6.0.13
   '@react-navigation/native-stack': ^6.9.0
+  axios: ^1.1.2
   expo: ~46.0.9
   expo-constants: ^13.2.4
   expo-status-bar: ~1.4.0
   formik: ^2.2.9
+  lottie-ios: ^3.4.3
   lottie-react-native: 5.1.3
   react: 18.0.0
   react-native: 0.69.6
@@ -24,11 +26,13 @@ dependencies:
   '@react-native-material/core': 1.3.7_gtltrjvtlgj7ga36qzsxajwqwe
   '@react-navigation/native': 6.0.13_gtltrjvtlgj7ga36qzsxajwqwe
   '@react-navigation/native-stack': 6.9.0_hg7duugoxzqbcxx766hj52kwii
+  axios: 1.1.2
   expo: 46.0.10_@babel+core@7.18.13
   expo-constants: 13.2.4_expo@46.0.10
   expo-status-bar: 1.4.0
   formik: 2.2.9_react@18.0.0
-  lottie-react-native: 5.1.3_gtltrjvtlgj7ga36qzsxajwqwe
+  lottie-ios: 3.5.0
+  lottie-react-native: 5.1.3_pzxkebfe27bnck73reo6r3khve
   react: 18.0.0
   react-native: 0.69.6_6iplzvqeiudpi4sy52vugn7nxq
   react-native-safe-area-context: 4.3.1_gtltrjvtlgj7ga36qzsxajwqwe
@@ -2361,6 +2365,16 @@ packages:
     hasBin: true
     dev: false
 
+  /axios/1.1.2:
+    resolution: {integrity: sha512-bznQyETwElsXl2RK7HLLwb5GPpOLlycxHCtrpDR/4RqqBzjARaOTo3jz4IgtntWUYee7Ne4S8UHd92VCuzPaWA==}
+    dependencies:
+      follow-redirects: 1.15.2
+      form-data: 4.0.0
+      proxy-from-env: 1.1.0
+    transitivePeerDependencies:
+      - debug
+    dev: false
+
   /babel-core/7.0.0-bridge.0_@babel+core@7.18.13:
     resolution: {integrity: sha512-poPX9mZH/5CSanm50Q+1toVci6pv5KSRv/5TWCwtzQS5XEwn40BcCrgIeMFWP9CKKIniKXNxoIOnOq4VVlGXhg==}
     peerDependencies:
@@ -3609,6 +3623,16 @@ packages:
     engines: {node: '>=0.4.0'}
     dev: false
 
+  /follow-redirects/1.15.2:
+    resolution: {integrity: sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
+    dev: false
+
   /fontfaceobserver/2.3.0:
     resolution: {integrity: sha512-6FPvD/IVyT4ZlNe7Wcn5Fb/4ChigpucKYSvD6a+0iMoLn2inpo711eyIcKjmDtE5XNcgAkSH9uN/nfAeZzHEfg==}
     dev: false
@@ -3620,6 +3644,15 @@ packages:
 
   /form-data/3.0.1:
     resolution: {integrity: sha512-RHkBKtLWUVwd7SqRIvCZMEvAMoGUp0XU+seQiZejj0COz3RI3hWP4sCv3gZWWLjJTd7rGwcsF5eKZGii0r/hbg==}
+    engines: {node: '>= 6'}
+    dependencies:
+      asynckit: 0.4.0
+      combined-stream: 1.0.8
+      mime-types: 2.1.35
+    dev: false
+
+  /form-data/4.0.0:
+    resolution: {integrity: sha512-ETEklSGi5t0QMZuiXoA/Q6vcnxcLQP5vdugSpuAyi6SVGi2clPPp+xgEhuMaHC+zGgn31Kd235W35f7Hykkaww==}
     engines: {node: '>= 6'}
     dependencies:
       asynckit: 0.4.0
@@ -4589,7 +4622,11 @@ packages:
       js-tokens: 4.0.0
     dev: false
 
-  /lottie-react-native/5.1.3_gtltrjvtlgj7ga36qzsxajwqwe:
+  /lottie-ios/3.5.0:
+    resolution: {integrity: sha512-DM6BYLhHTzvUsK89AjY+K9RwVGkOBwbH/iytjyZUmFbXz8DVsoPEyy+c7L5NZmVouZHvLnOQp6NaYTkwMo+iOg==}
+    dev: false
+
+  /lottie-react-native/5.1.3_pzxkebfe27bnck73reo6r3khve:
     resolution: {integrity: sha512-Ho+oM+D3if85I2EBn8c17tcg7pc880Sp/DOeNW5aWiNtlCJKX/kmlhoM19NLqjzkHEm96fTkTcTy82ZwYU3Kbg==}
     peerDependencies:
       lottie-ios: ^3.2.3
@@ -4597,6 +4634,7 @@ packages:
       react-native: '>=0.46'
     dependencies:
       invariant: 2.2.4
+      lottie-ios: 3.5.0
       react: 18.0.0
       react-native: 0.69.6_6iplzvqeiudpi4sy52vugn7nxq
       react-native-safe-modules: 1.0.3_react-native@0.69.6
@@ -5606,6 +5644,10 @@ packages:
 
   /property-expr/2.0.5:
     resolution: {integrity: sha512-IJUkICM5dP5znhCckHSv30Q4b5/JA5enCtkRHYaOVOAocnH/1BQEYTC5NMfT3AVl/iXKdr3aqQbQn9DxyWknwA==}
+    dev: false
+
+  /proxy-from-env/1.1.0:
+    resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
     dev: false
 
   /pump/3.0.0:
