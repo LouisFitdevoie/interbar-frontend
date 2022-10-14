@@ -10,6 +10,7 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [userAccessToken, setUserAccessToken] = useState(null);
+  const [userRefreshToken, setUserRefreshToken] = useState(null);
   const [error, setError] = useState(false);
 
   const login = (emailAddress, password) => {
@@ -22,9 +23,9 @@ export const AuthProvider = ({ children }) => {
       })
       .then((res) => {
         setUserAccessToken(res.data.accessToken);
-        console.log("Access token decoded : ");
-        console.log(jwt_decode(res.data.accessToken));
-        AsyncStorage.setItem("userToken", res.data.accessToken);
+        setUserRefreshToken(res.data.refreshToken);
+        AsyncStorage.setItem("userAccessToken", res.data.accessToken);
+        AsyncStorage.setItem("userRefreshToken", res.data.refreshToken);
       })
       .catch((e) => {
         if (e.response.status) {
@@ -38,35 +39,45 @@ export const AuthProvider = ({ children }) => {
     setIsLoading(false);
   };
 
-  const logout = (userAccessToken) => {
+  const logout = (userRefreshToken) => {
     setIsLoading(true);
-    // axios
-    //   .post(`${BASE_URL}/logout`, {
-    //     token,
-    //   })
-    //   .then((res) => {
-    //     console.log("Logout : " + res.data);
-    //     setUserToken(null);
-    //     AsyncStorage.removeItem("userToken");
-    //     setUserToken(null);
-    //   })
-    //   .catch((error) => {
-    //     console.log(`Logout error ${error}`);
-    //   });
-    console.log("Logout : " + userAccessToken);
-    AsyncStorage.removeItem("userToken");
-    setUserAccessToken(null);
+    axios({
+      method: "delete",
+      url: `${BASE_URL}/logout`,
+      data: {
+        token: userRefreshToken,
+      },
+      headers: {
+        Authorization: `Bearer ${userAccessToken}`,
+      },
+    })
+      .then((res) => {
+        AsyncStorage.removeItem("userAccessToken");
+        AsyncStorage.removeItem("userRefreshToken");
+        setUserAccessToken(null);
+        setUserRefreshToken(null);
+      })
+      .catch((error) => {
+        console.log(`Logout error ${error}`);
+      });
     setIsLoading(false);
   };
 
   const isLoggedIn = async () => {
     try {
       setIsLoading(true);
-      let userTokenFromAS = await AsyncStorage.getItem("userToken");
-      setUserAccessToken(userTokenFromAS);
+      let userAccessTokenFromAS = await AsyncStorage.getItem("userAccessToken");
+      let userRefreshTokenFromAS = await AsyncStorage.getItem(
+        "userRefreshToken"
+      );
+      setUserAccessToken(userAccessTokenFromAS);
+      setUserRefreshToken(userRefreshTokenFromAS);
       setIsLoading(false);
     } catch (e) {
-      console.log("Error while trying to get userToken from AsyncStorage: ", e);
+      console.log(
+        "Error while trying to get userAccessToken or userRefreshToken from AsyncStorage: ",
+        e
+      );
     }
   };
 
@@ -81,6 +92,7 @@ export const AuthProvider = ({ children }) => {
         logout,
         isLoading,
         userAccessToken,
+        userRefreshToken,
         error,
       }}
     >

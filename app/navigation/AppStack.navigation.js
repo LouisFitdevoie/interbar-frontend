@@ -7,9 +7,8 @@ import { AuthContext } from "../auth/AuthContext";
 import AppText from "../components/AppText";
 
 function AppStack(props) {
-  const { logout, userAccessToken } = useContext(AuthContext);
+  const { logout, userAccessToken, userRefreshToken } = useContext(AuthContext);
   const userInfos = jwt_decode(userAccessToken);
-  console.log(userInfos);
   return (
     <View style={styles.container}>
       <AppText>
@@ -19,7 +18,7 @@ function AppStack(props) {
       </AppText>
       <AppButton
         title="Logout"
-        onPress={() => logout(userAccessToken)}
+        onPress={() => logout(userRefreshToken)}
         style={{ width: "90%" }}
       />
     </View>
