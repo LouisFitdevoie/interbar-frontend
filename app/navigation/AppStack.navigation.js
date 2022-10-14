@@ -5,9 +5,11 @@ import jwt_decode from "jwt-decode";
 
 import { AuthContext } from "../auth/AuthContext";
 import AppText from "../components/AppText";
+import LoadingIndicator from "../components/LoadingIndicator";
 
 function AppStack(props) {
-  const { logout, userAccessToken, userRefreshToken } = useContext(AuthContext);
+  const { logout, isLoading, userAccessToken, userRefreshToken } =
+    useContext(AuthContext);
   const userInfos = jwt_decode(userAccessToken);
   return (
     <View style={styles.container}>
@@ -21,6 +23,7 @@ function AppStack(props) {
         onPress={() => logout(userRefreshToken)}
         style={{ width: "90%" }}
       />
+      {isLoading && <LoadingIndicator />}
     </View>
   );
 }

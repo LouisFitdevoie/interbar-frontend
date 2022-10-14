@@ -32,6 +32,7 @@ export const AuthProvider = ({ children }) => {
         setIsLoading(false);
       })
       .catch((e) => {
+        setIsLoading(false);
         if (e.response.status) {
           if (e.response.status === 400) {
             setError(true);
@@ -59,11 +60,12 @@ export const AuthProvider = ({ children }) => {
         AsyncStorage.removeItem("userRefreshToken");
         setUserAccessToken(null);
         setUserRefreshToken(null);
+        setIsLoading(false);
       })
       .catch((error) => {
         console.log(`Logout error ${error}`);
+        setIsLoading(false);
       });
-    setIsLoading(false);
   };
 
   const isLoggedIn = async () => {
