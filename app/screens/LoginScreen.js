@@ -5,6 +5,7 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
+  KeyboardAvoidingView,
 } from "react-native";
 import * as Yup from "yup";
 
@@ -55,47 +56,52 @@ function LoginScreen({ navigation }) {
         <View style={styles.logoView}>
           <Image source={logo} style={styles.logo} resizeMode="contain" />
         </View>
-        <View style={styles.formContainer}>
-          <AppForm
-            initialValues={{ email: "", password: "" }}
-            onSubmit={(values) => handleSubmit(values)}
-            validationSchema={validationSchema}
-          >
-            <ErrorMessage
-              error="Email ou mot de passe incorrect"
-              visible={error}
-            />
-            <AppFormField
-              autoCapitalize="none"
-              autoCorrect={false}
-              keyboardAppearance={colors.colorScheme}
-              keyboardType="email-address"
-              name="email"
-              placeholder="Adresse email"
-              registration
-              textContentType="emailAddress"
-            />
-            <AppFormField
-              autoCapitalize="none"
-              autoCorrect={false}
-              keyboardAppearance={colors.colorScheme}
-              name="password"
-              placeholder="Mot de passe"
-              registration
-              secureTextEntry
-              textContentType="password"
-            />
-            <SubmitButton title="Connexion" />
-          </AppForm>
-          <View style={styles.registerContainer}>
-            <AppText style={styles.register}>
-              Vous n'avez pas encore de compte ?
-            </AppText>
-            <TouchableOpacity onPress={() => navigation.navigate("Register")}>
-              <AppText style={styles.registerBtn}>Créer un compte</AppText>
-            </TouchableOpacity>
+        <KeyboardAvoidingView
+          style={{ flex: 1, width: "100%", marginBottom: 100 }}
+          behavior="padding"
+        >
+          <View style={styles.formContainer}>
+            <AppForm
+              initialValues={{ email: "", password: "" }}
+              onSubmit={(values) => handleSubmit(values)}
+              validationSchema={validationSchema}
+            >
+              <ErrorMessage
+                error="Email ou mot de passe incorrect"
+                visible={error}
+              />
+              <AppFormField
+                autoCapitalize="none"
+                autoCorrect={false}
+                keyboardAppearance={colors.colorScheme}
+                keyboardType="email-address"
+                name="email"
+                placeholder="Adresse email"
+                registration
+                textContentType="emailAddress"
+              />
+              <AppFormField
+                autoCapitalize="none"
+                autoCorrect={false}
+                keyboardAppearance={colors.colorScheme}
+                name="password"
+                placeholder="Mot de passe"
+                registration
+                secureTextEntry
+                textContentType="password"
+              />
+              <SubmitButton title="Connexion" />
+            </AppForm>
+            <View style={styles.registerContainer}>
+              <AppText style={styles.register}>
+                Vous n'avez pas encore de compte ?
+              </AppText>
+              <TouchableOpacity onPress={() => navigation.navigate("Register")}>
+                <AppText style={styles.registerBtn}>Créer un compte</AppText>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
+        </KeyboardAvoidingView>
         {isLoading && <LoadingIndicator />}
       </Screen>
     </ImageBackground>
@@ -115,7 +121,6 @@ const styles = StyleSheet.create({
     flex: 1,
     height: "100%",
     justifyContent: "flex-end",
-    marginBottom: 100,
     width: "100%",
   },
   logo: {
