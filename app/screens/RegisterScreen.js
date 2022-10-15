@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import {
   ImageBackground,
   View,
@@ -10,7 +10,12 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import axios from "axios";
 
 import Screen from "../components/Screen";
-import { AppForm, AppFormField, SubmitButton } from "../components/forms";
+import {
+  AppForm,
+  AppFormField,
+  ErrorMessage,
+  SubmitButton,
+} from "../components/forms";
 import colors from "../config/colors";
 import AppText from "../components/AppText";
 import registerValidator from "../validators/register.validator.js";
@@ -25,6 +30,7 @@ const backgroundImage =
 
 function RegisterScreen(props) {
   const { login, isLoading, setIsLoading } = useContext(AuthContext);
+  const [registerError, setRegisterError] = useState(null);
 
   const handleSubmit = ({
     lastName,
@@ -34,6 +40,7 @@ function RegisterScreen(props) {
     password,
     passwordConfirmation,
   }) => {
+    setRegisterError(null);
     setIsLoading(true);
     axios({
       method: "post",
@@ -55,7 +62,19 @@ function RegisterScreen(props) {
       })
       .catch((err) => {
         setIsLoading(false);
-        console.log(err);
+        if (email.response === undefined) {
+          setRegisterError("Impossible de communiquer avec le serveur");
+          console.log(err);
+        } else {
+          const errMessage = err.response.data.error;
+          if (errMessage.includes("already") && errMessage.includes("email")) {
+            console.log(err.response.data.error);
+            setRegisterError("L'adresse mail est déjà utilisée");
+          } else {
+            setRegisterError("Une erreur est survenue");
+            console.log(err);
+          }
+        }
       });
   };
 
@@ -145,6 +164,10 @@ function RegisterScreen(props) {
                 textContentType="password"
               />
               <SubmitButton title="Inscription" />
+              <ErrorMessage
+                error={registerError}
+                visible={registerError != null ? true : false}
+              />
             </AppForm>
             <TouchableOpacity
               onPress={() => console.log("To data usage informations")}

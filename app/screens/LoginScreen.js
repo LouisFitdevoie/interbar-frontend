@@ -58,8 +58,8 @@ function LoginScreen({ navigation }) {
               validationSchema={loginValidator}
             >
               <ErrorMessage
-                error="Email ou mot de passe incorrect"
-                visible={error}
+                error={error}
+                visible={error != null ? true : false}
               />
               <AppFormField
                 autoCapitalize="none"

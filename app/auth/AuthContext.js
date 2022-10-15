@@ -11,10 +11,10 @@ export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [userAccessToken, setUserAccessToken] = useState(null);
   const [userRefreshToken, setUserRefreshToken] = useState(null);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState(null);
 
   const login = (emailAddress, password) => {
-    setError(false);
+    setError(null);
     setIsLoading(true);
     axios({
       method: "post",
@@ -33,12 +33,17 @@ export const AuthProvider = ({ children }) => {
       })
       .catch((e) => {
         setIsLoading(false);
-        if (e.response.status) {
-          if (e.response.status === 400) {
-            setError(true);
-          }
-        } else {
+        if (e.response === undefined) {
+          setError("Impossible de communiquer avec le serveur");
           console.log("Erreur : " + e);
+        } else {
+          if (e.response.status === 400) {
+            setError("Email/mot de passe incorrect");
+          } else if (e.response.status === 404) {
+            setError("Aucun compte lié à cette adresse email n'existe");
+          } else {
+            setError("Une erreur est survenue");
+          }
         }
       });
   };
