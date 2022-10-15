@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
 } from "react-native";
-import * as Yup from "yup";
 
 import Screen from "../components/Screen";
 import LoadingIndicator from "../components/LoadingIndicator";

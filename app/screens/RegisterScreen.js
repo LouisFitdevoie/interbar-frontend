@@ -1,20 +1,22 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   ImageBackground,
   View,
   StyleSheet,
   TouchableOpacity,
-  ScrollView,
 } from "react-native";
-import * as Yup from "yup";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import axios from "axios";
 
 import Screen from "../components/Screen";
 import { AppForm, AppFormField, SubmitButton } from "../components/forms";
 import colors from "../config/colors";
 import AppText from "../components/AppText";
 import registerValidator from "../validators/register.validator.js";
+import { AuthContext } from "../auth/AuthContext";
+import LoadingIndicator from "../components/LoadingIndicator";
+import { BASE_URL } from "../api/config.api";
 
 const backgroundImage =
   colors.colorScheme === "light"
@@ -22,6 +24,41 @@ const backgroundImage =
     : require("../assets/splashscreen/splashscreen-dark.png");
 
 function RegisterScreen(props) {
+  const { login, isLoading, setIsLoading } = useContext(AuthContext);
+
+  const handleSubmit = ({
+    lastName,
+    firstName,
+    email,
+    birthDate,
+    password,
+    passwordConfirmation,
+  }) => {
+    setIsLoading(true);
+    axios({
+      method: "post",
+      url: `${BASE_URL}/create-user`,
+      data: {
+        emailAddress: email,
+        firstName,
+        lastName,
+        password,
+        passwordConfirmation,
+        birthday: birthDate,
+      },
+    })
+      .then((res) => {
+        setIsLoading(false);
+        if (res.data.success) {
+          login(email, password);
+        }
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        console.log(err);
+      });
+  };
+
   return (
     <ImageBackground
       source={backgroundImage}
@@ -43,7 +80,7 @@ function RegisterScreen(props) {
                 password: "",
                 passwordConfirmation: "",
               }}
-              onSubmit={(values) => console.log(values)}
+              onSubmit={(values) => handleSubmit(values)}
               validationSchema={registerValidator}
             >
               <AppFormField
@@ -124,6 +161,7 @@ function RegisterScreen(props) {
             </TouchableOpacity>
           </View>
         </KeyboardAwareScrollView>
+        {isLoading && <LoadingIndicator />}
       </Screen>
     </ImageBackground>
   );

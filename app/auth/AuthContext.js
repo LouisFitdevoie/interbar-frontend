@@ -99,6 +99,7 @@ export const AuthProvider = ({ children }) => {
         userAccessToken,
         userRefreshToken,
         error,
+        setIsLoading,
       }}
     >
       {children}
