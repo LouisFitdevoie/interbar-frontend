@@ -20,6 +20,7 @@ import {
 } from "../components/forms";
 import colors from "../config/colors";
 import { AuthContext } from "../auth/AuthContext";
+import loginValidator from "../validators/login.validator";
 
 const backgroundImage =
   colors.colorScheme === "light"
@@ -29,15 +30,6 @@ const logo =
   colors.colorScheme === "light"
     ? require("../assets/splashscreen/logo-light.png")
     : require("../assets/splashscreen/logo-dark.png");
-
-const validationSchema = Yup.object().shape({
-  email: Yup.string()
-    .required("L'adresse email est requise")
-    .email("L'adresse email est invalide"),
-  password: Yup.string()
-    .required("Le mot de passe est requis")
-    .min(8, "Le mot de passe doit être de 8 caractères minimum"),
-});
 
 function LoginScreen({ navigation }) {
   const { login, isLoading, error } = useContext(AuthContext);
@@ -64,7 +56,7 @@ function LoginScreen({ navigation }) {
             <AppForm
               initialValues={{ email: "", password: "" }}
               onSubmit={(values) => handleSubmit(values)}
-              validationSchema={validationSchema}
+              validationSchema={loginValidator}
             >
               <ErrorMessage
                 error="Email ou mot de passe incorrect"
