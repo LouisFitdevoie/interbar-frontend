@@ -47,8 +47,8 @@ function RegisterScreen(props) {
       url: `${BASE_URL}/create-user`,
       data: {
         emailAddress: email,
-        firstName,
-        lastName,
+        firstName: firstName.toLowerCase(),
+        lastName: lastName.toLowerCase(),
         password,
         passwordConfirmation,
         birthday: birthDate,
