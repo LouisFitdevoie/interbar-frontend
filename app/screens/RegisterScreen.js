@@ -8,6 +8,8 @@ import {
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import axios from "axios";
+import { Platform } from "react-native";
+import { useHeaderHeight } from "@react-navigation/elements";
 
 import Screen from "../components/Screen";
 import {
@@ -31,6 +33,8 @@ const backgroundImage =
 function RegisterScreen({ navigation }) {
   const { login, isLoading, setIsLoading } = useContext(AuthContext);
   const [registerError, setRegisterError] = useState(null);
+
+  const headerHeight = Platform.OS === "android" ? useHeaderHeight() / 1.5 : 0;
 
   const handleSubmit = ({
     lastName,
@@ -86,7 +90,7 @@ function RegisterScreen({ navigation }) {
     >
       <Screen style={styles.container}>
         <KeyboardAwareScrollView
-          style={styles.scrollView}
+          style={[styles.scrollView, { marginTop: headerHeight }]}
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.formContainer}>
@@ -215,6 +219,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
+    // marginTop: headerHeight,
     width: "100%",
   },
 });
