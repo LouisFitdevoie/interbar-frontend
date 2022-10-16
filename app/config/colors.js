@@ -1,9 +1,16 @@
+import { Appearance } from "react-native";
+
+const colorScheme = Appearance.getColorScheme();
+
 export default {
   black: "#090909",
-  buttonPrimaryLight: "#497179",
-  danger: "#FF5252",
-  textInputRegistrationPlaceholder: "#FFFFFF90",
-  textInputDefaultPlaceholder: "#21495175",
-  primaryLight: "#214951",
+  buttonPrimary: colorScheme === "light" ? "#497179" : "#7A3729",
+  colorScheme,
+  danger: "#BE381F",
+  textInputRegistrationPlaceholder:
+    colorScheme === "light" ? "#FFFFFF90" : "#E4DED2",
+  textInputDefaultPlaceholder:
+    colorScheme === "light" ? "#21495175" : "#E4DED2",
+  primary: colorScheme === "light" ? "#214951" : "#E4DED2",
   white: "#FFFFFF",
 };

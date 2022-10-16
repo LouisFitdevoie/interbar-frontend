@@ -1,11 +1,19 @@
 import Constants from "expo-constants";
 import React from "react";
-import { View, SafeAreaView, StyleSheet } from "react-native";
+import {
+  Keyboard,
+  View,
+  SafeAreaView,
+  StyleSheet,
+  TouchableWithoutFeedback,
+} from "react-native";
 
 function Screen({ children, style }) {
   return (
     <SafeAreaView style={[styles.screen, style]}>
-      <View style={[styles.view, style]}>{children}</View>
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <View style={[styles.view, style]}>{children}</View>
+      </TouchableWithoutFeedback>
     </SafeAreaView>
   );
 }

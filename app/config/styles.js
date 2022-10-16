@@ -18,22 +18,24 @@ export default {
   },
   textInputRegistrationContainer: {
     backgroundColor: "#70B7C325",
-    borderColor: "#FFFFFF50",
+    borderColor: "#FFFFFF90",
     borderWidth: 2,
     borderRadius: 15,
-    marginVertical: 10,
+    marginVertical: 5,
+    overflow: "hidden",
   },
   textInputDefaultText: {
-    color: colors.primaryLight,
+    color: colors.primary,
     fontSize: 18,
     fontFamily: Platform.OS === "android" ? "Roboto" : "System",
     paddingVertical: 10,
     paddingHorizontal: 15,
   },
   textInputDefaultContainer: {
-    borderColor: colors.primaryLight,
+    borderColor: colors.primary,
     borderWidth: 2,
     borderRadius: 15,
     marginVertical: 10,
+    overflow: "hidden",
   },
 };
