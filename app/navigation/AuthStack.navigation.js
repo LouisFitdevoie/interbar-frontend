@@ -40,6 +40,10 @@ export default function AuthStack() {
             headerTitleStyle: {
               fontSize: 22,
             },
+            headerStyle: {
+              backgroundColor: colors.buttonPrimary,
+            },
+            headerTintColor: colors.white,
             headerTransparent: false,
           }}
         />
