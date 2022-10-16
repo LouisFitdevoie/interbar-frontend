@@ -28,7 +28,7 @@ const backgroundImage =
     ? require("../assets/splashscreen/splashscreen-light.png")
     : require("../assets/splashscreen/splashscreen-dark.png");
 
-function RegisterScreen(props) {
+function RegisterScreen({ navigation }) {
   const { login, isLoading, setIsLoading } = useContext(AuthContext);
   const [registerError, setRegisterError] = useState(null);
 
@@ -170,7 +170,7 @@ function RegisterScreen(props) {
               />
             </AppForm>
             <TouchableOpacity
-              onPress={() => console.log("To data usage informations")}
+              onPress={() => navigation.navigate("DataUsage")}
               style={styles.dataUsageContainer}
             >
               <MaterialCommunityIcons
