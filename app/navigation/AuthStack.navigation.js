@@ -40,7 +40,7 @@ export default function AuthStack() {
             headerTitleStyle: {
               fontSize: 22,
             },
-            headerTransparent: true,
+            headerTransparent: false,
           }}
         />
       </Stack.Group>
