@@ -1,15 +1,27 @@
 import React from "react";
 import { StyleSheet } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import LogoutTestScreen from "../screens/LogoutTestScreen";
+import colors from "../config/colors";
 
 const Tab = createBottomTabNavigator();
 
 function AppStack(props) {
+  const insets = useSafeAreaInsets();
   return (
-    <Tab.Navigator>
+    <Tab.Navigator
+      screenOptions={{
+        tabBarStyle: {
+          backgroundColor: colors.primary,
+          height: insets.bottom + 60,
+        },
+        tabBarActiveTintColor: colors.white,
+        tabBarInactiveTintColor: colors.buttonPrimary,
+      }}
+    >
       <Tab.Screen
         name="Events"
         component={LogoutTestScreen}
@@ -20,16 +32,13 @@ function AppStack(props) {
               name="home-outline"
               size={30}
               color={color}
-              style={{ paddingTop: 5 }}
+              style={{ marginTop: 5 }}
             />
           ),
           tabBarLabel: "Mes évènements",
           tabBarLabelStyle: {
             fontSize: 10,
-            paddingBottom: 5,
-          },
-          tabBarStyle: {
-            height: 60,
+            marginBottom: 5,
           },
         }}
       />
@@ -43,16 +52,13 @@ function AppStack(props) {
               name="arrow-redo-circle-outline"
               size={35}
               color={color}
-              style={{ paddingTop: 5 }}
+              style={{ marginTop: 5 }}
             />
           ),
           tabBarLabel: "Rejoindre",
           tabBarLabelStyle: {
             fontSize: 10,
-            paddingBottom: 5,
-          },
-          tabBarStyle: {
-            height: 60,
+            marginBottom: 5,
           },
         }}
       />
@@ -66,16 +72,13 @@ function AppStack(props) {
               name="add-circle-outline"
               size={35}
               color={color}
-              style={{ paddingTop: 5 }}
+              style={{ marginTop: 5 }}
             />
           ),
           tabBarLabel: "Créer",
           tabBarLabelStyle: {
             fontSize: 10,
-            paddingBottom: 5,
-          },
-          tabBarStyle: {
-            height: 60,
+            marginBottom: 5,
           },
         }}
       />
@@ -89,16 +92,13 @@ function AppStack(props) {
               name="settings-outline"
               size={30}
               color={color}
-              style={{ paddingTop: 5 }}
+              style={{ marginTop: 5 }}
             />
           ),
           tabBarLabel: "Paramètres",
           tabBarLabelStyle: {
             fontSize: 10,
-            paddingBottom: 5,
-          },
-          tabBarStyle: {
-            height: 60,
+            marginBottom: 5,
           },
         }}
       />
