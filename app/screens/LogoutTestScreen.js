@@ -15,9 +15,10 @@ function LogoutTestScreen(props) {
     userAccessToken,
     userRefreshToken,
     isTokenExpired,
+    updateAccessToken,
   } = useContext(AuthContext);
   const userInfos = jwt_decode(userAccessToken);
-  //Calculate time between expiration date and now
+
   return (
     <Screen version="scroll">
       <View style={styles.container}>
@@ -27,6 +28,11 @@ function LogoutTestScreen(props) {
             userInfos.firstName.slice(1)}
           {`\n`}Access token still valid ? {isTokenExpired() ? "No" : "Yes"}
         </AppText>
+        <AppButton
+          title="Update access token"
+          onPress={updateAccessToken}
+          style={{ width: "90%" }}
+        />
         <AppButton
           title="Logout"
           onPress={() => logout(userRefreshToken)}

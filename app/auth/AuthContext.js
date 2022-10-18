@@ -48,6 +48,44 @@ export const AuthProvider = ({ children }) => {
       });
   };
 
+  const updateAccessToken = () => {
+    if (userRefreshToken !== null) {
+      console.log("Updating access token...");
+      const oldAccessTokenInfos = jwt_decode(userAccessToken);
+      const oldAccessTokenTimeLeft =
+        oldAccessTokenInfos.exp - new Date().getTime() / 1000;
+      console.log(
+        "OLD : " + Math.round(oldAccessTokenTimeLeft / 60) + " minutes"
+      );
+      axios({
+        method: "post",
+        url: `${BASE_URL}/update-token`,
+        data: {
+          token: userRefreshToken,
+        },
+        headers: {
+          Authorization: `Bearer ${userAccessToken}`,
+        },
+      })
+        .then((res) => {
+          const newAccessTokenInfos = jwt_decode(res.data.accessToken);
+          const newAccessTokenTimeLeft =
+            newAccessTokenInfos.exp - new Date().getTime() / 1000;
+          console.log(
+            "NEW : " + Math.round(newAccessTokenTimeLeft / 60) + " minutes"
+          );
+          setUserAccessToken(res.data.accessToken);
+          AsyncStorage.setItem("userAccessToken", res.data.accessToken);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    } else {
+      logout();
+      return new Error("No refresh token found");
+    }
+  };
+
   const logout = (userRefreshToken) => {
     setIsLoading(true);
     axios({
@@ -117,6 +155,7 @@ export const AuthProvider = ({ children }) => {
         error,
         setIsLoading,
         isTokenExpired,
+        updateAccessToken,
       }}
     >
       {children}
