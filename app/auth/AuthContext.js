@@ -51,12 +51,6 @@ export const AuthProvider = ({ children }) => {
   const updateAccessToken = () => {
     if (userRefreshToken !== null) {
       console.log("Updating access token...");
-      const oldAccessTokenInfos = jwt_decode(userAccessToken);
-      const oldAccessTokenTimeLeft =
-        oldAccessTokenInfos.exp - new Date().getTime() / 1000;
-      console.log(
-        "OLD : " + Math.round(oldAccessTokenTimeLeft / 60) + " minutes"
-      );
       axios({
         method: "post",
         url: `${BASE_URL}/update-token`,
@@ -68,17 +62,19 @@ export const AuthProvider = ({ children }) => {
         },
       })
         .then((res) => {
-          const newAccessTokenInfos = jwt_decode(res.data.accessToken);
-          const newAccessTokenTimeLeft =
-            newAccessTokenInfos.exp - new Date().getTime() / 1000;
-          console.log(
-            "NEW : " + Math.round(newAccessTokenTimeLeft / 60) + " minutes"
-          );
           setUserAccessToken(res.data.accessToken);
           AsyncStorage.setItem("userAccessToken", res.data.accessToken);
         })
         .catch((e) => {
-          console.log(e);
+          if (e.response.status === 404) {
+            AsyncStorage.removeItem("userAccessToken");
+            AsyncStorage.removeItem("userRefreshToken");
+            setUserAccessToken(null);
+            setUserRefreshToken(null);
+            console.log("You have been disconnected");
+          } else {
+            console.log(e);
+          }
         });
     } else {
       logout();
