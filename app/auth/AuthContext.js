@@ -4,6 +4,7 @@ import axios from "axios";
 import jwt_decode from "jwt-decode";
 
 import { BASE_URL } from "../api/config.api";
+import { Alert } from "react-native";
 
 export const AuthContext = createContext();
 
@@ -71,7 +72,10 @@ export const AuthProvider = ({ children }) => {
             AsyncStorage.removeItem("userRefreshToken");
             setUserAccessToken(null);
             setUserRefreshToken(null);
-            console.log("You have been disconnected");
+            Alert.alert(
+              "Vous avez été déconnecté",
+              "Veuillez vous reconnecter"
+            );
           } else {
             console.log(e);
           }
