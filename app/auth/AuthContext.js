@@ -110,10 +110,18 @@ export const AuthProvider = ({ children }) => {
   const isLoggedIn = async () => {
     try {
       setIsLoading(true);
-      let userAccessTokenFromAS = await AsyncStorage.getItem("userAccessToken");
       let userRefreshTokenFromAS = await AsyncStorage.getItem(
         "userRefreshToken"
       );
+      let userAccessTokenFromAS = await AsyncStorage.getItem("userAccessToken");
+      //Verify if the userAccessToken is still valid and if not update it
+      if (userAccessTokenFromAS !== null) {
+        let decodedToken = jwt_decode(userAccessTokenFromAS);
+        let currentTime = Date.now() / 1000;
+        if (decodedToken.exp < currentTime) {
+          updateAccessToken();
+        }
+      }
       setUserAccessToken(userAccessTokenFromAS);
       setUserRefreshToken(userRefreshTokenFromAS);
       setIsLoading(false);
