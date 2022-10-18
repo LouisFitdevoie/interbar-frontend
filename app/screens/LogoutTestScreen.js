@@ -9,9 +9,15 @@ import LoadingIndicator from "../components/LoadingIndicator";
 import Screen from "../components/Screen";
 
 function LogoutTestScreen(props) {
-  const { logout, isLoading, userAccessToken, userRefreshToken } =
-    useContext(AuthContext);
+  const {
+    logout,
+    isLoading,
+    userAccessToken,
+    userRefreshToken,
+    isTokenExpired,
+  } = useContext(AuthContext);
   const userInfos = jwt_decode(userAccessToken);
+  //Calculate time between expiration date and now
   return (
     <Screen version="scroll">
       <View style={styles.container}>
@@ -19,6 +25,7 @@ function LogoutTestScreen(props) {
           Bonjour{" "}
           {userInfos.firstName.charAt(0).toUpperCase() +
             userInfos.firstName.slice(1)}
+          {`\n`}Access token still valid ? {isTokenExpired() ? "No" : "Yes"}
         </AppText>
         <AppButton
           title="Logout"

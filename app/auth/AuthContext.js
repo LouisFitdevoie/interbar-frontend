@@ -91,6 +91,17 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const isTokenExpired = () => {
+    const token = userAccessToken;
+    if (token) {
+      const decodedToken = jwt_decode(token);
+      const expirationTime = decodedToken.exp;
+      return Date.now() >= expirationTime * 1000;
+    } else {
+      return true;
+    }
+  };
+
   useEffect(() => {
     isLoggedIn();
   }, []);
@@ -105,6 +116,7 @@ export const AuthProvider = ({ children }) => {
         userRefreshToken,
         error,
         setIsLoading,
+        isTokenExpired,
       }}
     >
       {children}
