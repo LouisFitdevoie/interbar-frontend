@@ -4,6 +4,7 @@ import axios from "axios";
 import jwt_decode from "jwt-decode";
 
 import { BASE_URL } from "../api/config.api";
+import { Alert } from "react-native";
 
 export const AuthContext = createContext();
 
@@ -48,6 +49,43 @@ export const AuthProvider = ({ children }) => {
       });
   };
 
+  const updateAccessToken = () => {
+    if (userRefreshToken !== null) {
+      console.log("Updating access token...");
+      axios({
+        method: "post",
+        url: `${BASE_URL}/update-token`,
+        data: {
+          token: userRefreshToken,
+        },
+        headers: {
+          Authorization: `Bearer ${userAccessToken}`,
+        },
+      })
+        .then((res) => {
+          setUserAccessToken(res.data.accessToken);
+          AsyncStorage.setItem("userAccessToken", res.data.accessToken);
+        })
+        .catch((e) => {
+          if (e.response.status === 404) {
+            AsyncStorage.removeItem("userAccessToken");
+            AsyncStorage.removeItem("userRefreshToken");
+            setUserAccessToken(null);
+            setUserRefreshToken(null);
+            Alert.alert(
+              "Vous avez été déconnecté",
+              "Veuillez vous reconnecter"
+            );
+          } else {
+            console.log(e);
+          }
+        });
+    } else {
+      logout();
+      return new Error("No refresh token found");
+    }
+  };
+
   const logout = (userRefreshToken) => {
     setIsLoading(true);
     axios({
@@ -76,10 +114,18 @@ export const AuthProvider = ({ children }) => {
   const isLoggedIn = async () => {
     try {
       setIsLoading(true);
-      let userAccessTokenFromAS = await AsyncStorage.getItem("userAccessToken");
       let userRefreshTokenFromAS = await AsyncStorage.getItem(
         "userRefreshToken"
       );
+      let userAccessTokenFromAS = await AsyncStorage.getItem("userAccessToken");
+      //Verify if the userAccessToken is still valid and if not update it
+      if (userAccessTokenFromAS !== null) {
+        let decodedToken = jwt_decode(userAccessTokenFromAS);
+        let currentTime = Date.now() / 1000;
+        if (decodedToken.exp < currentTime) {
+          updateAccessToken();
+        }
+      }
       setUserAccessToken(userAccessTokenFromAS);
       setUserRefreshToken(userRefreshTokenFromAS);
       setIsLoading(false);
@@ -88,6 +134,17 @@ export const AuthProvider = ({ children }) => {
         "Error while trying to get userAccessToken or userRefreshToken from AsyncStorage: ",
         e
       );
+    }
+  };
+
+  const isTokenExpired = () => {
+    const token = userAccessToken;
+    if (token) {
+      const decodedToken = jwt_decode(token);
+      const expirationTime = decodedToken.exp;
+      return Date.now() >= expirationTime * 1000;
+    } else {
+      return true;
     }
   };
 
@@ -105,6 +162,8 @@ export const AuthProvider = ({ children }) => {
         userRefreshToken,
         error,
         setIsLoading,
+        isTokenExpired,
+        updateAccessToken,
       }}
     >
       {children}
