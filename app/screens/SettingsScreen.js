@@ -7,6 +7,7 @@ import ListItem from "../components/lists/ListItem";
 import { AuthContext } from "../auth/AuthContext";
 import ListIcon from "../components/lists/ListIcon";
 import colors from "../config/colors";
+import ListSeparator from "../components/lists/ListSeparator";
 
 const settingsItems = [
   {
@@ -61,6 +62,8 @@ function AccountScreen(props) {
         <FlatList
           data={settingsItems}
           keyExtractor={(settingsItem) => settingsItem.title}
+          ItemSeparatorComponent={() => <ListSeparator />}
+          scrollEnabled={false}
           renderItem={({ item }) => (
             <ListItem
               title={item.title}

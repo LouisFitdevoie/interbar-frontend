@@ -9,6 +9,7 @@ export default {
   colorScheme,
   danger: "#BE381F",
   green: "#58C091",
+  light: "#F0F0F0",
   textInputRegistrationPlaceholder:
     colorScheme === "light" ? "#FFFFFF90" : "#E4DED2",
   textInputDefaultPlaceholder:
