@@ -3,7 +3,7 @@ import { View, StyleSheet, Text, TouchableHighlight } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import colors from "../../config/colors";
 
-function ListItem({ title, subtitle, IconComponent, onPress }) {
+function ListItem({ title, subtitle, IconComponent, onPress, chevron = true }) {
   return (
     <View>
       <TouchableHighlight onPress={onPress} underlayColor={colors.black}>
@@ -19,11 +19,13 @@ function ListItem({ title, subtitle, IconComponent, onPress }) {
               </Text>
             )}
           </View>
-          <Ionicons
-            name="chevron-forward"
-            size={25}
-            color={colors.buttonPrimary}
-          />
+          {chevron && (
+            <Ionicons
+              name="chevron-forward"
+              size={25}
+              color={colors.buttonPrimary}
+            />
+          )}
         </View>
       </TouchableHighlight>
     </View>

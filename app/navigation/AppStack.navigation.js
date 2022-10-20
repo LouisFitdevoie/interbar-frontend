@@ -100,7 +100,8 @@ function AppStack(props) {
         name="Settings"
         component={SettingsScreen}
         options={{
-          headerShown: false,
+          headerShown: true,
+          headerTitle: "Paramètres",
           tabBarIcon: ({ color }) => (
             <Ionicons
               name="settings-outline"
