@@ -13,7 +13,6 @@ function LogoutTestScreen(props) {
     logout,
     isLoading,
     userAccessToken,
-    userRefreshToken,
     isTokenExpired,
     updateAccessToken,
   } = useContext(AuthContext);
@@ -35,7 +34,7 @@ function LogoutTestScreen(props) {
         />
         <AppButton
           title="Logout"
-          onPress={() => logout(userRefreshToken)}
+          onPress={() => logout()}
           style={{ width: "90%" }}
         />
         {isLoading && <LoadingIndicator />}

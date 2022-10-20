@@ -86,7 +86,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = (userRefreshToken) => {
+  const logout = () => {
     setIsLoading(true);
     axios({
       method: "delete",

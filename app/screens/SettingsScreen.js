@@ -8,41 +8,46 @@ import { AuthContext } from "../auth/AuthContext";
 import ListIcon from "../components/lists/ListIcon";
 import colors from "../config/colors";
 import ListSeparator from "../components/lists/ListSeparator";
-
-const settingsItems = [
-  {
-    title: "Modifier mes données personnelles",
-    icon: {
-      name: "card-account-details-outline",
-      backgroundColor: colors.green,
-    },
-  },
-  {
-    title: "Modifier mon mot de passe",
-    icon: {
-      name: "key-variant",
-      backgroundColor: colors.primary,
-    },
-  },
-  {
-    title: "Utilisation des données personnelles",
-    icon: {
-      name: "information-outline",
-      backgroundColor: colors.blue,
-    },
-  },
-  {
-    title: "Déconnexion",
-    icon: {
-      name: "logout",
-      backgroundColor: colors.danger,
-    },
-  },
-];
+import LoadingIndicator from "../components/LoadingIndicator";
 
 function AccountScreen(props) {
-  const { userAccessToken } = useContext(AuthContext);
+  const { userAccessToken, logout, isLoading } = useContext(AuthContext);
   const user = jwtDecode(userAccessToken);
+
+  const settingsItems = [
+    {
+      title: "Modifier mes données personnelles",
+      icon: {
+        name: "card-account-details-outline",
+        backgroundColor: colors.green,
+      },
+      onPress: () => console.log("Modifier mes données personnelles"),
+    },
+    {
+      title: "Modifier mon mot de passe",
+      icon: {
+        name: "key-variant",
+        backgroundColor: colors.primary,
+      },
+      onPress: () => console.log("Modifier mon mot de passe"),
+    },
+    {
+      title: "Utilisation des données personnelles",
+      icon: {
+        name: "information-outline",
+        backgroundColor: colors.blue,
+      },
+      onPress: () => console.log("Utilisation des données personnelles"),
+    },
+    {
+      title: "Déconnexion",
+      icon: {
+        name: "logout",
+        backgroundColor: colors.danger,
+      },
+      onPress: () => logout(),
+    },
+  ];
   return (
     <Screen>
       <View style={styles.container}>
@@ -75,10 +80,12 @@ function AccountScreen(props) {
                   backgroundColor={item.icon.backgroundColor}
                 />
               }
+              onPress={item.onPress}
             />
           )}
         />
       </View>
+      {isLoading && <LoadingIndicator />}
     </Screen>
   );
 }

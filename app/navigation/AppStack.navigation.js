@@ -14,7 +14,7 @@ const Tab = createBottomTabNavigator();
 function AppStack(props) {
   const insets = useSafeAreaInsets();
 
-  const { updateAccessToken } = useContext(AuthContext);
+  const { updateAccessToken, isLoading } = useContext(AuthContext);
 
   const timeToUpdateAccessToken = 10 * 60 * 1000; // 10 minutes
   useEffect(() => {
@@ -34,6 +34,14 @@ function AppStack(props) {
         },
         tabBarActiveTintColor: colors.white,
         tabBarInactiveTintColor: colors.buttonPrimary,
+      }}
+      screenListeners={{
+        //If isLoading -> don't navigate
+        tabPress: (e) => {
+          if (isLoading) {
+            e.preventDefault();
+          }
+        },
       }}
     >
       <Tab.Screen
