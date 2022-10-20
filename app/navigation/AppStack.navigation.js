@@ -7,6 +7,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import LogoutTestScreen from "../screens/LogoutTestScreen";
 import colors from "../config/colors";
 import { AuthContext } from "../auth/AuthContext";
+import SettingsScreen from "../screens/SettingsScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -97,7 +98,7 @@ function AppStack(props) {
       />
       <Tab.Screen
         name="Settings"
-        component={LogoutTestScreen}
+        component={SettingsScreen}
         options={{
           headerShown: false,
           tabBarIcon: ({ color }) => (
