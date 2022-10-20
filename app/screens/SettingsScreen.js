@@ -10,7 +10,7 @@ import colors from "../config/colors";
 import ListSeparator from "../components/lists/ListSeparator";
 import LoadingIndicator from "../components/LoadingIndicator";
 
-function AccountScreen(props) {
+function AccountScreen({ navigation }) {
   const { userAccessToken, logout, isLoading } = useContext(AuthContext);
   const user = jwtDecode(userAccessToken);
 
@@ -37,7 +37,7 @@ function AccountScreen(props) {
         name: "information-outline",
         backgroundColor: colors.blue,
       },
-      onPress: () => console.log("Utilisation des données personnelles"),
+      onPress: () => navigation.navigate("DataUsage"),
     },
     {
       title: "Déconnexion",

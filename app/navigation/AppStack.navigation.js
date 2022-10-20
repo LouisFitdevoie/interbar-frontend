@@ -1,20 +1,15 @@
 import React, { useContext, useEffect } from "react";
-import { StyleSheet } from "react-native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Ionicons } from "@expo/vector-icons";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import LogoutTestScreen from "../screens/LogoutTestScreen";
 import colors from "../config/colors";
 import { AuthContext } from "../auth/AuthContext";
-import SettingsScreen from "../screens/SettingsScreen";
+import DataUsageScreen from "../screens/DataUsageScreen";
+import { createStackNavigator } from "@react-navigation/stack";
+import AppTabNavigator from "./AppTabNavigator.navigation";
 
-const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
 
 function AppStack(props) {
-  const insets = useSafeAreaInsets();
-
-  const { updateAccessToken, isLoading } = useContext(AuthContext);
+  const { updateAccessToken } = useContext(AuthContext);
 
   const timeToUpdateAccessToken = 10 * 60 * 1000; // 10 minutes
   useEffect(() => {
@@ -26,114 +21,32 @@ function AppStack(props) {
   });
 
   return (
-    <Tab.Navigator
-      screenOptions={{
-        tabBarStyle: {
-          backgroundColor: colors.primary,
-          height: insets.bottom + 60,
-        },
-        tabBarActiveTintColor: colors.white,
-        tabBarInactiveTintColor: colors.buttonPrimary,
-      }}
-      screenListeners={{
-        //If isLoading -> don't navigate
-        tabPress: (e) => {
-          if (isLoading) {
-            e.preventDefault();
-          }
-        },
-      }}
-    >
-      <Tab.Screen
-        name="Events"
-        component={LogoutTestScreen}
-        options={{
-          headerShown: false,
-          tabBarIcon: ({ color }) => (
-            <Ionicons
-              name="home-outline"
-              size={30}
-              color={color}
-              style={{ marginTop: 5 }}
-            />
-          ),
-          tabBarLabel: "Mes évènements",
-          tabBarLabelStyle: {
-            fontSize: 10,
-            marginBottom: 5,
-          },
-        }}
+    <Stack.Navigator>
+      <Stack.Screen
+        name="TabNavigator"
+        component={AppTabNavigator}
+        options={{ headerShown: false }}
       />
-      <Tab.Screen
-        name="Join"
-        component={LogoutTestScreen}
-        options={{
-          headerShown: false,
-          tabBarIcon: ({ color }) => (
-            <Ionicons
-              name="arrow-redo-circle-outline"
-              size={35}
-              color={color}
-              style={{ marginTop: 5 }}
-            />
-          ),
-          tabBarLabel: "Rejoindre",
-          tabBarLabelStyle: {
-            fontSize: 10,
-            marginBottom: 5,
-          },
-        }}
-      />
-      <Tab.Screen
-        name="Create"
-        component={LogoutTestScreen}
-        options={{
-          headerShown: false,
-          tabBarIcon: ({ color }) => (
-            <Ionicons
-              name="add-circle-outline"
-              size={35}
-              color={color}
-              style={{
-                marginTop: 5,
-                paddingLeft: 3,
-              }}
-            />
-          ),
-          tabBarLabel: "Créer",
-          tabBarLabelStyle: {
-            fontSize: 10,
-            marginBottom: 5,
-          },
-        }}
-      />
-      <Tab.Screen
-        name="Settings"
-        component={SettingsScreen}
-        options={{
-          headerShown: true,
-          headerTitle: "Paramètres",
-          tabBarIcon: ({ color }) => (
-            <Ionicons
-              name="settings-outline"
-              size={30}
-              color={color}
-              style={{
-                marginTop: 5,
-              }}
-            />
-          ),
-          tabBarLabel: "Paramètres",
-          tabBarLabelStyle: {
-            fontSize: 10,
-            marginBottom: 5,
-          },
-        }}
-      />
-    </Tab.Navigator>
+      <Stack.Group screenOptions={{ presentation: "modal" }}>
+        <Stack.Screen
+          name="DataUsage"
+          component={DataUsageScreen}
+          options={{
+            headerTitle: "Utilisation des données",
+            headerTitleStyle: {
+              fontSize: 22,
+            },
+            headerStyle: {
+              backgroundColor: colors.buttonPrimary,
+            },
+            headerTintColor: colors.white,
+            headerTransparent: false,
+            headerBackTitleVisible: false,
+          }}
+        />
+      </Stack.Group>
+    </Stack.Navigator>
   );
 }
-
-const styles = StyleSheet.create({});
 
 export default AppStack;
