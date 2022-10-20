@@ -94,7 +94,10 @@ function AppStack(props) {
               name="add-circle-outline"
               size={35}
               color={color}
-              style={{ marginTop: 5 }}
+              style={{
+                marginTop: 5,
+                paddingLeft: 3,
+              }}
             />
           ),
           tabBarLabel: "Créer",
@@ -115,7 +118,9 @@ function AppStack(props) {
               name="settings-outline"
               size={30}
               color={color}
-              style={{ marginTop: 5 }}
+              style={{
+                marginTop: 5,
+              }}
             />
           ),
           tabBarLabel: "Paramètres",
