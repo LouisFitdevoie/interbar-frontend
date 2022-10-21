@@ -66,7 +66,7 @@ function RegisterScreen({ navigation }) {
       })
       .catch((err) => {
         setIsLoading(false);
-        if (email.response === undefined) {
+        if (err.response === undefined) {
           setRegisterError("Impossible de communiquer avec le serveur");
           console.log(err);
         } else {
@@ -74,6 +74,12 @@ function RegisterScreen({ navigation }) {
           if (errMessage.includes("already") && errMessage.includes("email")) {
             console.log(err.response.data.error);
             setRegisterError("L'adresse mail est déjà utilisée");
+          } else if (
+            err.response.status === 400 &&
+            errMessage.includes("birthday")
+          ) {
+            console.log(err.response.data.error);
+            setRegisterError("La date de naissance est invalide");
           } else {
             setRegisterError("Une erreur est survenue");
             console.log(err);
@@ -219,7 +225,6 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
-    // marginTop: headerHeight,
     width: "100%",
   },
 });
