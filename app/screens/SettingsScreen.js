@@ -29,7 +29,7 @@ function AccountScreen({ navigation }) {
         name: "key-variant",
         backgroundColor: colors.primary,
       },
-      onPress: () => console.log("Modifier mon mot de passe"),
+      onPress: () => navigation.navigate("EditPassword"),
     },
     {
       title: "Utilisation des données personnelles",
