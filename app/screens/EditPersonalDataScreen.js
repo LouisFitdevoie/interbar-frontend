@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   View,
   StyleSheet,
@@ -12,8 +12,11 @@ import { AppForm, AppFormField, SubmitButton } from "../components/forms";
 import editPersonalData from "../validators/editPersonalData.validator";
 import colors from "../config/colors";
 import AppText from "../components/AppText";
+import { AuthContext } from "../auth/AuthContext";
 
 function EditPersonalDataScreen({ navigation }) {
+  const { user } = useContext(AuthContext);
+
   return (
     <Screen style={styles.container}>
       <KeyboardAvoidingView
@@ -22,7 +25,19 @@ function EditPersonalDataScreen({ navigation }) {
       >
         <View style={styles.formContainer}>
           <AppForm
-            initialValues={{ firstName: "", lastName: "", birthDate: "" }}
+            initialValues={{
+              firstName:
+                user.firstName.slice(0, 1).toUpperCase() +
+                user.firstName.slice(1),
+              lastName:
+                user.lastName.slice(0, 1).toUpperCase() +
+                user.lastName.slice(1),
+              birthDate: new Date(user.birthday).toLocaleString("fr-BE", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+              }),
+            }}
             onSubmit={(values) => console.log(values)}
             validationSchema={editPersonalData}
           >
@@ -96,6 +111,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: "100%",
     justifyContent: "flex-start",
+    marginTop: 10,
     width: "100%",
   },
 });

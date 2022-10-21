@@ -12,6 +12,7 @@ export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [userAccessToken, setUserAccessToken] = useState(null);
   const [userRefreshToken, setUserRefreshToken] = useState(null);
+  const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
 
   const login = (emailAddress, password) => {
@@ -30,6 +31,7 @@ export const AuthProvider = ({ children }) => {
         setUserRefreshToken(res.data.refreshToken);
         AsyncStorage.setItem("userAccessToken", res.data.accessToken);
         AsyncStorage.setItem("userRefreshToken", res.data.refreshToken);
+        setUser(jwt_decode(res.data.accessToken));
         setIsLoading(false);
       })
       .catch((e) => {
@@ -103,6 +105,7 @@ export const AuthProvider = ({ children }) => {
         AsyncStorage.removeItem("userRefreshToken");
         setUserAccessToken(null);
         setUserRefreshToken(null);
+        setUser(null);
         setIsLoading(false);
       })
       .catch((error) => {
@@ -127,6 +130,7 @@ export const AuthProvider = ({ children }) => {
         }
       }
       setUserAccessToken(userAccessTokenFromAS);
+      setUser(jwt_decode(userAccessTokenFromAS));
       setUserRefreshToken(userRefreshTokenFromAS);
       setIsLoading(false);
     } catch (e) {
@@ -164,6 +168,7 @@ export const AuthProvider = ({ children }) => {
         setIsLoading,
         isTokenExpired,
         updateAccessToken,
+        user,
       }}
     >
       {children}
