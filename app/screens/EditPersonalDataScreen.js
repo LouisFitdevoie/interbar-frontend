@@ -80,10 +80,7 @@ function EditPersonalDataScreen({ navigation }) {
 
   return (
     <Screen style={styles.container}>
-      <KeyboardAvoidingView
-        style={{ flex: 1, width: "100%", marginBottom: 100 }}
-        behavior="padding"
-      >
+      <KeyboardAvoidingView style={styles.avoidingView} behavior="padding">
         <View style={styles.formContainer}>
           <AppForm
             initialValues={{
@@ -157,11 +154,15 @@ function EditPersonalDataScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  avoidingView: {
+    flex: 1,
+    marginBottom: 100,
+    width: "95%",
+  },
   container: {
     alignItems: "center",
     flex: 1,
     justifyContent: "center",
-    paddingHorizontal: 10,
     width: "100%",
   },
   dataUsageContainer: {

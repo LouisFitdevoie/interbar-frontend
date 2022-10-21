@@ -6,7 +6,11 @@ const validationSchema = Yup.object().shape({
     .min(8, "Le mot de passe doit contenir au moins 8 caractères"),
   newPassword: Yup.string()
     .required("Le nouveau mot de passe est requis")
-    .min(8, "Le mot de passe doit contenir au moins 8 caractères"),
+    .min(8, "Le mot de passe doit contenir au moins 8 caractères")
+    .notOneOf(
+      [Yup.ref("oldPassword"), null],
+      "Le nouveau mot de passe doit être différent de l'ancien"
+    ),
   newPasswordConfirmation: Yup.string()
     .required("La confirmation du nouveau mot de passe est requise")
     .min(8, "Le mot de passe doit contenir au moins 8 caractères")

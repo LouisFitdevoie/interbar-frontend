@@ -2,17 +2,16 @@ import React, { useContext, useState } from "react";
 import { View, StyleSheet, KeyboardAvoidingView, Alert } from "react-native";
 import axios from "axios";
 
-import Screen from "../components/Screen";
+import { AuthContext } from "../auth/AuthContext";
 import {
   AppForm,
   AppFormField,
   SubmitButton,
   ErrorMessage,
 } from "../components/forms";
-import editPasswordValidator from "../validators/editPassword.validator";
 import colors from "../config/colors";
-import AppText from "../components/AppText";
-import { AuthContext } from "../auth/AuthContext";
+import editPasswordValidator from "../validators/editPassword.validator";
+import Screen from "../components/Screen";
 import LoadingIndicator from "../components/LoadingIndicator";
 import { BASE_URL } from "../api/config.api";
 
@@ -21,12 +20,67 @@ function EditPasswordScreen(props) {
     useContext(AuthContext);
   const [passwordEditingError, setPasswordEditingError] = useState(null);
 
+  const handleSubmit = ({
+    oldPassword,
+    newPassword,
+    newPasswordConfirmation,
+  }) => {
+    setPasswordEditingError(null);
+    Alert.alert(
+      "Voulez-vous vraiment modifier votre mot de passe ?",
+      "Vous serez déconnecté si vous acceptez",
+      [
+        {
+          text: "Annuler",
+          style: "cancel",
+        },
+        {
+          text: "Modifier",
+          onPress: () => {
+            setIsLoading(true);
+            axios({
+              method: "put",
+              url: `${BASE_URL}/update-user-password`,
+              data: {
+                id: user.id,
+                oldPassword,
+                newPassword,
+                newPasswordConfirmation,
+              },
+              headers: {
+                Authorization: `Bearer ${userAccessToken}`,
+              },
+            })
+              .then((res) => {
+                if (res.data.success) {
+                  setIsLoading(false);
+                  logout();
+                } else {
+                  setIsLoading(false);
+                  setPasswordEditingError(res.data.message);
+                }
+              })
+              .catch((err) => {
+                setIsLoading(false);
+                if (err.response === undefined) {
+                  setPasswordEditingError(
+                    "Impossible de communiquer avec le serveur"
+                  );
+                } else if (err.response.status === 404) {
+                  setPasswordEditingError("Utilisateur non trouvé");
+                } else {
+                  setPasswordEditingError("Une erreur est survenue");
+                }
+              });
+          },
+        },
+      ]
+    );
+  };
+
   return (
     <Screen style={styles.container}>
-      <KeyboardAvoidingView
-        style={{ flex: 1, width: "100%", marginBottom: 100 }}
-        behavior="padding"
-      >
+      <KeyboardAvoidingView style={styles.avoidingView} behavior="padding">
         <View style={styles.formContainer}>
           <AppForm
             initialValues={{
@@ -34,7 +88,7 @@ function EditPasswordScreen(props) {
               newPassword: "",
               newPasswordConfirmation: "",
             }}
-            onSubmit={(values) => console.log(values)}
+            onSubmit={(values) => handleSubmit(values)}
             validationSchema={editPasswordValidator}
           >
             <AppFormField
@@ -78,11 +132,15 @@ function EditPasswordScreen(props) {
 }
 
 const styles = StyleSheet.create({
+  avoidingView: {
+    flex: 1,
+    marginBottom: 100,
+    width: "95%",
+  },
   container: {
     alignItems: "center",
     flex: 1,
     justifyContent: "center",
-    paddingHorizontal: 10,
     width: "100%",
   },
   dataUsageContainer: {
