@@ -1,21 +1,82 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import {
   View,
   StyleSheet,
   KeyboardAvoidingView,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import axios from "axios";
 
 import Screen from "../components/Screen";
-import { AppForm, AppFormField, SubmitButton } from "../components/forms";
+import {
+  AppForm,
+  AppFormField,
+  SubmitButton,
+  ErrorMessage,
+} from "../components/forms";
 import editPersonalData from "../validators/editPersonalData.validator";
 import colors from "../config/colors";
 import AppText from "../components/AppText";
 import { AuthContext } from "../auth/AuthContext";
+import LoadingIndicator from "../components/LoadingIndicator";
+import { BASE_URL } from "../api/config.api";
 
 function EditPersonalDataScreen({ navigation }) {
-  const { user } = useContext(AuthContext);
+  const { userAccessToken, user, isLoading, setIsLoading, logout } =
+    useContext(AuthContext);
+  const [editingError, setEditingError] = useState(null);
+
+  const handleSubmit = ({ firstName, lastName, birthDate }) => {
+    setEditingError(null);
+    Alert.alert(
+      "Voulez-vous vraiment modifier vos données personnelles ?",
+      "Vous serez déconnecté si vous acceptez",
+      [
+        {
+          text: "Annuler",
+          style: "cancel",
+        },
+        {
+          text: "Modifier",
+          onPress: () => {
+            setIsLoading(true);
+            axios({
+              method: "put",
+              url: `${BASE_URL}/update-user`,
+              data: {
+                id: user.id,
+                firstName: firstName.toLowerCase(),
+                lastName: lastName.toLowerCase(),
+                birthday: birthDate,
+              },
+              headers: {
+                Authorization: `Bearer ${userAccessToken}`,
+              },
+            })
+              .then((res) => {
+                if (res.data.success) {
+                  setIsLoading(false);
+                  logout();
+                }
+              })
+              .catch((err) => {
+                setIsLoading(false);
+                if (err.response === undefined) {
+                  setEditingError("Impossible de communiquer avec le serveur");
+                } else if (err.response.status === 404) {
+                  setEditingError("Utilisateur non trouvé");
+                } else {
+                  setEditingError("Une erreur est survenue");
+                }
+              });
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
 
   return (
     <Screen style={styles.container}>
@@ -38,7 +99,7 @@ function EditPersonalDataScreen({ navigation }) {
                 day: "2-digit",
               }),
             }}
-            onSubmit={(values) => console.log(values)}
+            onSubmit={(values) => handleSubmit(values)}
             validationSchema={editPersonalData}
           >
             <AppFormField
@@ -70,6 +131,10 @@ function EditPersonalDataScreen({ navigation }) {
               textContentType="none"
             />
             <SubmitButton title="Enregistrer" />
+            <ErrorMessage
+              error={editingError}
+              visible={editingError != null ? true : false}
+            />
           </AppForm>
           <TouchableOpacity
             onPress={() => navigation.navigate("DataUsage")}
@@ -86,6 +151,7 @@ function EditPersonalDataScreen({ navigation }) {
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
+      {isLoading && <LoadingIndicator />}
     </Screen>
   );
 }

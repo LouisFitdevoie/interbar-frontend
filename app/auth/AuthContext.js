@@ -66,6 +66,7 @@ export const AuthProvider = ({ children }) => {
       })
         .then((res) => {
           setUserAccessToken(res.data.accessToken);
+          setUser(jwt_decode(res.data.accessToken));
           AsyncStorage.setItem("userAccessToken", res.data.accessToken);
         })
         .catch((e) => {
@@ -169,6 +170,7 @@ export const AuthProvider = ({ children }) => {
         isTokenExpired,
         updateAccessToken,
         user,
+        setUser,
       }}
     >
       {children}
