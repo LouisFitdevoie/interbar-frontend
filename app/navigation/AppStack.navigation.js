@@ -5,6 +5,7 @@ import { AuthContext } from "../auth/AuthContext";
 import DataUsageScreen from "../screens/DataUsageScreen";
 import { createStackNavigator } from "@react-navigation/stack";
 import AppTabNavigator from "./AppTabNavigator.navigation";
+import EditPersonalDataScreen from "../screens/EditPersonalDataScreen";
 
 const Stack = createStackNavigator();
 
@@ -33,6 +34,22 @@ function AppStack(props) {
           component={DataUsageScreen}
           options={{
             headerTitle: "Utilisation des données",
+            headerTitleStyle: {
+              fontSize: 22,
+            },
+            headerStyle: {
+              backgroundColor: colors.buttonPrimary,
+            },
+            headerTintColor: colors.white,
+            headerTransparent: false,
+            headerBackTitleVisible: false,
+          }}
+        />
+        <Stack.Screen
+          name="EditPersonalData"
+          component={EditPersonalDataScreen}
+          options={{
+            headerTitle: "Modifier mes données personnelles",
             headerTitleStyle: {
               fontSize: 22,
             },

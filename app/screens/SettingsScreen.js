@@ -21,7 +21,7 @@ function AccountScreen({ navigation }) {
         name: "card-account-details-outline",
         backgroundColor: colors.green,
       },
-      onPress: () => console.log("Modifier mes données personnelles"),
+      onPress: () => navigation.navigate("EditPersonalData"),
     },
     {
       title: "Modifier mon mot de passe",
