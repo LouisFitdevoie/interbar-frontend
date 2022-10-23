@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import jwtDecode from "jwt-decode";
-import { Alert, FlatList, StyleSheet, View } from "react-native";
+import { Alert, FlatList, StyleSheet, View, Dimensions } from "react-native";
 
 import Screen from "../components/Screen";
 import ListItem from "../components/lists/ListItem";
@@ -40,6 +40,15 @@ function AccountScreen({ navigation }) {
       // onPress: () => navigation.navigate("ColorMode"),
       onPress: () =>
         Alert.alert("Mode de couleur", "En cours de développement"),
+    },
+    {
+      title: "Supprimer mon compte",
+      icon: {
+        name: "delete-outline",
+        backgroundColor: colors.danger,
+      },
+      onPress: () =>
+        Alert.alert("Supprimer mon compte", "En cours de développement"),
     },
     {
       title: "Déconnexion",
@@ -88,7 +97,7 @@ function AccountScreen({ navigation }) {
           data={settingsItems}
           keyExtractor={(settingsItem) => settingsItem.title}
           ItemSeparatorComponent={() => <ListSeparator />}
-          scrollEnabled={false}
+          scrollEnabled={Math.round(Dimensions.get("window").height) < 600} //If the screen height is less than 600, the FlatList is scrollable
           renderItem={({ item }) => (
             <ListItem
               title={item.title}
