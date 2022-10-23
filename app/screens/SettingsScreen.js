@@ -32,12 +32,12 @@ function AccountScreen({ navigation }) {
       onPress: () => navigation.navigate("EditPassword"),
     },
     {
-      title: "Utilisation des données personnelles",
+      title: "Mode de couleur",
       icon: {
-        name: "information-outline",
+        name: "palette-outline",
         backgroundColor: colors.blue,
       },
-      onPress: () => navigation.navigate("DataUsage"),
+      onPress: () => console.log("Mode de couleur"),
     },
     {
       title: "Déconnexion",
