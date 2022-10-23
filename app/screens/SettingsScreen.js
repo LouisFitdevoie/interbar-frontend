@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import jwtDecode from "jwt-decode";
-import { FlatList, StyleSheet, View } from "react-native";
+import { Alert, FlatList, StyleSheet, View } from "react-native";
 
 import Screen from "../components/Screen";
 import ListItem from "../components/lists/ListItem";
@@ -45,7 +45,23 @@ function AccountScreen({ navigation }) {
         name: "logout",
         backgroundColor: colors.danger,
       },
-      onPress: () => logout(),
+      onPress: () => {
+        Alert.alert(
+          "Déconnexion",
+          "Êtes-vous sûr de vouloir vous déconnecter ?",
+          [
+            {
+              text: "Annuler",
+              style: "cancel",
+            },
+            {
+              text: "Déconnexion",
+              onPress: () => logout(),
+            },
+          ],
+          { cancelable: false }
+        );
+      },
     },
   ];
   return (
