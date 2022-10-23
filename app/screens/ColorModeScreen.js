@@ -1,30 +1,46 @@
 import React, { useState } from "react";
-import { View, StyleSheet, TouchableHighlight } from "react-native";
-import AppText from "../components/AppText";
+import { View, StyleSheet } from "react-native";
+import AppButton from "../components/AppButton";
+import RadioButton from "../components/RadioButton";
 
 import Screen from "../components/Screen";
 
 function ColorModeScreen(props) {
-  const [value, setValue] = useState("");
+  const [colorMode, setColorMode] = useState("light");
+
+  const handleChangeColorMode = () => {
+    console.log(colorMode);
+  };
 
   return (
     <Screen>
       <View style={styles.container}>
-        <View>
-          <TouchableHighlight
-            style={{ backgroundColor: value === "Test 1" ? "red" : "white" }}
-            onPress={() => setValue("Test 1")}
-          >
-            <AppText>Test 1</AppText>
-          </TouchableHighlight>
-        </View>
-        <View>
-          <TouchableHighlight
-            style={{ backgroundColor: value === "Test 2" ? "red" : "white" }}
-            onPress={() => setValue("Test 2")}
-          >
-            <AppText>Test 2</AppText>
-          </TouchableHighlight>
+        <RadioButton
+          value="light"
+          stateValue={colorMode}
+          label="Clair"
+          onPress={() => setColorMode("light")}
+        />
+        <View style={styles.separator} />
+        <RadioButton
+          value="dark"
+          stateValue={colorMode}
+          label="Sombre"
+          onPress={() => setColorMode("dark")}
+        />
+        <View style={styles.separator} />
+        <RadioButton
+          value="auto"
+          stateValue={colorMode}
+          label="Automatique"
+          onPress={() => setColorMode("auto")}
+        />
+        <View style={styles.buttonContainer}>
+          <AppButton
+            title="Enregistrer"
+            onPress={handleChangeColorMode()}
+            style={styles.button}
+          />
         </View>
       </View>
     </Screen>
@@ -32,7 +48,16 @@ function ColorModeScreen(props) {
 }
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    marginTop: 20,
+  },
+  button: {
+    width: "95%",
+    marginHorizontal: 10,
+  },
+  buttonContainer: {
+    width: "100%",
+  },
 });
 
 export default ColorModeScreen;

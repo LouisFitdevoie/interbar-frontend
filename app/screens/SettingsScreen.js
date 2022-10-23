@@ -37,7 +37,9 @@ function AccountScreen({ navigation }) {
         name: "palette-outline",
         backgroundColor: colors.blue,
       },
-      onPress: () => navigation.navigate("ColorMode"),
+      // onPress: () => navigation.navigate("ColorMode"),
+      onPress: () =>
+        Alert.alert("Mode de couleur", "En cours de développement"),
     },
     {
       title: "Déconnexion",
