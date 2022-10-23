@@ -128,10 +128,11 @@ export const AuthProvider = ({ children }) => {
         let currentTime = Date.now() / 1000;
         if (decodedToken.exp < currentTime) {
           updateAccessToken();
+        } else {
+          setUser(decodedToken);
         }
       }
       setUserAccessToken(userAccessTokenFromAS);
-      setUser(jwt_decode(userAccessTokenFromAS));
       setUserRefreshToken(userRefreshTokenFromAS);
       setIsLoading(false);
     } catch (e) {
