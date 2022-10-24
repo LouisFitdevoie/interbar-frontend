@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet } from "react-native";
 
 import { AuthProvider } from "./app/auth/AuthContext";
 import AppNavigation from "./app/navigation/AppNavigation.navigation";
