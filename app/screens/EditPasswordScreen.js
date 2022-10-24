@@ -1,6 +1,5 @@
 import React, { useContext, useState } from "react";
 import { View, StyleSheet, KeyboardAvoidingView, Alert } from "react-native";
-import axios from "axios";
 
 import { AuthContext } from "../auth/AuthContext";
 import {
@@ -13,7 +12,7 @@ import colors from "../config/colors";
 import editPasswordValidator from "../validators/editPassword.validator";
 import Screen from "../components/Screen";
 import LoadingIndicator from "../components/LoadingIndicator";
-import { BASE_URL } from "../api/config.api";
+import userAPI from "../api/user.api";
 
 function EditPasswordScreen(props) {
   const { userAccessToken, user, isLoading, setIsLoading, logout } =
@@ -39,19 +38,14 @@ function EditPasswordScreen(props) {
           style: "destructive",
           onPress: () => {
             setIsLoading(true);
-            axios({
-              method: "put",
-              url: `${BASE_URL}/update-user-password`,
-              data: {
-                id: user.id,
+            userAPI
+              .editPassword(
+                user.id,
                 oldPassword,
                 newPassword,
                 newPasswordConfirmation,
-              },
-              headers: {
-                Authorization: `Bearer ${userAccessToken}`,
-              },
-            })
+                userAccessToken
+              )
               .then((res) => {
                 if (res.data.success) {
                   setIsLoading(false);

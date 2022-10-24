@@ -7,7 +7,6 @@ import {
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import axios from "axios";
 import { Platform } from "react-native";
 import { useHeaderHeight } from "@react-navigation/elements";
 
@@ -23,7 +22,7 @@ import AppText from "../components/AppText";
 import registerValidator from "../validators/register.validator.js";
 import { AuthContext } from "../auth/AuthContext";
 import LoadingIndicator from "../components/LoadingIndicator";
-import { BASE_URL } from "../api/config.api";
+import userAPI from "../api/user.api.js";
 
 const backgroundImage =
   colors.colorScheme === "light"
@@ -46,18 +45,15 @@ function RegisterScreen({ navigation }) {
   }) => {
     setRegisterError(null);
     setIsLoading(true);
-    axios({
-      method: "post",
-      url: `${BASE_URL}/create-user`,
-      data: {
-        emailAddress: email,
-        firstName: firstName.toLowerCase(),
-        lastName: lastName.toLowerCase(),
+    userAPI
+      .register(
+        email,
+        firstName,
+        lastName,
         password,
         passwordConfirmation,
-        birthday: birthDate,
-      },
-    })
+        birthDate
+      )
       .then((res) => {
         setIsLoading(false);
         if (res.data.success) {

@@ -7,7 +7,6 @@ import {
   Alert,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import axios from "axios";
 
 import Screen from "../components/Screen";
 import {
@@ -21,7 +20,7 @@ import colors from "../config/colors";
 import AppText from "../components/AppText";
 import { AuthContext } from "../auth/AuthContext";
 import LoadingIndicator from "../components/LoadingIndicator";
-import { BASE_URL } from "../api/config.api";
+import userAPI from "../api/user.api";
 
 function EditPersonalDataScreen({ navigation }) {
   const { userAccessToken, user, isLoading, setIsLoading, logout } =
@@ -43,19 +42,14 @@ function EditPersonalDataScreen({ navigation }) {
           style: "destructive",
           onPress: () => {
             setIsLoading(true);
-            axios({
-              method: "put",
-              url: `${BASE_URL}/update-user`,
-              data: {
-                id: user.id,
-                firstName: firstName.toLowerCase(),
-                lastName: lastName.toLowerCase(),
-                birthday: birthDate,
-              },
-              headers: {
-                Authorization: `Bearer ${userAccessToken}`,
-              },
-            })
+            userAPI
+              .editPersonalData(
+                user.id,
+                firstName,
+                lastName,
+                birthDate,
+                userAccessToken
+              )
               .then((res) => {
                 if (res.data.success) {
                   setIsLoading(false);
