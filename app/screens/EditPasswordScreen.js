@@ -36,6 +36,7 @@ function EditPasswordScreen(props) {
         },
         {
           text: "Modifier",
+          style: "destructive",
           onPress: () => {
             setIsLoading(true);
             axios({

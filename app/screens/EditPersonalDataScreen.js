@@ -40,6 +40,7 @@ function EditPersonalDataScreen({ navigation }) {
         },
         {
           text: "Modifier",
+          style: "destructive",
           onPress: () => {
             setIsLoading(true);
             axios({

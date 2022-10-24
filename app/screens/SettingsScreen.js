@@ -68,6 +68,7 @@ function AccountScreen({ navigation }) {
             {
               text: "Déconnexion",
               onPress: () => logout(),
+              style: "destructive",
             },
           ],
           { cancelable: false }
