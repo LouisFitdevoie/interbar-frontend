@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 import AppText from "../components/AppText";
 import {
@@ -42,8 +43,22 @@ function CreateEventScreen(props) {
               placeholder="Nom de l'événement"
               textContentType="none"
             />
-            <AppText style={styles.text}>Date de début : </AppText>
-            <AppText style={styles.text}>Date de fin : </AppText>
+            <View style={styles.dateTimePickerView}>
+              <AppText style={styles.text}>Date de début : </AppText>
+              <DateTimePicker
+                value={new Date()}
+                mode="datetime"
+                style={styles.dateTimePicker}
+              />
+            </View>
+            <View style={[styles.dateTimePickerView, { marginTop: 10 }]}>
+              <AppText style={styles.text}>Date de fin : </AppText>
+              <DateTimePicker
+                value={new Date()}
+                mode="datetime"
+                style={styles.dateTimePicker}
+              />
+            </View>
             <AppFormField
               autoCapitalize="sentences"
               autoCorrect={true}
@@ -102,6 +117,15 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     width: "100%",
   },
+  dateTimePicker: {
+    flex: 1,
+  },
+  dateTimePickerView: {
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 10,
+  },
   formContainer: {
     alignItems: "center",
     flex: 1,
@@ -116,9 +140,6 @@ const styles = StyleSheet.create({
   },
   text: {
     color: colors.primary,
-    paddingHorizontal: 10,
-    textAlign: "left",
-    width: "100%",
   },
 });
 
