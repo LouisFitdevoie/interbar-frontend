@@ -1,10 +1,9 @@
 import React, { createContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
 import jwt_decode from "jwt-decode";
-
-import { BASE_URL } from "../api/config.api";
 import { Alert } from "react-native";
+
+import authAPI from "../api/auth.api.js";
 
 export const AuthContext = createContext();
 
@@ -18,14 +17,8 @@ export const AuthProvider = ({ children }) => {
   const login = (emailAddress, password) => {
     setError(null);
     setIsLoading(true);
-    axios({
-      method: "post",
-      url: `${BASE_URL}/login`,
-      data: {
-        emailAddress,
-        password,
-      },
-    })
+    authAPI
+      .login(emailAddress, password)
       .then((res) => {
         setUserAccessToken(res.data.accessToken);
         setUserRefreshToken(res.data.refreshToken);
@@ -54,16 +47,8 @@ export const AuthProvider = ({ children }) => {
   const updateAccessToken = () => {
     if (userRefreshToken !== null) {
       console.log("Updating access token...");
-      axios({
-        method: "post",
-        url: `${BASE_URL}/update-token`,
-        data: {
-          token: userRefreshToken,
-        },
-        headers: {
-          Authorization: `Bearer ${userAccessToken}`,
-        },
-      })
+      authAPI
+        .updateAccessToken(userRefreshToken, userAccessToken)
         .then((res) => {
           setUserAccessToken(res.data.accessToken);
           setUser(jwt_decode(res.data.accessToken));
@@ -91,16 +76,8 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     setIsLoading(true);
-    axios({
-      method: "delete",
-      url: `${BASE_URL}/logout`,
-      data: {
-        token: userRefreshToken,
-      },
-      headers: {
-        Authorization: `Bearer ${userAccessToken}`,
-      },
-    })
+    authAPI
+      .logout(userRefreshToken, userAccessToken)
       .then((res) => {
         AsyncStorage.removeItem("userAccessToken");
         AsyncStorage.removeItem("userRefreshToken");
