@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 
 import Screen from "../components/Screen";
@@ -37,6 +38,10 @@ function LoginScreen({ navigation }) {
     login(email, password);
   };
 
+  if (Platform.OS === "android") {
+    //If keyboard is up -> move content up
+  }
+
   return (
     <ImageBackground
       source={backgroundImage}
@@ -49,7 +54,8 @@ function LoginScreen({ navigation }) {
         </View>
         <KeyboardAvoidingView
           style={{ flex: 1, width: "100%", marginBottom: 100 }}
-          behavior="padding"
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : -150}
         >
           <View style={styles.formContainer}>
             <AppForm

@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
+import { View, StyleSheet, ScrollView, Platform } from "react-native";
 
 import Screen from "../components/Screen";
 import AppText from "../components/AppText";
@@ -9,7 +9,15 @@ function DataUsageScreen(props) {
     <Screen version="scroll">
       <ScrollView>
         <View style={styles.container}>
-          <AppText style={styles.subtitle}>1) Nom et prénom</AppText>
+          <AppText
+            style={
+              Platform.OS === "ios"
+                ? styles.subtitle
+                : [styles.subtitle, { marginTop: 0 }]
+            }
+          >
+            1) Nom et prénom
+          </AppText>
           <AppText style={styles.text}>
             Votre nom et votre prénom seront utilisés pour savoir qui doit être
             servi, si vous êtes client lors d'un évènement, ou qui sert les
