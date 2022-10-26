@@ -45,6 +45,7 @@ function CreateEventScreen(props) {
               textContentType="none"
             />
             <AppDateTimePicker
+              containerStyle={{ marginTop: 10 }}
               label="Date de début :"
               mode="datetime"
               name="startDate"

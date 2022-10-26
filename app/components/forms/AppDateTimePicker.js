@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { View, StyleSheet } from "react-native";
 import { useFormikContext } from "formik";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -38,9 +38,14 @@ function AppDateTimePicker({
               ? new Date(1900, 0, 1)
               : new Date()
           }
+          accentColor={colors.buttonPrimary}
         />
       </View>
-      <ErrorMessage error={errors[name]} visible={touched[name]} />
+      <ErrorMessage
+        error={errors[name]}
+        visible={touched[name]}
+        style={{ marginTop: 5 }}
+      />
     </>
   );
 }
