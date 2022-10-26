@@ -13,6 +13,7 @@ import {
 import Screen from "../components/Screen";
 import colors from "../config/colors";
 import createEventValidator from "../validators/createEvent.validator.js";
+import AppDateTimePicker from "../components/forms/AppDateTimePicker";
 
 function CreateEventScreen(props) {
   const [createEventError, setCreateEventError] = useState(null);
@@ -24,8 +25,8 @@ function CreateEventScreen(props) {
           <AppForm
             initialValues={{
               name: "",
-              startDate: "",
-              endDate: "",
+              startDate: new Date(),
+              endDate: new Date(),
               location: "",
               description: "",
               sellerPassword: "",
@@ -43,22 +44,19 @@ function CreateEventScreen(props) {
               placeholder="Nom de l'événement"
               textContentType="none"
             />
-            <View style={styles.dateTimePickerView}>
-              <AppText style={styles.text}>Date de début : </AppText>
-              <DateTimePicker
-                value={new Date()}
-                mode="datetime"
-                style={styles.dateTimePicker}
-              />
-            </View>
-            <View style={[styles.dateTimePickerView, { marginTop: 10 }]}>
-              <AppText style={styles.text}>Date de fin : </AppText>
-              <DateTimePicker
-                value={new Date()}
-                mode="datetime"
-                style={styles.dateTimePicker}
-              />
-            </View>
+            <AppDateTimePicker
+              label="Date de début :"
+              mode="datetime"
+              name="startDate"
+              minimumDate={new Date()}
+            />
+            <AppDateTimePicker
+              containerStyle={{ marginTop: 10 }}
+              label="Date de fin :"
+              mode="datetime"
+              name="endDate"
+              minimumDate={new Date()}
+            />
             <AppFormField
               autoCapitalize="sentences"
               autoCorrect={true}
