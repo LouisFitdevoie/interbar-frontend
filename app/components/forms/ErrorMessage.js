@@ -20,6 +20,7 @@ const styles = StyleSheet.create({
     color: colors.danger,
     fontSize: 14,
     marginBottom: 5,
+    textAlign: "center",
   },
 });
 
