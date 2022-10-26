@@ -31,6 +31,13 @@ function AppDateTimePicker({
             setFieldValue(name, dateSelected);
           }}
           {...otherProperties}
+          minimumDate={
+            name === "endDate"
+              ? values["startDate"]
+              : name === "birthday"
+              ? new Date(1900, 0, 1)
+              : new Date()
+          }
         />
       </View>
       <ErrorMessage error={errors[name]} visible={touched[name]} />

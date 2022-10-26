@@ -48,14 +48,12 @@ function CreateEventScreen(props) {
               label="Date de début :"
               mode="datetime"
               name="startDate"
-              minimumDate={new Date()}
             />
             <AppDateTimePicker
               containerStyle={{ marginTop: 10 }}
               label="Date de fin :"
               mode="datetime"
               name="endDate"
-              minimumDate={new Date()}
             />
             <AppFormField
               autoCapitalize="sentences"
