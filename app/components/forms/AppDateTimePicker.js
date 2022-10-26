@@ -54,10 +54,8 @@ function AppDateTimePicker({
       </>
     );
   } else {
-    const [dateSelected, setDateSelected] = useState(new Date());
     const handleDateChange = (name, date) => {
       const dateSelected = new Date(date);
-      setDateSelected(dateSelected);
       setFieldValue(name, dateSelected);
       if (name === "startDate") {
         setFieldValue("endDate", dateSelected);
@@ -68,7 +66,6 @@ function AppDateTimePicker({
         onblur: () => setFieldTouched(name),
         value: values[name],
         mode: "date",
-        // display: "calendar",
         onChange: (event, selectedDate) => handleDateChange(name, selectedDate),
         minimumDate:
           name === "endDate"
@@ -85,7 +82,6 @@ function AppDateTimePicker({
         onblur: () => setFieldTouched(name),
         value: values[name],
         mode: "time",
-        // display: "calendar",
         onChange: (event, selectedDate) => {
           const dateSelected = new Date(selectedDate);
           setFieldValue(name, dateSelected);
