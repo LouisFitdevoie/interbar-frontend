@@ -79,6 +79,8 @@ function AppDateTimePicker({
         positiveButtonLabel: "Valider",
         negativeButtonLabel: "Annuler",
       });
+    };
+    const openTimePicker = () => {
       DateTimePickerAndroid.open({
         onblur: () => setFieldTouched(name),
         value: values[name],
@@ -115,7 +117,7 @@ function AppDateTimePicker({
             {name != "birthday" && (
               <AppButton
                 title="Choisir une heure"
-                onPress={openCalendar}
+                onPress={openTimePicker}
                 style={{ marginLeft: 10, width: "50%" }}
               />
             )}
