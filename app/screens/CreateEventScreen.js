@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Platform } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
@@ -45,13 +45,13 @@ function CreateEventScreen(props) {
               textContentType="none"
             />
             <AppDateTimePicker
-              containerStyle={{ marginTop: 10 }}
+              containerStyle={{ marginTop: Platform.OS === "ios" ? 10 : 0 }}
               label="Date de début :"
               mode="datetime"
               name="startDate"
             />
             <AppDateTimePicker
-              containerStyle={{ marginTop: 10 }}
+              containerStyle={{ marginTop: Platform.OS === "ios" ? 10 : 0 }}
               label="Date de fin :"
               mode="datetime"
               name="endDate"
