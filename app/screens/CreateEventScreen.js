@@ -1,9 +1,7 @@
-import React, { useState } from "react";
-import { View, StyleSheet, Platform } from "react-native";
+import React, { useContext, useState } from "react";
+import { View, StyleSheet, Platform, Alert } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import DateTimePicker from "@react-native-community/datetimepicker";
 
-import AppText from "../components/AppText";
 import {
   AppForm,
   AppFormField,
@@ -14,9 +12,70 @@ import Screen from "../components/Screen";
 import colors from "../config/colors";
 import createEventValidator from "../validators/createEvent.validator.js";
 import AppDateTimePicker from "../components/forms/AppDateTimePicker";
+import LoadingIndicator from "../components/LoadingIndicator";
+import { AuthContext } from "../auth/AuthContext";
+import eventAPI from "../api/event.api";
 
-function CreateEventScreen(props) {
+function CreateEventScreen({ navigation }) {
+  const { isLoading, setIsLoading, userAccessToken } = useContext(AuthContext);
   const [createEventError, setCreateEventError] = useState(null);
+
+  const handleSubmit = ({
+    name,
+    startDate,
+    endDate,
+    location,
+    description,
+    sellerPassword,
+    sellerPasswordConfirmation,
+  }) => {
+    setCreateEventError(null);
+    setIsLoading(true);
+    eventAPI
+      .createEvent(
+        name,
+        startDate,
+        endDate,
+        location,
+        description,
+        sellerPassword,
+        userAccessToken
+      )
+      .then((res) => {
+        setIsLoading(false);
+        if (res.data.success != null) {
+          Alert.alert(
+            "L'événement a été créé avec succès",
+            "Vous allez être redirigé vers la page d'accueil",
+            [
+              {
+                text: "OK",
+                onPress: () => navigation.navigate("Events"),
+              },
+            ],
+            { cancelable: false }
+          );
+        }
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        if (err.response === undefined) {
+          setCreateEventError("Impossible de communiquer avec le serveur");
+          console.log(err);
+        } else {
+          const errMessage = err.response.data.error;
+          if (err.response.status === 400) {
+            setCreateEventError(
+              "Un évènement avec ce nom existe déjà pour les dates et l'adresse spécifiées !"
+            );
+            console.log(errMessage);
+          } else {
+            setCreateEventError("Une erreur est survenue");
+            console.log(errMessage);
+          }
+        }
+      });
+  };
 
   return (
     <Screen style={styles.container}>
@@ -32,7 +91,7 @@ function CreateEventScreen(props) {
               sellerPassword: "",
               sellerPasswordConfirmation: "",
             }}
-            onSubmit={(values) => console.log(values)}
+            onSubmit={(values) => handleSubmit(values)}
             validationSchema={createEventValidator}
           >
             <AppFormField
@@ -101,6 +160,7 @@ function CreateEventScreen(props) {
             />
           </AppForm>
         </KeyboardAwareScrollView>
+        {isLoading && <LoadingIndicator />}
       </View>
     </Screen>
   );
