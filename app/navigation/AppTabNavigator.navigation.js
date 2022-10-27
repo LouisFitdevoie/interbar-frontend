@@ -7,7 +7,8 @@ import LogoutTestScreen from "../screens/LogoutTestScreen";
 import colors from "../config/colors";
 import { AuthContext } from "../auth/AuthContext";
 import SettingsNavigator from "./SettingsNavigator.navigation.js";
-import CreateEventScreen from "../screens/CreateEventScreen";
+import CreateEventInformationsScreen from "../screens/CreateEventInformationsScreen";
+import CreateEventStack from "./CreateEventStack.navigation";
 
 const Tab = createBottomTabNavigator();
 
@@ -85,15 +86,10 @@ function AppTabNavigator(props) {
         }}
       />
       <Tab.Screen
-        name="Create"
-        component={CreateEventScreen}
+        name="CreateEventNavigator"
+        component={CreateEventStack}
         options={{
-          headerShown: true,
-          headerTitle: "Créer un évènement",
-          headerTitleStyle: {
-            color: colors.primary,
-            fontSize: 22,
-          },
+          headerShown: false,
           tabBarIcon: ({ color }) => (
             <Ionicons
               name="add-circle-outline"
