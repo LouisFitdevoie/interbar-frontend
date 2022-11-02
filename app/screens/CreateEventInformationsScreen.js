@@ -1,8 +1,7 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import AppButton from "../components/AppButton";
 import AppText from "../components/AppText";
-import TarifItem from "../components/lists/TarifItem";
 import Screen from "../components/Screen";
 
 function CreateEventInformationsScreen({ navigation }) {
