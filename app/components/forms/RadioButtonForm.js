@@ -12,7 +12,7 @@ function RadioButtonForm({ value, name, label }) {
       <RadioButton
         value={value}
         stateValue={values[name]}
-        onPress={setFieldValue(name, value)}
+        onPress={() => setFieldValue(name, value)}
         label={label}
         onBlur={() => setFieldTouched(name)}
       />
