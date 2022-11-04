@@ -12,8 +12,10 @@ import LoadingIndicator from "../components/LoadingIndicator";
 import colors from "../config/colors";
 import ListSeparator from "../components/lists/ListSeparator";
 import { KeyboardAwareFlatList } from "react-native-keyboard-aware-scroll-view";
+import { useIsFocused } from "@react-navigation/native";
 
 function AddProductTarifScreen(props) {
+  const isFocused = useIsFocused();
   const { isLoading, setIsLoading, userAccessToken } = useContext(AuthContext);
   const eventId = props.route.params.eventId;
   const { navigation } = props;
@@ -46,8 +48,8 @@ function AddProductTarifScreen(props) {
   };
 
   useEffect(() => {
-    getExistingProducts();
-  }, []);
+    isFocused && getExistingProducts();
+  }, [isFocused]);
 
   return (
     <Screen style={styles.container}>
