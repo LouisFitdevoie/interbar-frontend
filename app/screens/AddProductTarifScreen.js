@@ -38,6 +38,7 @@ function AddProductTarifScreen(props) {
 
   const handleTextChanged = (value) => {
     setSearchValue(value);
+    setSortOptionSelected("Tous les produits");
     const sorted = existingProducts.filter((product) =>
       product.name.toLowerCase().includes(value.toLowerCase())
     );
@@ -51,6 +52,7 @@ function AddProductTarifScreen(props) {
 
   const handleSortOptionChanged = (option, category) => {
     setIsLoading(true);
+    setSearchValue("");
     setSortOptionSelected(option);
     if (option === "Tous les produits") {
       setDisplayedProducts(existingProducts);
