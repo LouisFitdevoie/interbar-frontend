@@ -96,7 +96,7 @@ function AddProductTarifScreen(props) {
             onPress={() => setIsSortOptionsVisible(!isSortOptionsVisible)}
           >
             <MaterialCommunityIcons
-              name="sort"
+              name="filter-variant"
               size={24}
               color={isSortOptionsVisible ? colors.white : colors.buttonPrimary}
             />
