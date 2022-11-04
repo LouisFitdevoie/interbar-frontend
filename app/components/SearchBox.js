@@ -61,7 +61,6 @@ function SearchBox({ clicked, setClicked, searchValue, setSearchValue }) {
               style={{
                 width: "100%",
                 padding: 2,
-                paddingVertical: 10,
                 textAlign: "center",
                 color: colors.primary,
               }}
@@ -78,10 +77,10 @@ function SearchBox({ clicked, setClicked, searchValue, setSearchValue }) {
 const styles = StyleSheet.create({
   container: {
     margin: 15,
-    justifyContent: "flex-start",
+    justifyContent: "center",
     alignItems: "center",
     flexDirection: "row",
-    width: "90%",
+    width: "100%",
   },
   searchBoxClicked: {
     padding: 10,

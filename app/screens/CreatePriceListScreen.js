@@ -9,6 +9,7 @@ import AppButton from "../components/AppButton";
 
 function CreatePriceListScreen(props) {
   const eventId = props.route.params.eventId;
+  const { navigation } = props;
 
   const testData = [
     {
@@ -61,7 +62,7 @@ function CreatePriceListScreen(props) {
       />
       <AppButton
         title="Ajouter un produit"
-        onPress={() => console.log("Add product")}
+        onPress={() => navigation.navigate("AddProductTarif", { eventId })}
         style={{ marginBottom: 5 }}
       />
       <AppButton
