@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { View, StyleSheet, TouchableOpacity, FlatList } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useIsFocused } from "@react-navigation/native";
 
 import { AuthContext } from "../auth/AuthContext";
 import AppButton from "../components/AppButton";
@@ -11,8 +12,6 @@ import productsAPI from "../api/products.api";
 import LoadingIndicator from "../components/LoadingIndicator";
 import colors from "../config/colors";
 import ListSeparator from "../components/lists/ListSeparator";
-import { KeyboardAwareFlatList } from "react-native-keyboard-aware-scroll-view";
-import { useIsFocused } from "@react-navigation/native";
 
 function AddProductTarifScreen(props) {
   const isFocused = useIsFocused();
@@ -24,6 +23,9 @@ function AddProductTarifScreen(props) {
   const [displayedProducts, setDisplayedProducts] = useState([]);
   const [searchValue, setSearchValue] = useState("");
   const [clicked, setClicked] = useState(false);
+  const [sortOptionSelected, setSortOptionSelected] =
+    useState("Tous les produits");
+  const [isSortOptionsVisible, setIsSortOptionsVisible] = useState(false);
 
   const getExistingProducts = () => {
     setIsLoading(true);
@@ -47,8 +49,23 @@ function AddProductTarifScreen(props) {
     setDisplayedProducts(existingProducts);
   };
 
+  const handleSortOptionChanged = (option, category) => {
+    setIsLoading(true);
+    setSortOptionSelected(option);
+    if (option === "Tous les produits") {
+      setDisplayedProducts(existingProducts);
+    } else {
+      const sorted = existingProducts.filter(
+        (product) => product.category === category
+      );
+      setDisplayedProducts(sorted);
+    }
+    setIsLoading(false);
+  };
+
   useEffect(() => {
     isFocused && getExistingProducts();
+    setSortOptionSelected("Tous les produits");
   }, [isFocused]);
 
   return (
@@ -63,16 +80,58 @@ function AddProductTarifScreen(props) {
       />
       <ListSeparator />
       <View style={styles.sortView}>
-        <AppText style={{ fontSize: 22 }}>
-          Tous les produits ({displayedProducts.length})
-        </AppText>
-        <MaterialCommunityIcons
-          name="sort"
-          size={24}
-          color={colors.buttonPrimary}
-        />
+        <View style={styles.sortTitle}>
+          <AppText style={{ fontSize: 22 }}>
+            {sortOptionSelected} ({displayedProducts.length})
+          </AppText>
+          <TouchableOpacity
+            style={[
+              styles.sortButton,
+              {
+                backgroundColor: isSortOptionsVisible
+                  ? colors.buttonPrimary
+                  : colors.white,
+              },
+            ]}
+            onPress={() => setIsSortOptionsVisible(!isSortOptionsVisible)}
+          >
+            <MaterialCommunityIcons
+              name="sort"
+              size={24}
+              color={isSortOptionsVisible ? colors.white : colors.buttonPrimary}
+            />
+          </TouchableOpacity>
+        </View>
+        {isSortOptionsVisible && (
+          <View style={styles.sortOptions}>
+            <TouchableOpacity
+              onPress={() => handleSortOptionChanged("Tous les produits")}
+            >
+              <AppText style={styles.option}>Tous les produits</AppText>
+            </TouchableOpacity>
+            <View style={styles.separator} />
+            <TouchableOpacity
+              onPress={() => handleSortOptionChanged("Nourriture", 0)}
+            >
+              <AppText style={styles.option}>Nourriture</AppText>
+            </TouchableOpacity>
+            <View style={styles.separator} />
+            <TouchableOpacity
+              onPress={() => handleSortOptionChanged("Boisson alcoolisée", 1)}
+            >
+              <AppText style={styles.option}>Boisson alcoolisée</AppText>
+            </TouchableOpacity>
+            <View style={styles.separator} />
+            <TouchableOpacity
+              onPress={() => handleSortOptionChanged("Soft", 2)}
+            >
+              <AppText style={styles.option}>Soft</AppText>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
-      <KeyboardAwareFlatList
+
+      <FlatList
         data={displayedProducts}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
@@ -142,6 +201,11 @@ const styles = StyleSheet.create({
     marginTop: 20,
     width: "100%",
   },
+  option: {
+    marginBottom: 5,
+    width: "100%",
+    textAlign: "center",
+  },
   product: {
     fontSize: 16,
   },
@@ -152,13 +216,31 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     width: "100%",
   },
-  sortView: {
+  separator: {
+    height: 3,
+    width: "75%",
+    backgroundColor: colors.light,
+    alignSelf: "center",
+  },
+  sortButton: {
+    padding: 5,
+    borderRadius: 20,
+  },
+  sortTitle: {
     alignItems: "center",
     flexDirection: "row",
     justifyContent: "space-between",
+    width: "100%",
+  },
+  sortView: {
     marginTop: 10,
     paddingHorizontal: 10,
     marginBottom: 20,
+    width: "100%",
+    flexDirection: "column",
+  },
+  sortOptions: {
+    marginTop: 10,
     width: "100%",
   },
 });
