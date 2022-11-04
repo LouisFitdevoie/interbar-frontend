@@ -5,9 +5,16 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import colors from "../../config/colors";
 import AppText from "../AppText";
 
-function TarifItem({ name, buyingPrice, sellingPrice, stock, productId }) {
+function TarifItem({
+  name,
+  buyingPrice,
+  sellingPrice,
+  stock,
+  productId,
+  onPress,
+}) {
   return (
-    <TouchableOpacity style={styles.touchableContainer}>
+    <TouchableOpacity style={styles.touchableContainer} onPress={onPress}>
       <View style={styles.container}>
         <View style={styles.dataContainer}>
           <AppText style={styles.name}>{name}</AppText>
@@ -60,7 +67,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   sellingPrice: {
-    color: colors.buttonPrimary,
+    color: colors.black,
   },
   name: {
     fontSize: 20,
