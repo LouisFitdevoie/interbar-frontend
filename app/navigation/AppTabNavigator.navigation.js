@@ -7,7 +7,6 @@ import LogoutTestScreen from "../screens/LogoutTestScreen";
 import colors from "../config/colors";
 import { AuthContext } from "../auth/AuthContext";
 import SettingsNavigator from "./SettingsNavigator.navigation.js";
-import CreateEventInformationsScreen from "../screens/CreateEventInformationsScreen";
 import CreateEventStack from "./CreateEventStack.navigation";
 
 const Tab = createBottomTabNavigator();
