@@ -44,17 +44,9 @@ function CreateEventScreen({ navigation }) {
       .then((res) => {
         setIsLoading(false);
         if (res.data.success != null) {
-          Alert.alert(
-            "L'événement a été créé avec succès",
-            "Vous allez être redirigé vers la page d'accueil",
-            [
-              {
-                text: "OK",
-                onPress: () => navigation.navigate("Events"),
-              },
-            ],
-            { cancelable: false }
-          );
+          navigation.navigate("CreatePriceList", {
+            eventId: res.data.eventId,
+          });
         }
       })
       .catch((err) => {
