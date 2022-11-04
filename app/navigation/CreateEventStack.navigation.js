@@ -108,7 +108,7 @@ export default function CreateEventStack({ navigation }) {
           },
           headerTransparent: true,
           headerTintColor: colors.primary,
-          headerBackTitle: "Retour",
+          headerBackTitleVisible: false,
         }}
       />
     </Stack.Navigator>
