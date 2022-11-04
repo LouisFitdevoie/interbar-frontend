@@ -30,7 +30,6 @@ function RadioButton({ value, onPress, label, stateValue, ...otherProps }) {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 20,
     width: "100%",
   },
   checkbox: {
