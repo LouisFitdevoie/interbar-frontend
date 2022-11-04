@@ -104,7 +104,7 @@ function AddProductTarifScreen(props) {
       )}
       <AppButton
         title="Ajouter un produit"
-        onPress={() => navigation.navigate("CreateProduct")}
+        onPress={() => navigation.navigate("CreateProduct", { eventId })}
         style={{ marginBottom: 20 }}
       />
       {isLoading && <LoadingIndicator />}

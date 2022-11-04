@@ -11,3 +11,18 @@ exports.getAllProducts = (accessToken) => {
     },
   });
 };
+
+exports.createProduct = (accessToken, name, category, description) => {
+  return axios({
+    method: "post",
+    url: `${BASE_URL}/create-product`,
+    data: {
+      name,
+      category,
+      description,
+    },
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};

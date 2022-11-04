@@ -15,7 +15,7 @@ function CreatePriceListScreen(props) {
     {
       id: 1,
       name: "Boisson alcoolisée",
-      category: "alcohol",
+      category: "1",
       description: "Boisson alcoolisée description",
       buyingPrice: 1.5,
       sellingPrice: 2.5,
@@ -24,7 +24,7 @@ function CreatePriceListScreen(props) {
     {
       id: 2,
       name: "Soft",
-      category: "soft",
+      category: "2",
       description: "Soft description",
       buyingPrice: 1.5,
       sellingPrice: 2.5,
@@ -33,7 +33,7 @@ function CreatePriceListScreen(props) {
     {
       id: 3,
       name: "Nourriture",
-      category: "food",
+      category: "0",
       description: "Nourriture description",
       buyingPrice: 1.5,
       sellingPrice: 2.5,
