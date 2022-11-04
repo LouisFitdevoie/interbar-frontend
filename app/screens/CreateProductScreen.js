@@ -2,17 +2,20 @@ import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
 
 import { AppForm, AppFormField, SubmitButton } from "../components/forms";
+import colors from "../config/colors";
 import RadioButtonForm from "../components/forms/RadioButtonForm";
 import Screen from "../components/Screen";
 import createProductValidator from "../validators/createProduct.validator.js";
 
 function CreateProductScreen(props) {
+  const [createProductError, setCreateProductError] = useState(false);
+
   return (
     <Screen style={styles.container}>
       <AppForm
         initialValues={{
           name: "",
-          category: "",
+          category: "food",
           description: "",
         }}
         onSubmit={(values) => console.log(values)}
@@ -43,7 +46,7 @@ function CreateProductScreen(props) {
           placeholder="Description (facultatif)"
           textContentType="none"
         />
-        <SubmitButton title="Valider" disabled={productFound} />
+        <SubmitButton title="Valider" disabled={createProductError} />
       </AppForm>
     </Screen>
   );

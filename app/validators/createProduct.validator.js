@@ -7,3 +7,5 @@ const validationSchema = Yup.object().shape({
     .oneOf(["food", "alcohol", "soft"], "La catégorie est invalide"),
   description: Yup.string().notRequired("La description n'est obligatoire"),
 });
+
+export default validationSchema;

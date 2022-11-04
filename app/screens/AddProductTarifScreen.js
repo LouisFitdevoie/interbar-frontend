@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import { View, StyleSheet, FlatList } from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { AuthContext } from "../auth/AuthContext";
@@ -19,6 +19,7 @@ function AddProductTarifScreen(props) {
   const { navigation } = props;
 
   const [existingProducts, setExistingProducts] = useState([]);
+  const [displayedProducts, setDisplayedProducts] = useState([]);
   const [searchValue, setSearchValue] = useState("");
   const [clicked, setClicked] = useState(false);
 
@@ -26,8 +27,22 @@ function AddProductTarifScreen(props) {
     setIsLoading(true);
     productsAPI.getAllProducts(userAccessToken).then((res) => {
       setExistingProducts(res.data);
+      setDisplayedProducts(res.data);
       setIsLoading(false);
     });
+  };
+
+  const handleTextChanged = (value) => {
+    setSearchValue(value);
+    const sorted = existingProducts.filter((product) =>
+      product.name.toLowerCase().includes(value.toLowerCase())
+    );
+    setDisplayedProducts(sorted);
+  };
+
+  const handleCloseCliked = () => {
+    setSearchValue("");
+    setDisplayedProducts(existingProducts);
   };
 
   useEffect(() => {
@@ -41,11 +56,13 @@ function AddProductTarifScreen(props) {
         setClicked={setClicked}
         searchValue={searchValue}
         setSearchValue={setSearchValue}
+        onChangeText={handleTextChanged}
+        onCloseCliked={handleCloseCliked}
       />
       <ListSeparator />
       <View style={styles.sortView}>
         <AppText style={{ fontSize: 22 }}>
-          Tous les produits ({existingProducts.length})
+          Tous les produits ({displayedProducts.length})
         </AppText>
         <MaterialCommunityIcons
           name="sort"
@@ -54,17 +71,41 @@ function AddProductTarifScreen(props) {
         />
       </View>
       <KeyboardAwareFlatList
-        data={existingProducts}
+        data={displayedProducts}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <View style={styles.productView}>
-            <AppText style={styles.product}>
-              {item.name.charAt(0).toUpperCase() + item.name.slice(1)}
-            </AppText>
-          </View>
+          <TouchableOpacity onPress={() => console.log(item.name + " clicked")}>
+            <View style={styles.productView}>
+              <AppText style={styles.product}>
+                {item.name.charAt(0).toUpperCase() + item.name.slice(1)}
+              </AppText>
+              <View style={styles.addButton}>
+                <AppText style={{ color: colors.buttonPrimary }}>
+                  Ajouter
+                </AppText>
+                <MaterialCommunityIcons
+                  name="plus"
+                  size={24}
+                  color={colors.buttonPrimary}
+                />
+              </View>
+            </View>
+          </TouchableOpacity>
         )}
         ItemSeparatorComponent={() => <ListSeparator />}
         style={styles.list}
+      />
+      {displayedProducts.length === 0 && (
+        <View style={styles.noProductView}>
+          <AppText style={styles.noProductText}>
+            Aucun produit ne correspond à votre recherche
+          </AppText>
+        </View>
+      )}
+      <AppButton
+        title="Ajouter un produit"
+        onPress={() => navigation.navigate("CreateProduct")}
+        style={{ marginBottom: 20 }}
       />
       {isLoading && <LoadingIndicator />}
     </Screen>
@@ -72,6 +113,10 @@ function AddProductTarifScreen(props) {
 }
 
 const styles = StyleSheet.create({
+  addButton: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   container: {
     alignItems: "center",
     backgroundColor: colors.white,
@@ -84,11 +129,25 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     width: "100%",
   },
+  noProductText: {
+    fontSize: 18,
+    marginBottom: 5,
+    textAlign: "center",
+  },
+  noProductView: {
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 20,
+    width: "100%",
+  },
   product: {
     fontSize: 16,
   },
   productView: {
-    marginVertical: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 10,
     width: "100%",
   },
   sortView: {

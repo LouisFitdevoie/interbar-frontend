@@ -12,7 +12,14 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import colors from "../config/colors";
 import AppText from "./AppText";
 
-function SearchBox({ clicked, setClicked, searchValue, setSearchValue }) {
+function SearchBox({
+  clicked,
+  setClicked,
+  searchValue,
+  setSearchValue,
+  onChangeText,
+  onCloseCliked,
+}) {
   return (
     <View style={styles.container}>
       <View
@@ -28,7 +35,7 @@ function SearchBox({ clicked, setClicked, searchValue, setSearchValue }) {
           style={styles.textInput}
           placeholder="Rechercher"
           value={searchValue}
-          onChangeText={setSearchValue}
+          onChangeText={onChangeText}
           onFocus={() => {
             setClicked(true);
           }}
@@ -39,7 +46,7 @@ function SearchBox({ clicked, setClicked, searchValue, setSearchValue }) {
             size={24}
             color={colors.primary}
             onPress={() => {
-              setSearchValue("");
+              onCloseCliked();
             }}
             style={{ padding: 1 }}
           />
