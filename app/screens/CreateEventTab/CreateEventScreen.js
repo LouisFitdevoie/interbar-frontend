@@ -15,9 +15,11 @@ import AppDateTimePicker from "../../components/forms/AppDateTimePicker";
 import LoadingIndicator from "../../components/LoadingIndicator";
 import { AuthContext } from "../../auth/AuthContext";
 import eventAPI from "../../api/event.api";
+import userEventAPI from "../../api/userEvent.api";
 
 function CreateEventScreen({ navigation }) {
-  const { isLoading, setIsLoading, userAccessToken } = useContext(AuthContext);
+  const { isLoading, setIsLoading, userAccessToken, user } =
+    useContext(AuthContext);
   const [createEventError, setCreateEventError] = useState(null);
 
   const handleSubmit = ({
@@ -42,11 +44,34 @@ function CreateEventScreen({ navigation }) {
         userAccessToken
       )
       .then((res) => {
-        setIsLoading(false);
         if (res.data.success != null) {
-          navigation.navigate("CreatePriceList", {
-            eventId: res.data.eventId,
-          });
+          const eventCreatedId = res.data.eventId;
+          userEventAPI
+            .userCreateEvent(eventCreatedId, user.id, userAccessToken)
+            .then((res) => {
+              setIsLoading(false);
+              if (res.data.success != null) {
+                navigation.navigate("CreatePriceList", {
+                  eventId: eventCreatedId,
+                });
+              }
+            })
+            .catch((err) => {
+              setIsLoading(false);
+              if (err.response === undefined) {
+                setCreateEventError(
+                  "Impossible de communiquer avec le serveur"
+                );
+                console.log(err);
+              } else {
+                const errMessage = err.response.data.error;
+                if (err.response.status === 400) {
+                  setCreateEventError("Une erreur est survenue");
+                } else {
+                  setCreateEventError(errMessage);
+                }
+              }
+            });
         }
       })
       .catch((err) => {
