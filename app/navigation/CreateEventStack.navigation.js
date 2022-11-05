@@ -8,6 +8,7 @@ import { Alert } from "react-native";
 import CreatePriceListScreen from "../screens/CreateEventTab/CreatePriceListScreen";
 import AddProductTarifScreen from "../screens/CreateEventTab/AddProductTarifScreen";
 import CreateProductScreen from "../screens/CreateEventTab/CreateProductScreen";
+import CreateEventProductScreen from "../screens/CreateEventTab/CreateEventProductScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -118,6 +119,20 @@ export default function CreateEventStack({ navigation }) {
         options={{
           headerShown: true,
           headerTitle: "Nouveau produit",
+          headerTitleStyle: {
+            fontSize: 22,
+          },
+          headerTransparent: true,
+          headerTintColor: colors.primary,
+          headerBackTitleVisible: false,
+        }}
+      />
+      <Stack.Screen
+        name="CreateEventProduct"
+        component={CreateEventProductScreen}
+        options={{
+          headerShown: true,
+          headerTitle: "Ajouter le produit",
           headerTitleStyle: {
             fontSize: 22,
           },

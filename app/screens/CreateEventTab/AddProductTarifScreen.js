@@ -136,7 +136,17 @@ function AddProductTarifScreen(props) {
         data={displayedProducts}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => console.log(item.name + " clicked")}>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate("CreateEventProduct", {
+                eventId: eventId,
+                productId: item.id,
+                productName: item.name,
+                productCategory: item.category,
+                productDescription: item.description,
+              })
+            }
+          >
             <View style={styles.productView}>
               <AppText style={styles.product}>
                 {item.name.charAt(0).toUpperCase() + item.name.slice(1)}
