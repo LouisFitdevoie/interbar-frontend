@@ -8,6 +8,7 @@ import colors from "../config/colors";
 import { AuthContext } from "../auth/AuthContext";
 import SettingsNavigator from "./SettingsNavigator.navigation.js";
 import CreateEventStack from "./CreateEventStack.navigation";
+import JoinEventStack from "./JoinEventStack.navigation";
 
 const Tab = createBottomTabNavigator();
 
@@ -57,7 +58,7 @@ function AppTabNavigator(props) {
       />
       <Tab.Screen
         name="Join"
-        component={LogoutTestScreen}
+        component={JoinEventStack}
         options={{
           headerShown: false,
           tabBarIcon: ({ color }) => (

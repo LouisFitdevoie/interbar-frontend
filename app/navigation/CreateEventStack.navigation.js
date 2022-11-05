@@ -23,6 +23,7 @@ export default function CreateEventStack({ navigation }) {
           headerTitle: "Informations",
           headerTitleStyle: {
             fontSize: 22,
+            color: colors.primary,
           },
         }}
       />
