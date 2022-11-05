@@ -17,6 +17,7 @@ function JoinEventStack({ navigation }) {
             fontSize: 22,
             color: colors.primary,
           },
+          unmountOnBlur: true,
         }}
       />
     </Stack.Navigator>

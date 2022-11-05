@@ -1,7 +1,5 @@
-import React, { useState, useContext } from "react";
-import { View, StyleSheet, Dimensions } from "react-native";
-import { AuthContext } from "../../auth/AuthContext";
-import AppButton from "../../components/AppButton";
+import React, { useState, useContext, useEffect } from "react";
+import { View, StyleSheet, Dimensions, Alert } from "react-native";
 
 import AppText from "../../components/AppText";
 import {
@@ -14,8 +12,10 @@ import LoadingIndicator from "../../components/LoadingIndicator";
 import Screen from "../../components/Screen";
 import colors from "../../config/colors";
 import joinEventValidator from "../../validators/joinEvent.validator";
+import { AuthContext } from "../../auth/AuthContext";
+import AppButton from "../../components/AppButton";
 
-function JoinEventScreen(props) {
+function JoinEventScreen({ navigation }) {
   const { isLoading, setIsLoading, userAccessToken } = useContext(AuthContext);
   const [isCameraViewVisible, setIsCameraViewVisible] = useState(false);
   const [joinEventError, setJoinEventError] = useState(null);
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginVertical: 10,
-    padding: 10,
+    overflow: "hidden",
   },
   container: {
     flex: 1,
