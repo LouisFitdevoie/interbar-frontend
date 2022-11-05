@@ -3,9 +3,6 @@ import { View, StyleSheet } from "react-native";
 
 import Screen from "../../components/Screen";
 import AppForm from "../../components/forms/AppForm";
-import AppFormField from "../../components/forms/AppFormField";
-import RadioButtonGroupForm from "../../components/forms/RadioButtonGroupForm";
-import RadioButtonForm from "../../components/forms/RadioButtonForm";
 import SubmitButton from "../../components/forms/SubmitButton";
 import ErrorMessage from "../../components/forms/ErrorMessage";
 import LoadingIndicator from "../../components/LoadingIndicator";
@@ -14,28 +11,73 @@ import createEventProductValidator from "../../validators/createEventProduct.val
 import { AuthContext } from "../../auth/AuthContext";
 import AppText from "../../components/AppText";
 import AppFormFieldNumber from "../../components/forms/AppFormFieldNumber";
+import eventProductAPI from "../../api/eventProduct.api";
 
 function CreateEventProductScreen(props) {
   const { isLoading, setIsLoading, userAccessToken } = useContext(AuthContext);
   const { navigation } = props;
 
   const [addProductToEventError, setAddProductToEventError] = useState(null);
+  const eventId = props.route.params.eventId;
+  const productId = props.route.params.productId;
 
-  const handleSubmit = (values) => {
-    console.log(values);
+  const handleSubmit = ({
+    eventId,
+    productId,
+    buyingPrice,
+    sellingPrice,
+    stock,
+  }) => {
+    setIsLoading(true);
+    setAddProductToEventError(null);
+    eventProductAPI
+      .createEventProduct(
+        eventId,
+        productId,
+        stock,
+        parseFloat(buyingPrice.replace(",", ".")),
+        parseFloat(sellingPrice.replace(",", ".")),
+        userAccessToken
+      )
+      .then((res) => {
+        setIsLoading(false);
+        if (res.data.success != null) {
+          navigation.navigate("CreatePriceList", { eventId });
+        }
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        if (err.response === undefined) {
+          setAddProductToEventError(
+            "Impossible de communiquer avec le serveur"
+          );
+          console.log(err);
+        } else {
+          const errMessage = err.response.data.error;
+          if (err.response.status === 409) {
+            setAddProductToEventError(
+              "Le produit a déjà été ajouté au tarif de l'évènement"
+            );
+            console.log(errMessage);
+          } else {
+            setAddProductToEventError("Une erreur inconnue est survenue");
+            console.log(errMessage);
+          }
+        }
+      });
   };
 
   return (
     <Screen style={styles.container}>
       <AppForm
         initialValues={{
-          eventId: props.route.params.eventId,
-          productId: props.route.params.productId,
+          eventId: eventId,
+          productId: productId,
           buyingPrice: "",
           sellingPrice: "",
           stock: "",
         }}
-        onSubmit={(values) => console.log(values)}
+        onSubmit={(values) => handleSubmit(values)}
         validationSchema={createEventProductValidator}
       >
         <View style={styles.productInfosContainer}>
