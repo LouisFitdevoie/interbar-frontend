@@ -1,15 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
+import { AuthContext } from "../../auth/AuthContext";
 import AppButton from "../../components/AppButton";
 
 import AppText from "../../components/AppText";
-import { AppForm, AppFormField, SubmitButton } from "../../components/forms";
+import {
+  AppForm,
+  AppFormField,
+  ErrorMessage,
+  SubmitButton,
+} from "../../components/forms";
+import LoadingIndicator from "../../components/LoadingIndicator";
 import Screen from "../../components/Screen";
 import colors from "../../config/colors";
 import joinEventValidator from "../../validators/joinEvent.validator";
 
 function JoinEventScreen(props) {
+  const { isLoading, setIsLoading, userAccessToken } = useContext(AuthContext);
   const [isCameraViewVisible, setIsCameraViewVisible] = useState(false);
+  const [joinEventError, setJoinEventError] = useState(null);
 
   return (
     <Screen style={styles.container}>
@@ -46,7 +55,9 @@ function JoinEventScreen(props) {
           />
         )}
         <SubmitButton title="Suivant" />
+        <ErrorMessage error={joinEventError} visible={joinEventError != null} />
       </AppForm>
+      {isLoading && <LoadingIndicator />}
     </Screen>
   );
 }
