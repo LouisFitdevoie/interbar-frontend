@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
-import AppButton from "../components/AppButton";
-import RadioButton from "../components/RadioButton";
 
-import Screen from "../components/Screen";
+import AppButton from "../../components/AppButton";
+import RadioButton from "../../components/RadioButton";
+import Screen from "../../components/Screen";
 
 function ColorModeScreen(props) {
   const [colorMode, setColorMode] = useState("light");

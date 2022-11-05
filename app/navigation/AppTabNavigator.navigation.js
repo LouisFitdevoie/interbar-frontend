@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -7,22 +7,14 @@ import LogoutTestScreen from "../screens/LogoutTestScreen";
 import colors from "../config/colors";
 import { AuthContext } from "../auth/AuthContext";
 import SettingsNavigator from "./SettingsNavigator.navigation.js";
+import CreateEventStack from "./CreateEventStack.navigation";
 
 const Tab = createBottomTabNavigator();
 
 function AppTabNavigator(props) {
   const insets = useSafeAreaInsets();
 
-  const { updateAccessToken, isLoading } = useContext(AuthContext);
-
-  const timeToUpdateAccessToken = 10 * 60 * 1000; // 10 minutes
-  useEffect(() => {
-    const interval = setInterval(() => {
-      updateAccessToken();
-    }, timeToUpdateAccessToken);
-
-    return () => clearInterval(interval);
-  });
+  const { isLoading } = useContext(AuthContext);
 
   return (
     <Tab.Navigator
@@ -84,8 +76,8 @@ function AppTabNavigator(props) {
         }}
       />
       <Tab.Screen
-        name="Create"
-        component={LogoutTestScreen}
+        name="CreateEventNavigator"
+        component={CreateEventStack}
         options={{
           headerShown: false,
           tabBarIcon: ({ color }) => (

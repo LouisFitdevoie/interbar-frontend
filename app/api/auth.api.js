@@ -13,15 +13,12 @@ exports.login = (emailAddress, password) => {
   });
 };
 
-exports.updateAccessToken = (refreshToken, accessToken) => {
+exports.updateAccessToken = (refreshToken) => {
   return axios({
     method: "post",
     url: `${BASE_URL}/update-token`,
     data: {
       token: refreshToken,
-    },
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
     },
   });
 };

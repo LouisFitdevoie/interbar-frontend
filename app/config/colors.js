@@ -10,6 +10,8 @@ export default {
   danger: "#BE381F",
   green: "#58C091",
   light: "#F0F0F0",
+  searchBoxClicked: "#70B7C325",
+  searchBoxNotClicked: "#D9DBDA",
   textInputRegistrationPlaceholder:
     colorScheme === "light" ? "#FFFFFF90" : "#E4DED2",
   textInputDefaultPlaceholder:

@@ -5,10 +5,14 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AppText from "./AppText";
 import colors from "../config/colors";
 
-function RadioButton({ value, onPress, label, stateValue }) {
+function RadioButton({ value, onPress, label, stateValue, ...otherProps }) {
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={onPress} style={styles.checkbox}>
+      <TouchableOpacity
+        onPress={onPress}
+        style={styles.checkbox}
+        {...otherProps}
+      >
         <MaterialCommunityIcons
           name={
             stateValue === value
@@ -26,7 +30,6 @@ function RadioButton({ value, onPress, label, stateValue }) {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 20,
     width: "100%",
   },
   checkbox: {

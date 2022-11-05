@@ -4,13 +4,13 @@ import colors from "../../config/colors";
 
 import AppText from "../AppText";
 
-function ErrorMessage({ error, visible }) {
+function ErrorMessage({ error, visible, style }) {
   if (!visible || !error) {
     return null;
   }
   return (
     <View>
-      <AppText style={styles.error}>{error}</AppText>
+      <AppText style={[styles.error, style]}>{error}</AppText>
     </View>
   );
 }
@@ -20,6 +20,7 @@ const styles = StyleSheet.create({
     color: colors.danger,
     fontSize: 14,
     marginBottom: 5,
+    textAlign: "center",
   },
 });
 

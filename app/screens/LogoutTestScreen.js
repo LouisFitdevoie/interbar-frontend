@@ -21,7 +21,7 @@ function LogoutTestScreen(props) {
         </AppText>
         <AppButton
           title="Update access token"
-          onPress={updateAccessToken}
+          onPress={() => updateAccessToken()}
           style={{ width: "90%" }}
         />
         <AppButton

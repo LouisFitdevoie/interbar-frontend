@@ -2,13 +2,13 @@ import React, { useContext } from "react";
 import jwtDecode from "jwt-decode";
 import { Alert, FlatList, StyleSheet, View, Dimensions } from "react-native";
 
-import Screen from "../components/Screen";
-import ListItem from "../components/lists/ListItem";
-import { AuthContext } from "../auth/AuthContext";
-import ListIcon from "../components/lists/ListIcon";
-import colors from "../config/colors";
-import ListSeparator from "../components/lists/ListSeparator";
-import LoadingIndicator from "../components/LoadingIndicator";
+import Screen from "../../components/Screen";
+import ListItem from "../../components/lists/ListItem";
+import { AuthContext } from "../../auth/AuthContext";
+import ListIcon from "../../components/lists/ListIcon";
+import colors from "../../config/colors";
+import ListSeparator from "../../components/lists/ListSeparator";
+import LoadingIndicator from "../../components/LoadingIndicator";
 
 function AccountScreen({ navigation }) {
   const { userAccessToken, logout, isLoading } = useContext(AuthContext);

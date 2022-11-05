@@ -5,9 +5,9 @@ import { AuthContext } from "../auth/AuthContext";
 import DataUsageScreen from "../screens/DataUsageScreen";
 import { createStackNavigator } from "@react-navigation/stack";
 import AppTabNavigator from "./AppTabNavigator.navigation";
-import EditPersonalDataScreen from "../screens/EditPersonalDataScreen";
-import EditPasswordScreen from "../screens/EditPasswordScreen";
-import ColorModeScreen from "../screens/ColorModeScreen";
+import EditPersonalDataScreen from "../screens/SettingsTab/EditPersonalDataScreen";
+import EditPasswordScreen from "../screens/SettingsTab/EditPasswordScreen";
+import ColorModeScreen from "../screens/SettingsTab/ColorModeScreen";
 
 const Stack = createStackNavigator();
 

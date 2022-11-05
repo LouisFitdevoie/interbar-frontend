@@ -44,11 +44,15 @@ export const AuthProvider = ({ children }) => {
       });
   };
 
-  const updateAccessToken = () => {
-    if (userRefreshToken !== null) {
+  const updateAccessToken = (refreshTokenAtAppLaunch) => {
+    if (userRefreshToken != null || refreshTokenAtAppLaunch != null) {
       console.log("Updating access token...");
       authAPI
-        .updateAccessToken(userRefreshToken, userAccessToken)
+        .updateAccessToken(
+          refreshTokenAtAppLaunch != null
+            ? refreshTokenAtAppLaunch
+            : userRefreshToken
+        )
         .then((res) => {
           setUserAccessToken(res.data.accessToken);
           setUser(jwt_decode(res.data.accessToken));
@@ -102,9 +106,9 @@ export const AuthProvider = ({ children }) => {
       //Verify if the userAccessToken is still valid and if not update it
       if (userAccessTokenFromAS !== null) {
         let decodedToken = jwt_decode(userAccessTokenFromAS);
-        let currentTime = Date.now() / 1000;
+        let currentTime = Math.round(Date.now() / 1000);
         if (decodedToken.exp < currentTime) {
-          updateAccessToken();
+          updateAccessToken(userRefreshTokenFromAS);
         } else {
           setUser(decodedToken);
         }

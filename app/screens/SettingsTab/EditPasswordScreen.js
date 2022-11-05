@@ -1,18 +1,18 @@
 import React, { useContext, useState } from "react";
 import { View, StyleSheet, KeyboardAvoidingView, Alert } from "react-native";
 
-import { AuthContext } from "../auth/AuthContext";
+import { AuthContext } from "../../auth/AuthContext";
 import {
   AppForm,
   AppFormField,
   SubmitButton,
   ErrorMessage,
-} from "../components/forms";
-import colors from "../config/colors";
-import editPasswordValidator from "../validators/editPassword.validator";
-import Screen from "../components/Screen";
-import LoadingIndicator from "../components/LoadingIndicator";
-import userAPI from "../api/user.api";
+} from "../../components/forms";
+import colors from "../../config/colors";
+import editPasswordValidator from "../../validators/editPassword.validator";
+import Screen from "../../components/Screen";
+import LoadingIndicator from "../../components/LoadingIndicator";
+import userAPI from "../../api/user.api";
 
 function EditPasswordScreen(props) {
   const { userAccessToken, user, isLoading, setIsLoading, logout } =
