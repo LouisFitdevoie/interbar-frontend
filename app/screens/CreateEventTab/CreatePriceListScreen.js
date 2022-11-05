@@ -1,5 +1,5 @@
 import React, { useEffect, useContext, useState } from "react";
-import { View, StyleSheet, FlatList } from "react-native";
+import { View, StyleSheet, FlatList, Alert } from "react-native";
 
 import Screen from "../../components/Screen";
 import TarifItem from "../../components/lists/TarifItem";
@@ -77,7 +77,27 @@ function CreatePriceListScreen(props) {
       />
       <AppButton
         title="Valider le tarif"
-        onPress={() => console.log("Validate PriceList")}
+        onPress={() =>
+          Alert.alert(
+            "Voulez-vous vraiment valider le tarif ?",
+            "Vous pourrez toujours le modifier avant le début de l'évènement",
+            [
+              {
+                text: "Annuler",
+                style: "cancel",
+              },
+              {
+                text: "Valider",
+                onPress: () => {
+                  navigation.reset({
+                    index: 0,
+                    routes: [{ name: "Events" }],
+                  });
+                },
+              },
+            ]
+          )
+        }
         style={{ marginTop: 5 }}
       />
       {isLoading && <LoadingIndicator />}
