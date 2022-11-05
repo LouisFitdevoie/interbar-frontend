@@ -28,8 +28,8 @@ function TarifItem({
         <View style={styles.priceContainer}>
           <AppText style={styles.sellingPrice}>{sellingPrice}€</AppText>
           <MaterialCommunityIcons
-            name="chevron-right"
-            size={36}
+            name="pencil"
+            size={28}
             color={colors.buttonPrimary}
           />
         </View>
@@ -68,6 +68,7 @@ const styles = StyleSheet.create({
   },
   sellingPrice: {
     color: colors.black,
+    paddingRight: 5,
   },
   name: {
     fontSize: 20,
