@@ -9,6 +9,7 @@ import CreatePriceListScreen from "../screens/CreateEventTab/CreatePriceListScre
 import AddProductTarifScreen from "../screens/CreateEventTab/AddProductTarifScreen";
 import CreateProductScreen from "../screens/CreateEventTab/CreateProductScreen";
 import CreateEventProductScreen from "../screens/CreateEventTab/CreateEventProductScreen";
+import EditEventProductScreen from "../screens/CreateEventTab/EditEventProductScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -133,6 +134,20 @@ export default function CreateEventStack({ navigation }) {
         options={{
           headerShown: true,
           headerTitle: "Ajouter le produit",
+          headerTitleStyle: {
+            fontSize: 22,
+          },
+          headerTransparent: true,
+          headerTintColor: colors.primary,
+          headerBackTitleVisible: false,
+        }}
+      />
+      <Stack.Screen
+        name="EditEventProduct"
+        component={EditEventProductScreen}
+        options={{
+          headerShown: true,
+          headerTitle: "Modifier le produit",
           headerTitleStyle: {
             fontSize: 22,
           },

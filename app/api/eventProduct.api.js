@@ -35,3 +35,24 @@ exports.getAllProductsAtEvent = (eventId, accessToken) => {
     },
   });
 };
+
+exports.editEventProduct = (
+  eventProductId,
+  stock,
+  buyingPrice,
+  sellingPrice,
+  accessToken
+) => {
+  return axios({
+    method: "put",
+    url: `${BASE_URL}/update-event-product/${eventProductId}`,
+    data: {
+      buyingPrice,
+      sellingPrice,
+      stock,
+    },
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};

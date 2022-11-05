@@ -54,9 +54,15 @@ function CreatePriceListScreen(props) {
               sellingPrice={item.sellingPrice}
               stock={item.stock}
               onPress={() =>
-                console.log(
-                  "TarifItem pressed with id: " + item.events_products_id
-                )
+                navigation.navigate("EditEventProduct", {
+                  eventId,
+                  eventProductId: item.events_products_id,
+                  name: item.name,
+                  category: item.category,
+                  buyingPrice: item.buyingPrice,
+                  sellingPrice: item.sellingPrice,
+                  stock: item.stock,
+                })
               }
             />
           )}
