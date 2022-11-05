@@ -25,3 +25,13 @@ exports.createEventProduct = (
     },
   });
 };
+
+exports.getAllProductsAtEvent = (eventId, accessToken) => {
+  return axios({
+    method: "get",
+    url: `${BASE_URL}/event-products-by-event-id?id=${eventId}`,
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};
