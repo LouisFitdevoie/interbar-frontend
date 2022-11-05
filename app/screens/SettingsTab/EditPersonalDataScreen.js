@@ -8,19 +8,19 @@ import {
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-import Screen from "../components/Screen";
+import Screen from "../../components/Screen";
 import {
   AppForm,
   AppFormField,
   SubmitButton,
   ErrorMessage,
-} from "../components/forms";
-import editPersonalData from "../validators/editPersonalData.validator";
-import colors from "../config/colors";
-import AppText from "../components/AppText";
-import { AuthContext } from "../auth/AuthContext";
-import LoadingIndicator from "../components/LoadingIndicator";
-import userAPI from "../api/user.api";
+} from "../../components/forms";
+import editPersonalData from "../../validators/editPersonalData.validator";
+import colors from "../../config/colors";
+import AppText from "../../components/AppText";
+import { AuthContext } from "../../auth/AuthContext";
+import LoadingIndicator from "../../components/LoadingIndicator";
+import userAPI from "../../api/user.api";
 
 function EditPersonalDataScreen({ navigation }) {
   const { userAccessToken, user, isLoading, setIsLoading, logout } =

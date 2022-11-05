@@ -3,15 +3,15 @@ import { View, StyleSheet, TouchableOpacity, FlatList } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
 
-import { AuthContext } from "../auth/AuthContext";
-import AppButton from "../components/AppButton";
-import AppText from "../components/AppText";
-import Screen from "../components/Screen";
-import SearchBox from "../components/SearchBox";
-import productsAPI from "../api/products.api";
-import LoadingIndicator from "../components/LoadingIndicator";
-import colors from "../config/colors";
-import ListSeparator from "../components/lists/ListSeparator";
+import { AuthContext } from "../../auth/AuthContext";
+import AppButton from "../../components/AppButton";
+import AppText from "../../components/AppText";
+import Screen from "../../components/Screen";
+import SearchBox from "../../components/SearchBox";
+import productsAPI from "../../api/products.api";
+import LoadingIndicator from "../../components/LoadingIndicator";
+import colors from "../../config/colors";
+import ListSeparator from "../../components/lists/ListSeparator";
 
 function AddProductTarifScreen(props) {
   const isFocused = useIsFocused();
@@ -132,7 +132,6 @@ function AddProductTarifScreen(props) {
           </View>
         )}
       </View>
-
       <FlatList
         data={displayedProducts}
         keyExtractor={(item) => item.id.toString()}

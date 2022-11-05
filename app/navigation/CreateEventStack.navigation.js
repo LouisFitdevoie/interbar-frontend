@@ -1,13 +1,13 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import CreateEventInformationsScreen from "../screens/CreateEventInformationsScreen";
-import CreateEventScreen from "../screens/CreateEventScreen";
+import CreateEventInformationsScreen from "../screens/CreateEventTab/CreateEventInformationsScreen";
+import CreateEventScreen from "../screens/CreateEventTab/CreateEventScreen";
 import colors from "../config/colors";
 import { HeaderBackButton } from "@react-navigation/elements";
 import { Alert } from "react-native";
-import CreatePriceListScreen from "../screens/CreatePriceListScreen";
-import AddProductTarifScreen from "../screens/AddProductTarifScreen";
-import CreateProductScreen from "../screens/CreateProductScreen";
+import CreatePriceListScreen from "../screens/CreateEventTab/CreatePriceListScreen";
+import AddProductTarifScreen from "../screens/CreateEventTab/AddProductTarifScreen";
+import CreateProductScreen from "../screens/CreateEventTab/CreateProductScreen";
 
 const Stack = createNativeStackNavigator();
 

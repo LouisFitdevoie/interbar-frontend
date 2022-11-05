@@ -6,15 +6,15 @@ import {
   AppFormField,
   ErrorMessage,
   SubmitButton,
-} from "../components/forms";
-import colors from "../config/colors";
-import RadioButtonForm from "../components/forms/RadioButtonForm";
-import Screen from "../components/Screen";
-import createProductValidator from "../validators/createProduct.validator.js";
-import RadioButtonGroupForm from "../components/forms/RadioButtonGroupForm";
-import { AuthContext } from "../auth/AuthContext";
-import LoadingIndicator from "../components/LoadingIndicator";
-import productsAPI from "../api/products.api";
+} from "../../components/forms";
+import colors from "../../config/colors";
+import RadioButtonForm from "../../components/forms/RadioButtonForm";
+import Screen from "../../components/Screen";
+import createProductValidator from "../../validators/createProduct.validator.js";
+import RadioButtonGroupForm from "../../components/forms/RadioButtonGroupForm";
+import { AuthContext } from "../../auth/AuthContext";
+import LoadingIndicator from "../../components/LoadingIndicator";
+import productsAPI from "../../api/products.api";
 
 function CreateProductScreen(props) {
   const { isLoading, setIsLoading, userAccessToken } = useContext(AuthContext);

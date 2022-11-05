@@ -1,11 +1,11 @@
 import React from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 
-import Screen from "../components/Screen";
-import TarifItem from "../components/lists/TarifItem";
-import ListSeparator from "../components/lists/ListSeparator";
-import colors from "../config/colors";
-import AppButton from "../components/AppButton";
+import Screen from "../../components/Screen";
+import TarifItem from "../../components/lists/TarifItem";
+import ListSeparator from "../../components/lists/ListSeparator";
+import colors from "../../config/colors";
+import AppButton from "../../components/AppButton";
 
 function CreatePriceListScreen(props) {
   const eventId = props.route.params.eventId;

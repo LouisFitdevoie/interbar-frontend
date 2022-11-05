@@ -7,14 +7,14 @@ import {
   AppFormField,
   ErrorMessage,
   SubmitButton,
-} from "../components/forms";
-import Screen from "../components/Screen";
-import colors from "../config/colors";
-import createEventValidator from "../validators/createEvent.validator.js";
-import AppDateTimePicker from "../components/forms/AppDateTimePicker";
-import LoadingIndicator from "../components/LoadingIndicator";
-import { AuthContext } from "../auth/AuthContext";
-import eventAPI from "../api/event.api";
+} from "../../components/forms";
+import Screen from "../../components/Screen";
+import colors from "../../config/colors";
+import createEventValidator from "../../validators/createEvent.validator.js";
+import AppDateTimePicker from "../../components/forms/AppDateTimePicker";
+import LoadingIndicator from "../../components/LoadingIndicator";
+import { AuthContext } from "../../auth/AuthContext";
+import eventAPI from "../../api/event.api";
 
 function CreateEventScreen({ navigation }) {
   const { isLoading, setIsLoading, userAccessToken } = useContext(AuthContext);
