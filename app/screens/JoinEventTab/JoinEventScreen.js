@@ -42,14 +42,27 @@ function JoinEventScreen({ navigation }) {
 
   const joinEvent = (eventId) => {
     setIsLoading(true);
-    eventAPI.getEventById(eventId, userAccessToken).then((res) => {
-      setIsLoading(false);
-      if (res.data) {
-        console.log(res.data);
-      } else {
-        setJoinEventError("Event not found");
-      }
-    });
+    eventAPI
+      .getEventById(eventId, userAccessToken)
+      .then((res) => {
+        setIsLoading(false);
+        if (res.data) {
+          const eventDetails = res.data;
+          if (eventDetails.endDate < new Date()) {
+            setJoinEventError(
+              "Cet évènement est terminé, vous ne pouvez plus y participer"
+            );
+          } else {
+            navigation.navigate("JoinEventDetails", { event: eventDetails });
+          }
+        } else {
+          setJoinEventError("Event not found");
+        }
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        console.log(err);
+      });
   };
 
   const handleBarCodeScanned = ({ type, data }) => {
@@ -58,6 +71,8 @@ function JoinEventScreen({ navigation }) {
       setIsCameraViewVisible(false);
       joinEvent(data);
     } else {
+      setScanned(true);
+      setIsCameraViewVisible(false);
       Alert.alert("Ce code barre n'est pas un QR Code");
     }
   };

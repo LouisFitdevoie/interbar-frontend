@@ -1,7 +1,9 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { HeaderBackButton } from "@react-navigation/elements";
 
 import colors from "../config/colors";
 import JoinEventScreen from "../screens/JoinEventTab/JoinEventScreen";
+import JoinEventDetailsScreen from "../screens/JoinEventTab/JoinEventDetailsScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -20,6 +22,35 @@ function JoinEventStack({ navigation }) {
           unmountOnBlur: true,
         }}
       />
+      <Stack.Group
+        screenOptions={{
+          presentation: "modal",
+        }}
+      >
+        <Stack.Screen
+          name="JoinEventDetails"
+          component={JoinEventDetailsScreen}
+          options={{
+            headerTitle: "Confirmer",
+            headerTitleStyle: {
+              fontSize: 22,
+              color: colors.white,
+            },
+            headerStyle: {
+              backgroundColor: colors.buttonPrimary,
+            },
+            headerTintColor: colors.buttonPrimary,
+            headerLeft: () => (
+              <HeaderBackButton
+                tintColor={colors.white}
+                onPress={() => {
+                  navigation.navigate("JoinEvent");
+                }}
+              />
+            ),
+          }}
+        />
+      </Stack.Group>
     </Stack.Navigator>
   );
 }
