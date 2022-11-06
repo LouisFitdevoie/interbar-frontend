@@ -16,6 +16,7 @@ import colors from "../../config/colors";
 import joinEventValidator from "../../validators/joinEvent.validator";
 import { AuthContext } from "../../auth/AuthContext";
 import AppButton from "../../components/AppButton";
+import eventAPI from "../../api/event.api";
 
 function JoinEventScreen({ navigation }) {
   const isFocused = useIsFocused();
@@ -37,11 +38,25 @@ function JoinEventScreen({ navigation }) {
     askForCameraPermission();
   }, []);
 
+  // Try joining this event 32f0e734-b07d-4e91-ba18-49ebc1683a8e
+
+  const joinEvent = (eventId) => {
+    setIsLoading(true);
+    eventAPI.getEventById(eventId, userAccessToken).then((res) => {
+      setIsLoading(false);
+      if (res.data) {
+        console.log(res.data);
+      } else {
+        setJoinEventError("Event not found");
+      }
+    });
+  };
+
   const handleBarCodeScanned = ({ type, data }) => {
     if (type === "org.iso.QRCode") {
       setScanned(true);
       setIsCameraViewVisible(false);
-      console.log(data);
+      joinEvent(data);
     } else {
       Alert.alert("Ce code barre n'est pas un QR Code");
     }
@@ -55,7 +70,7 @@ function JoinEventScreen({ navigation }) {
             initialValues={{
               eventCode: "",
             }}
-            onSubmit={(values) => console.log(values)}
+            onSubmit={(values) => joinEvent(values.eventCode)}
             validationSchema={joinEventValidator}
           >
             <AppFormField
@@ -92,7 +107,7 @@ function JoinEventScreen({ navigation }) {
             initialValues={{
               eventCode: "",
             }}
-            onSubmit={(values) => console.log(values)}
+            onSubmit={(values) => joinEvent(values.eventCode)}
             validationSchema={joinEventValidator}
           >
             <AppFormField
@@ -134,7 +149,7 @@ function JoinEventScreen({ navigation }) {
             initialValues={{
               eventCode: "",
             }}
-            onSubmit={(values) => console.log(values)}
+            onSubmit={(values) => joinEvent(values.eventCode)}
             validationSchema={joinEventValidator}
           >
             <AppFormField
