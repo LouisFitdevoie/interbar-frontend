@@ -1,13 +1,27 @@
-import React from "react";
-import { View, StyleSheet } from "react-native";
+import React, { useState, useContext } from "react";
+import { View, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import AppText from "../../components/AppText";
+import {
+  AppForm,
+  AppFormField,
+  ErrorMessage,
+  SubmitButton,
+} from "../../components/forms";
 import Screen from "../../components/Screen";
 import colors from "../../config/colors";
+import AppButton from "../../components/AppButton";
+import sellerPasswordValidator from "../../validators/sellerPassword.validator";
+import LoadingIndicator from "../../components/LoadingIndicator";
+import { AuthContext } from "../../auth/AuthContext";
+import userEventAPI from "../../api/userEvent.api";
 
 function JoinEventDetailsScreen(props) {
   const { navigation } = props;
   const { event } = props.route.params;
+  const { isLoading, setIsLoading, userAccessToken, user } =
+    useContext(AuthContext);
 
   const eventDetails = {
     name: event.name,
@@ -28,6 +42,51 @@ function JoinEventDetailsScreen(props) {
     location: event.location,
     description: event.description,
     organizer: event.organizer,
+  };
+
+  const [isSellerVisible, setIsSellerVisible] = useState(false);
+  const [joinEventError, setJoinEventError] = useState(null);
+
+  const handleJoinEvent = (sellerPassword) => {
+    setIsLoading(true);
+    if (sellerPassword != "") {
+      userEventAPI
+        .sellerJoinEvent(event.id, user.id, sellerPassword, userAccessToken)
+        .then((res) => {
+          setIsLoading(false);
+          if (res.data.success != null) {
+            navigation.goBack();
+            navigation.navigate("Events");
+            Alert.alert(
+              "Succès",
+              "Vous avez rejoint l'évènement en tant que vendeur"
+            );
+          }
+        })
+        .catch((err) => {
+          setIsLoading(false);
+          if (err.response === undefined) {
+            setJoinEventError("Impossible de communiquer avec le serveur");
+          } else {
+            if (
+              err.response.status === 400 &&
+              err.response.data.error.includes("already")
+            ) {
+              setJoinEventError("Vous participez déjà à cet événement");
+            }
+            if (
+              err.response.status === 400 &&
+              err.response.data.error.includes("password")
+            ) {
+              setJoinEventError("Mot de passe incorrect");
+            } else {
+              setJoinEventError("Une erreur est survenue");
+            }
+          }
+        });
+    } else {
+      console.log("No seller password");
+    }
   };
 
   return (
@@ -64,6 +123,61 @@ function JoinEventDetailsScreen(props) {
             </AppText>
           </View>
         )}
+        <View style={styles.sellerButtonContainer}>
+          <TouchableOpacity
+            style={styles.sellerButton}
+            onPress={() => setIsSellerVisible(!isSellerVisible)}
+          >
+            <AppText style={styles.sellerButtonText}>
+              Serez-vous vendeur ?
+            </AppText>
+            <MaterialCommunityIcons
+              name={
+                isSellerVisible ? "checkbox-outline" : "checkbox-blank-outline"
+              }
+              size={24}
+              color={colors.primary}
+            />
+          </TouchableOpacity>
+        </View>
+        {!isSellerVisible && (
+          <View>
+            <AppButton
+              title="Rejoindre l'évènement"
+              onPress={() => handleJoinEvent("")}
+            />
+            <ErrorMessage
+              error={joinEventError}
+              visible={joinEventError != null}
+            />
+          </View>
+        )}
+        {isSellerVisible && (
+          <View style={styles.sellerFormContainer}>
+            <AppForm
+              initialValues={{
+                sellerPassword: "",
+              }}
+              onSubmit={(values) => handleJoinEvent(values.sellerPassword)}
+              validationSchema={sellerPasswordValidator}
+            >
+              <AppFormField
+                autoCapitalize="none"
+                autoCorrect={false}
+                keyboardAppearance={colors.colorScheme}
+                name="sellerPassword"
+                placeholder="Mot de passe vendeur"
+                secureTextEntry
+              />
+              <SubmitButton title="Rejoindre l'évènement" />
+              <ErrorMessage
+                error={joinEventError}
+                visible={joinEventError != null}
+              />
+            </AppForm>
+          </View>
+        )}
+        {isLoading && <LoadingIndicator />}
       </View>
     </Screen>
   );
@@ -95,13 +209,27 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: colors.primary,
   },
+  sellerButton: {
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+    marginTop: 20,
+  },
+  sellerButtonContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  sellerButtonText: {
+    color: colors.primary,
+    fontWeight: "bold",
+    paddingRight: 5,
+  },
   textDetailContainer: {
     flexDirection: "row",
     justifyContent: "flex-start",
     marginBottom: 10,
   },
   title: {
-    fontWeight: "bold",
     color: colors.primary,
   },
 });

@@ -22,35 +22,29 @@ function JoinEventStack({ navigation }) {
           unmountOnBlur: true,
         }}
       />
-      <Stack.Group
-        screenOptions={{
-          presentation: "modal",
+      <Stack.Screen
+        name="JoinEventDetails"
+        component={JoinEventDetailsScreen}
+        options={{
+          headerTitle: "Confirmer",
+          headerTitleStyle: {
+            fontSize: 22,
+            color: colors.white,
+          },
+          headerStyle: {
+            backgroundColor: colors.buttonPrimary,
+          },
+          headerTintColor: colors.buttonPrimary,
+          headerLeft: () => (
+            <HeaderBackButton
+              tintColor={colors.white}
+              onPress={() => {
+                navigation.navigate("JoinEvent");
+              }}
+            />
+          ),
         }}
-      >
-        <Stack.Screen
-          name="JoinEventDetails"
-          component={JoinEventDetailsScreen}
-          options={{
-            headerTitle: "Confirmer",
-            headerTitleStyle: {
-              fontSize: 22,
-              color: colors.white,
-            },
-            headerStyle: {
-              backgroundColor: colors.buttonPrimary,
-            },
-            headerTintColor: colors.buttonPrimary,
-            headerLeft: () => (
-              <HeaderBackButton
-                tintColor={colors.white}
-                onPress={() => {
-                  navigation.navigate("JoinEvent");
-                }}
-              />
-            ),
-          }}
-        />
-      </Stack.Group>
+      />
     </Stack.Navigator>
   );
 }
