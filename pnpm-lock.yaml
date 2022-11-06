@@ -12,7 +12,9 @@ specifiers:
   '@react-navigation/native-stack': ^6.9.0
   '@react-navigation/stack': ^6.3.2
   axios: ^1.1.2
+  date-fns: ^2.29.3
   expo: ~46.0.9
+  expo-barcode-scanner: ~11.4.0
   expo-constants: ^13.2.4
   expo-status-bar: ~1.4.0
   formik: ^2.2.9
@@ -37,7 +39,9 @@ dependencies:
   '@react-navigation/native-stack': 6.9.0_hg7duugoxzqbcxx766hj52kwii
   '@react-navigation/stack': 6.3.2_hg7duugoxzqbcxx766hj52kwii
   axios: 1.1.2
+  date-fns: 2.29.3
   expo: 46.0.10_@babel+core@7.18.13
+  expo-barcode-scanner: 11.4.0_expo@46.0.10
   expo-constants: 13.2.4_expo@46.0.10
   expo-status-bar: 1.4.0
   formik: 2.2.9_react@18.0.0
@@ -3103,6 +3107,11 @@ packages:
     resolution: {integrity: sha512-+LSAiGFwQ9dRnRdOeaj7g47ZFJcOUPukAP8J3A3fuZ1g9Y44BG+P1sgApjLXTQPOzC4+7S9Wr8kXsfpINM4jpw==}
     dev: false
 
+  /date-fns/2.29.3:
+    resolution: {integrity: sha512-dDCnyH2WnnKusqvZZ6+jA1O51Ibt8ZMRNkDZdyAyK4YfbDwa/cEmuztzG5pk6hqlp9aSBPYcjOlktquahGwGeA==}
+    engines: {node: '>=0.11'}
+    dev: false
+
   /dayjs/1.11.5:
     resolution: {integrity: sha512-CAdX5Q3YW3Gclyo5Vpqkgpj8fSdLQcRuzfX6mC6Phy0nfJ0eGYOeS7m4mt2plDWLAtA4TqTakvbboHvUxfe4iA==}
     dev: false
@@ -3413,6 +3422,18 @@ packages:
       - supports-color
     dev: false
 
+  /expo-barcode-scanner/11.4.0_expo@46.0.10:
+    resolution: {integrity: sha512-Q4BreQHY5U1aGF+rfqeGSzcdlayTKnSe/qTIfkXTmXFsL7bu3hMqdh5J/DL00Dfmc7C0IR8EiV75rqRrY4t0nA==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      '@expo/config-plugins': 5.0.1
+      expo: 46.0.10_@babel+core@7.18.13
+      expo-image-loader: 3.2.0_expo@46.0.10
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
   /expo-constants/13.2.4_expo@46.0.10:
     resolution: {integrity: sha512-Zobau8EuTk2GgafwkfGnWM6CmSLB7X8qnQXVuXe0nd3v92hfQUmRWGhJwH88uxXj3LrfqctM6PaJ8taG1vxfBw==}
     peerDependencies:
@@ -3454,6 +3475,14 @@ packages:
     dependencies:
       expo: 46.0.10_@babel+core@7.18.13
       fontfaceobserver: 2.3.0
+    dev: false
+
+  /expo-image-loader/3.2.0_expo@46.0.10:
+    resolution: {integrity: sha512-LU3Q2prn64/HxdToDmxgMIRXS1ZvD9Q3iCxRVTZn1fPQNNDciIQFE5okaa74Ogx20DFHs90r6WoUd7w9Af1OGQ==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      expo: 46.0.10_@babel+core@7.18.13
     dev: false
 
   /expo-keep-awake/10.2.0_expo@46.0.10:

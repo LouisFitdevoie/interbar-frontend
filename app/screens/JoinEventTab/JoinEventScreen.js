@@ -1,5 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import { View, StyleSheet, Dimensions, Alert } from "react-native";
+import { BarCodeScanner } from "expo-barcode-scanner";
+import { useIsFocused } from "@react-navigation/native";
 
 import AppText from "../../components/AppText";
 import {
@@ -16,50 +18,173 @@ import { AuthContext } from "../../auth/AuthContext";
 import AppButton from "../../components/AppButton";
 
 function JoinEventScreen({ navigation }) {
+  const isFocused = useIsFocused();
   const { isLoading, setIsLoading, userAccessToken } = useContext(AuthContext);
   const [isCameraViewVisible, setIsCameraViewVisible] = useState(false);
   const [joinEventError, setJoinEventError] = useState(null);
 
-  return (
-    <Screen style={styles.container}>
-      <AppForm
-        initialValues={{ eventCode: "" }}
-        onSubmit={(values) => console.log(values)}
-        validationSchema={joinEventValidator}
-      >
-        <AppFormField
-          autoCapitalize="none"
-          autoCorrect={false}
-          keyboardAppearance={colors.colorScheme}
-          keyboardType="default"
-          name="eventCode"
-          placeholder="Code de l'évènement"
-          textContentType="none"
-        />
-        {!isCameraViewVisible && (
-          <View style={styles.separatorContainer}>
-            <View style={styles.separator} />
-            <AppText style={styles.separatorText}>ou</AppText>
-            <View style={styles.separator} />
-          </View>
-        )}
-        {isCameraViewVisible && (
+  const [hasPermission, setHasPermission] = useState(null);
+  const [scanned, setScanned] = useState(false);
+
+  const askForCameraPermission = () => {
+    (async () => {
+      const { status } = await BarCodeScanner.requestPermissionsAsync();
+      setHasPermission(status === "granted");
+    })();
+  };
+
+  useEffect(() => {
+    askForCameraPermission();
+  }, []);
+
+  const handleBarCodeScanned = ({ type, data }) => {
+    if (type === "org.iso.QRCode") {
+      setScanned(true);
+      setIsCameraViewVisible(false);
+      console.log(data);
+    } else {
+      Alert.alert("Ce code barre n'est pas un QR Code");
+    }
+  };
+
+  if (isFocused) {
+    if (!isCameraViewVisible && hasPermission === null) {
+      return (
+        <Screen style={styles.container}>
+          <AppForm
+            initialValues={{
+              eventCode: "",
+            }}
+            onSubmit={(values) => console.log(values)}
+            validationSchema={joinEventValidator}
+          >
+            <AppFormField
+              autoCapitalize="none"
+              autoCorrect={false}
+              keyboardAppearance={colors.colorScheme}
+              keyboardType="default"
+              name="eventCode"
+              placeholder="Code de l'évènement"
+              textContentType="none"
+            />
+            <View style={styles.separatorContainer}>
+              <View style={styles.separator} />
+              <AppText style={styles.separatorText}>ou</AppText>
+              <View style={styles.separator} />
+            </View>
+            <AppButton
+              title="Scanner un QR Code"
+              onPress={() => askForCameraPermission()}
+            />
+            <SubmitButton title="Suivant" />
+            <ErrorMessage
+              error={joinEventError}
+              visible={joinEventError != null}
+            />
+          </AppForm>
+          {isLoading && <LoadingIndicator />}
+        </Screen>
+      );
+    } else if (!isCameraViewVisible && hasPermission === false) {
+      return (
+        <Screen style={styles.container}>
+          <AppForm
+            initialValues={{
+              eventCode: "",
+            }}
+            onSubmit={(values) => console.log(values)}
+            validationSchema={joinEventValidator}
+          >
+            <AppFormField
+              autoCapitalize="none"
+              autoCorrect={false}
+              keyboardAppearance={colors.colorScheme}
+              keyboardType="default"
+              name="eventCode"
+              placeholder="Code de l'évènement"
+              textContentType="none"
+            />
+            <View style={styles.separatorContainer}>
+              <View style={styles.separator} />
+              <AppText style={styles.separatorText}>ou</AppText>
+              <View style={styles.separator} />
+            </View>
+            <AppButton
+              title="Scanner un QR Code"
+              onPress={() => {
+                Alert.alert(
+                  "Vous avez refusé l'accès à la caméra",
+                  "Vous pouvez réessayer en autorisant l'accès à la caméra dans les paramètres de votre téléphone"
+                );
+              }}
+            />
+            <SubmitButton title="Suivant" />
+            <ErrorMessage
+              error={joinEventError}
+              visible={joinEventError != null}
+            />
+          </AppForm>
+          {isLoading && <LoadingIndicator />}
+        </Screen>
+      );
+    } else if (!isCameraViewVisible && hasPermission === true) {
+      return (
+        <Screen style={styles.container}>
+          <AppForm
+            initialValues={{
+              eventCode: "",
+            }}
+            onSubmit={(values) => console.log(values)}
+            validationSchema={joinEventValidator}
+          >
+            <AppFormField
+              autoCapitalize="none"
+              autoCorrect={false}
+              keyboardAppearance={colors.colorScheme}
+              keyboardType="default"
+              name="eventCode"
+              placeholder="Code de l'évènement"
+              textContentType="none"
+            />
+            <View style={styles.separatorContainer}>
+              <View style={styles.separator} />
+              <AppText style={styles.separatorText}>ou</AppText>
+              <View style={styles.separator} />
+            </View>
+            <AppButton
+              title="Scanner un QR Code"
+              onPress={() => setIsCameraViewVisible(!isCameraViewVisible)}
+            />
+            <SubmitButton title="Suivant" />
+            <ErrorMessage
+              error={joinEventError}
+              visible={joinEventError != null}
+            />
+          </AppForm>
+          {isLoading && <LoadingIndicator />}
+        </Screen>
+      );
+    } else if (isCameraViewVisible && hasPermission === true) {
+      return (
+        <Screen style={styles.container}>
           <View style={styles.cameraView}>
-            <AppText>Camera view</AppText>
+            <BarCodeScanner
+              onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+              style={StyleSheet.absoluteFillObject}
+            />
           </View>
-        )}
-        {!isCameraViewVisible && (
           <AppButton
-            title="Scanner un QR Code"
+            title="Ne plus scanner"
             onPress={() => setIsCameraViewVisible(!isCameraViewVisible)}
           />
-        )}
-        <SubmitButton title="Suivant" />
-        <ErrorMessage error={joinEventError} visible={joinEventError != null} />
-      </AppForm>
-      {isLoading && <LoadingIndicator />}
-    </Screen>
-  );
+          {isLoading && <LoadingIndicator />}
+        </Screen>
+      );
+    }
+  } else {
+    isCameraViewVisible ? setIsCameraViewVisible(false) : null;
+    return null;
+  }
 }
 
 const styles = StyleSheet.create({
