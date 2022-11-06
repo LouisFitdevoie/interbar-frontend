@@ -23,7 +23,10 @@ export default function CreateEventStack({ navigation }) {
           headerTitle: "Informations",
           headerTitleStyle: {
             fontSize: 22,
-            color: colors.primary,
+            color: colors.white,
+          },
+          headerStyle: {
+            backgroundColor: colors.buttonPrimary,
           },
         }}
       />
@@ -35,12 +38,16 @@ export default function CreateEventStack({ navigation }) {
           headerTitle: "Créer un évènement",
           headerTitleStyle: {
             fontSize: 22,
+            color: colors.white,
+          },
+          headerStyle: {
+            backgroundColor: colors.buttonPrimary,
           },
           headerTransparent: true,
-          headerTintColor: colors.primary,
+          headerTintColor: colors.white,
           headerLeft: () => (
             <HeaderBackButton
-              tintColor={colors.primary}
+              tintColor={colors.white}
               onPress={() => {
                 Alert.alert(
                   "Voulez-vous vraiment annuler la création de l'évènement ?",
@@ -72,12 +79,16 @@ export default function CreateEventStack({ navigation }) {
           headerTitle: "Créer le tarif",
           headerTitleStyle: {
             fontSize: 22,
+            color: colors.white,
+          },
+          headerStyle: {
+            backgroundColor: colors.buttonPrimary,
           },
           headerTransparent: true,
-          headerTintColor: colors.primary,
+          headerTintColor: colors.white,
           headerLeft: () => (
             <HeaderBackButton
-              tintColor={colors.primary}
+              tintColor={colors.white}
               onPress={() => {
                 Alert.alert(
                   "Voulez-vous vraiment annuler la création du tarif de l'évènement ?",
@@ -109,9 +120,13 @@ export default function CreateEventStack({ navigation }) {
           headerTitle: "Nouveau produit",
           headerTitleStyle: {
             fontSize: 22,
+            color: colors.white,
+          },
+          headerStyle: {
+            backgroundColor: colors.buttonPrimary,
           },
           headerTransparent: true,
-          headerTintColor: colors.primary,
+          headerTintColor: colors.white,
           headerBackTitleVisible: false,
         }}
       />
@@ -123,9 +138,13 @@ export default function CreateEventStack({ navigation }) {
           headerTitle: "Nouveau produit",
           headerTitleStyle: {
             fontSize: 22,
+            color: colors.white,
+          },
+          headerStyle: {
+            backgroundColor: colors.buttonPrimary,
           },
           headerTransparent: true,
-          headerTintColor: colors.primary,
+          headerTintColor: colors.white,
           headerBackTitleVisible: false,
         }}
       />
@@ -137,9 +156,13 @@ export default function CreateEventStack({ navigation }) {
           headerTitle: "Ajouter le produit",
           headerTitleStyle: {
             fontSize: 22,
+            color: colors.white,
+          },
+          headerStyle: {
+            backgroundColor: colors.buttonPrimary,
           },
           headerTransparent: true,
-          headerTintColor: colors.primary,
+          headerTintColor: colors.white,
           headerBackTitleVisible: false,
         }}
       />
@@ -151,9 +174,13 @@ export default function CreateEventStack({ navigation }) {
           headerTitle: "Modifier le produit",
           headerTitleStyle: {
             fontSize: 22,
+            color: colors.white,
+          },
+          headerStyle: {
+            backgroundColor: colors.buttonPrimary,
           },
           headerTransparent: true,
-          headerTintColor: colors.primary,
+          headerTintColor: colors.white,
           headerBackTitleVisible: false,
         }}
       />

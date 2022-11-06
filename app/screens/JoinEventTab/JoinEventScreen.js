@@ -42,6 +42,7 @@ function JoinEventScreen({ navigation }) {
 
   const joinEvent = (eventId) => {
     setIsLoading(true);
+    setScanned(false);
     eventAPI
       .getEventById(eventId, userAccessToken)
       .then((res) => {
@@ -70,10 +71,12 @@ function JoinEventScreen({ navigation }) {
       setScanned(true);
       setIsCameraViewVisible(false);
       joinEvent(data);
-    } else {
+    } else if (type !== "org.iso.QRCode") {
       setScanned(true);
       setIsCameraViewVisible(false);
       Alert.alert("Ce code barre n'est pas un QR Code");
+    } else {
+      return false;
     }
   };
 
@@ -199,7 +202,7 @@ function JoinEventScreen({ navigation }) {
         <Screen style={styles.container}>
           <View style={styles.cameraView}>
             <BarCodeScanner
-              onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+              onBarCodeScanned={handleBarCodeScanned}
               style={StyleSheet.absoluteFillObject}
             />
           </View>

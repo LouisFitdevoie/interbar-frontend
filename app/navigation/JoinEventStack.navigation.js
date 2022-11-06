@@ -17,7 +17,10 @@ function JoinEventStack({ navigation }) {
           headerTitle: "Rejoindre un évènement",
           headerTitleStyle: {
             fontSize: 22,
-            color: colors.primary,
+            color: colors.white,
+          },
+          headerStyle: {
+            backgroundColor: colors.buttonPrimary,
           },
           unmountOnBlur: true,
         }}
@@ -34,7 +37,7 @@ function JoinEventStack({ navigation }) {
           headerStyle: {
             backgroundColor: colors.buttonPrimary,
           },
-          headerTintColor: colors.buttonPrimary,
+          headerTintColor: colors.white,
           headerLeft: () => (
             <HeaderBackButton
               tintColor={colors.white}

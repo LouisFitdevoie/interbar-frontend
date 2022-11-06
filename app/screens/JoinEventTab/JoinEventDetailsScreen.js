@@ -68,18 +68,16 @@ function JoinEventDetailsScreen(props) {
           if (err.response === undefined) {
             setJoinEventError("Impossible de communiquer avec le serveur");
           } else {
-            if (
-              err.response.status === 400 &&
-              err.response.data.error.includes("already")
-            ) {
+            const errMessage = err.response.data.error;
+            if (err.response.status === 400 && errMessage.includes("already")) {
               setJoinEventError("Vous participez déjà à cet événement");
-            }
-            if (
+            } else if (
               err.response.status === 400 &&
-              err.response.data.error.includes("password")
+              errMessage.includes("password")
             ) {
-              setJoinEventError("Mot de passe incorrect");
+              setJoinEventError("Le mot de passe vendeur fourni est incorrect");
             } else {
+              console.log(err.response.data.error);
               setJoinEventError("Une erreur est survenue");
             }
           }
@@ -177,8 +175,8 @@ function JoinEventDetailsScreen(props) {
             </AppForm>
           </View>
         )}
-        {isLoading && <LoadingIndicator />}
       </View>
+      {isLoading && <LoadingIndicator />}
     </Screen>
   );
 }
