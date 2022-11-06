@@ -49,7 +49,7 @@ function JoinEventDetailsScreen(props) {
 
   const handleJoinEvent = (sellerPassword) => {
     setIsLoading(true);
-    if (sellerPassword != "") {
+    if (sellerPassword != "" && isSellerVisible) {
       userEventAPI
         .sellerJoinEvent(event.id, user.id, sellerPassword, userAccessToken)
         .then((res) => {
@@ -83,7 +83,31 @@ function JoinEventDetailsScreen(props) {
           }
         });
     } else {
-      console.log("No seller password");
+      setIsLoading(true);
+      userEventAPI
+        .userJoinEvent(event.id, user.id, userAccessToken)
+        .then((res) => {
+          setIsLoading(false);
+          if (res.data.success != null) {
+            navigation.goBack();
+            navigation.navigate("Events");
+            Alert.alert("Succès", "Vous avez rejoint l'évènement");
+          }
+        })
+        .catch((err) => {
+          setIsLoading(false);
+          if (err.response === undefined) {
+            setJoinEventError("Impossible de communiquer avec le serveur");
+          } else {
+            const errMessage = err.response.data.error;
+            if (err.response.status === 400 && errMessage.includes("already")) {
+              setJoinEventError("Vous participez déjà à cet événement");
+            } else {
+              console.log(err.response.data.error);
+              setJoinEventError("Une erreur est survenue");
+            }
+          }
+        });
     }
   };
 
