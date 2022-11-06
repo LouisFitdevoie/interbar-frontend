@@ -46,7 +46,16 @@ export const AuthProvider = ({ children }) => {
 
   const updateAccessToken = (refreshTokenAtAppLaunch) => {
     if (userRefreshToken != null || refreshTokenAtAppLaunch != null) {
-      console.log("Updating access token...");
+      const date = new Date();
+      console.log(
+        "Updating access token at " +
+          date.getHours() +
+          "h" +
+          date.getMinutes() +
+          "m" +
+          date.getSeconds() +
+          "s"
+      );
       authAPI
         .updateAccessToken(
           refreshTokenAtAppLaunch != null

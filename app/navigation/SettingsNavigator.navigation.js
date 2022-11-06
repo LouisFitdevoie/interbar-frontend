@@ -14,7 +14,10 @@ const SettingsNavigator = () => (
       options={{
         headerShown: true,
         headerTitle: "Paramètres",
-        headerTintColor: colors.primary,
+        headerTintColor: colors.white,
+        headerStyle: {
+          backgroundColor: colors.buttonPrimary,
+        },
         headerTitleStyle: {
           fontSize: 22,
         },

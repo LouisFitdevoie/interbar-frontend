@@ -27,3 +27,13 @@ exports.createEvent = (
     },
   });
 };
+
+exports.getEventById = (eventId, accessToken) => {
+  return axios({
+    method: "get",
+    url: `${BASE_URL}/eventId?id=${eventId}`,
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};
