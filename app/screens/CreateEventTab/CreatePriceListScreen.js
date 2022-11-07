@@ -12,6 +12,7 @@ import eventProductAPI from "../../api/eventProduct.api";
 import AppText from "../../components/AppText";
 import LoadingIndicator from "../../components/LoadingIndicator";
 import TarifItemDeleteAction from "../../components/lists/TarifItemDeleteAction";
+import ErrorMessage from "../../components/forms/ErrorMessage";
 
 function CreatePriceListScreen(props) {
   const isFocused = useIsFocused();
@@ -20,6 +21,7 @@ function CreatePriceListScreen(props) {
   const eventId = props.route.params.eventId;
   const [eventProducts, setEventProducts] = useState([]);
   const { navigation } = props;
+  const [deleteError, setDeleteError] = useState(null);
 
   const getAllEventProducts = (eventId) => {
     setIsLoading(true);
@@ -79,6 +81,7 @@ function CreatePriceListScreen(props) {
                         {
                           text: "Supprimer",
                           onPress: () => {
+                            setDeleteError(null);
                             setIsLoading(true);
                             eventProductAPI
                               .deleteEventProduct(
@@ -89,6 +92,9 @@ function CreatePriceListScreen(props) {
                                 getAllEventProducts(eventId);
                               })
                               .catch((err) => {
+                                setDeleteError(
+                                  "Une erreur est survenue lors de la suppression du produit du tarif de cet évènement. Veuillez réessayer."
+                                );
                                 console.log(err);
                                 setIsLoading(false);
                               });
@@ -142,6 +148,7 @@ function CreatePriceListScreen(props) {
           }
           style={{ marginTop: 5 }}
         />
+        <ErrorMessage error={deleteError} visible={deleteError != null} />
       </View>
 
       {isLoading && <LoadingIndicator />}
