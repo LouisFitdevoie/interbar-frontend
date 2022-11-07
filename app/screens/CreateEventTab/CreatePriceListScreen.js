@@ -11,6 +11,7 @@ import { AuthContext } from "../../auth/AuthContext";
 import eventProductAPI from "../../api/eventProduct.api";
 import AppText from "../../components/AppText";
 import LoadingIndicator from "../../components/LoadingIndicator";
+import TarifItemDeleteAction from "../../components/lists/TarifItemDeleteAction";
 
 function CreatePriceListScreen(props) {
   const isFocused = useIsFocused();
@@ -64,6 +65,13 @@ function CreatePriceListScreen(props) {
                   stock: item.stock,
                 })
               }
+              renderRightActions={() => (
+                <TarifItemDeleteAction
+                  onPress={() => {
+                    console.log(item.events_products_id);
+                  }}
+                />
+              )}
             />
           )}
           style={styles.list}
@@ -76,48 +84,54 @@ function CreatePriceListScreen(props) {
           </AppText>
         </View>
       )}
-      <AppButton
-        title="Ajouter un produit"
-        onPress={() => navigation.navigate("AddProductTarif", { eventId })}
-        style={{ marginBottom: 5 }}
-      />
-      <AppButton
-        title="Valider le tarif"
-        onPress={() =>
-          Alert.alert(
-            "Voulez-vous vraiment valider le tarif ?",
-            "Vous pourrez toujours le modifier avant le début de l'évènement",
-            [
-              {
-                text: "Annuler",
-                style: "cancel",
-              },
-              {
-                text: "Valider",
-                onPress: () => {
-                  navigation.reset({
-                    index: 0,
-                    routes: [{ name: "Events" }],
-                  });
+      <View style={styles.buttonContainer}>
+        <AppButton
+          title="Ajouter un produit"
+          onPress={() => navigation.navigate("AddProductTarif", { eventId })}
+          style={{ marginBottom: 5 }}
+        />
+        <AppButton
+          title="Valider le tarif"
+          onPress={() =>
+            Alert.alert(
+              "Voulez-vous vraiment valider le tarif ?",
+              "Vous pourrez toujours le modifier avant le début de l'évènement",
+              [
+                {
+                  text: "Annuler",
+                  style: "cancel",
                 },
-              },
-            ]
-          )
-        }
-        style={{ marginTop: 5 }}
-      />
+                {
+                  text: "Valider",
+                  onPress: () => {
+                    navigation.reset({
+                      index: 0,
+                      routes: [{ name: "Events" }],
+                    });
+                  },
+                },
+              ]
+            )
+          }
+          style={{ marginTop: 5 }}
+        />
+      </View>
+
       {isLoading && <LoadingIndicator />}
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
+  buttonContainer: {
+    paddingHorizontal: 10,
+    width: "100%",
+  },
   container: {
     alignItems: "center",
     backgroundColor: colors.white,
     flex: 1,
     justifyContent: "flex-start",
-    paddingHorizontal: 10,
     width: "100%",
   },
   list: {
