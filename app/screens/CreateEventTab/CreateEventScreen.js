@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useLayoutEffect } from "react";
 import { View, StyleSheet, Platform, Alert } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
@@ -16,11 +16,16 @@ import LoadingIndicator from "../../components/LoadingIndicator";
 import { AuthContext } from "../../auth/AuthContext";
 import eventAPI from "../../api/event.api";
 import userEventAPI from "../../api/userEvent.api";
+import tabBarDisplayManager from "../../config/tabBarDisplayManager";
 
 function CreateEventScreen({ navigation }) {
   const { isLoading, setIsLoading, userAccessToken, user } =
     useContext(AuthContext);
   const [createEventError, setCreateEventError] = useState(null);
+
+  useLayoutEffect(() => {
+    tabBarDisplayManager.hideTabBar(navigation);
+  }, []);
 
   const handleSubmit = ({
     name,

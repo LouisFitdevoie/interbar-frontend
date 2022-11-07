@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useLayoutEffect } from "react";
 import { View, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
@@ -16,12 +16,17 @@ import sellerPasswordValidator from "../../validators/sellerPassword.validator";
 import LoadingIndicator from "../../components/LoadingIndicator";
 import { AuthContext } from "../../auth/AuthContext";
 import userEventAPI from "../../api/userEvent.api";
+import tabBarDisplayManager from "../../config/tabBarDisplayManager";
 
 function JoinEventDetailsScreen(props) {
   const { navigation } = props;
   const { event } = props.route.params;
   const { isLoading, setIsLoading, userAccessToken, user } =
     useContext(AuthContext);
+
+  useLayoutEffect(() => {
+    tabBarDisplayManager.hideTabBar(navigation);
+  }, []);
 
   const eventDetails = {
     name: event.name,
