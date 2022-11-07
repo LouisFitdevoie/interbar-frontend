@@ -68,7 +68,34 @@ function CreatePriceListScreen(props) {
               renderRightActions={() => (
                 <TarifItemDeleteAction
                   onPress={() => {
-                    console.log(item.events_products_id);
+                    Alert.alert(
+                      "Suppression",
+                      "Voulez-vous vraiment supprimer ce produit du tarif de cet évènement ?",
+                      [
+                        {
+                          text: "Annuler",
+                          style: "cancel",
+                        },
+                        {
+                          text: "Supprimer",
+                          onPress: () => {
+                            setIsLoading(true);
+                            eventProductAPI
+                              .deleteEventProduct(
+                                item.events_products_id,
+                                userAccessToken
+                              )
+                              .then((res) => {
+                                getAllEventProducts(eventId);
+                              })
+                              .catch((err) => {
+                                console.log(err);
+                                setIsLoading(false);
+                              });
+                          },
+                        },
+                      ]
+                    );
                   }}
                 />
               )}

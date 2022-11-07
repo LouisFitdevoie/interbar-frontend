@@ -56,3 +56,13 @@ exports.editEventProduct = (
     },
   });
 };
+
+exports.deleteEventProduct = (eventProductId, accessToken) => {
+  return axios({
+    method: "put",
+    url: `${BASE_URL}/delete-event-product/${eventProductId}`,
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};
