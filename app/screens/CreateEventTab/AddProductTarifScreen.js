@@ -26,12 +26,14 @@ function AddProductTarifScreen(props) {
   const [sortOptionSelected, setSortOptionSelected] =
     useState("Tous les produits");
   const [isSortOptionsVisible, setIsSortOptionsVisible] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const getExistingProducts = () => {
     setIsLoading(true);
     productsAPI.getAllProducts(userAccessToken).then((res) => {
       setExistingProducts(res.data);
       setDisplayedProducts(res.data);
+      setSortOptionSelected("Tous les produits");
       setIsLoading(false);
     });
   };
@@ -135,6 +137,8 @@ function AddProductTarifScreen(props) {
       <FlatList
         data={displayedProducts}
         keyExtractor={(item) => item.id.toString()}
+        refreshing={refreshing}
+        onRefresh={() => getExistingProducts()}
         renderItem={({ item }) => (
           <TouchableOpacity
             onPress={() =>

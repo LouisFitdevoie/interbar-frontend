@@ -22,6 +22,7 @@ function CreatePriceListScreen(props) {
   const [eventProducts, setEventProducts] = useState([]);
   const { navigation } = props;
   const [deleteError, setDeleteError] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   const getAllEventProducts = (eventId) => {
     setIsLoading(true);
@@ -48,6 +49,8 @@ function CreatePriceListScreen(props) {
           data={eventProducts}
           keyExtractor={(item) => item.events_products_id.toString()}
           ItemSeparatorComponent={() => <ListSeparator />}
+          refreshing={refreshing}
+          onRefresh={() => getAllEventProducts(eventId)}
           renderItem={({ item }) => (
             <TarifItem
               name={item.name}
