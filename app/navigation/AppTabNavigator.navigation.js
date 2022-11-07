@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -15,7 +15,16 @@ const Tab = createBottomTabNavigator();
 function AppTabNavigator(props) {
   const insets = useSafeAreaInsets();
 
-  const { isLoading } = useContext(AuthContext);
+  const { isLoading, updateAccessToken } = useContext(AuthContext);
+
+  const timeToUpdateAccessToken = 10 * 60 * 1000; // 10 minutes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      updateAccessToken();
+    }, timeToUpdateAccessToken);
+
+    return () => clearInterval(interval);
+  });
 
   return (
     <Tab.Navigator
