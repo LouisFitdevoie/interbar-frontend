@@ -1,6 +1,7 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import Swipeable from "react-native-gesture-handler/Swipeable";
 
 import colors from "../../config/colors";
 import AppText from "../AppText";
@@ -12,29 +13,32 @@ function TarifItem({
   stock,
   productId,
   onPress,
+  renderRightActions,
 }) {
   return (
-    <TouchableOpacity style={styles.touchableContainer} onPress={onPress}>
-      <View style={styles.container}>
-        <View style={styles.dataContainer}>
-          <AppText style={styles.name}>{name}</AppText>
-          <View style={styles.priceStockContainer}>
-            <AppText style={styles.buyingPrice}>
-              Prix d'achat : {buyingPrice}€
-            </AppText>
-            <AppText style={styles.stock}>Stock : {stock}</AppText>
+    <Swipeable renderRightActions={renderRightActions}>
+      <TouchableOpacity style={styles.touchableContainer} onPress={onPress}>
+        <View style={styles.container}>
+          <View style={styles.dataContainer}>
+            <AppText style={styles.name}>{name}</AppText>
+            <View style={styles.priceStockContainer}>
+              <AppText style={styles.buyingPrice}>
+                Prix d'achat : {buyingPrice}€
+              </AppText>
+              <AppText style={styles.stock}>Stock : {stock}</AppText>
+            </View>
+          </View>
+          <View style={styles.priceContainer}>
+            <AppText style={styles.sellingPrice}>{sellingPrice}€</AppText>
+            <MaterialCommunityIcons
+              name="pencil"
+              size={28}
+              color={colors.buttonPrimary}
+            />
           </View>
         </View>
-        <View style={styles.priceContainer}>
-          <AppText style={styles.sellingPrice}>{sellingPrice}€</AppText>
-          <MaterialCommunityIcons
-            name="pencil"
-            size={28}
-            color={colors.buttonPrimary}
-          />
-        </View>
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
+    </Swipeable>
   );
 }
 
@@ -42,7 +46,7 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     flexDirection: "row",
-    paddingLeft: 10,
+    paddingHorizontal: 10,
   },
   dataContainer: {
     flexDirection: "column",
@@ -77,6 +81,7 @@ const styles = StyleSheet.create({
   touchableContainer: {
     width: "100%",
     paddingVertical: 10,
+    backgroundColor: colors.white,
   },
 });
 
