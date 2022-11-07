@@ -24,7 +24,7 @@ function AppTabNavigator(props) {
     }, timeToUpdateAccessToken);
 
     return () => clearInterval(interval);
-  });
+  }, [updateAccessToken]);
 
   return (
     <Tab.Navigator
