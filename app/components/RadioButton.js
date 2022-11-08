@@ -5,9 +5,16 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AppText from "./AppText";
 import colors from "../config/colors";
 
-function RadioButton({ value, onPress, label, stateValue, ...otherProps }) {
+function RadioButton({
+  value,
+  onPress,
+  label,
+  stateValue,
+  style,
+  ...otherProps
+}) {
   return (
-    <View style={styles.container}>
+    <View style={style != null ? style : styles.container}>
       <TouchableOpacity
         onPress={onPress}
         style={styles.checkbox}
