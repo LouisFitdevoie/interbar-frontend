@@ -101,7 +101,7 @@ function AddProductTarifScreen(props) {
           >
             <MaterialCommunityIcons
               name="filter-variant"
-              size={24}
+              size={30}
               color={isSortOptionsVisible ? colors.white : colors.buttonPrimary}
             />
           </TouchableOpacity>
@@ -111,25 +111,57 @@ function AddProductTarifScreen(props) {
             <TouchableOpacity
               onPress={() => handleSortOptionChanged("Tous les produits")}
             >
-              <AppText style={styles.option}>Tous les produits</AppText>
+              <AppText
+                style={
+                  sortOptionSelected === "Tous les produits"
+                    ? styles.optionSelected
+                    : styles.option
+                }
+              >
+                Tous les produits
+              </AppText>
             </TouchableOpacity>
             <View style={styles.separator} />
             <TouchableOpacity
               onPress={() => handleSortOptionChanged("Nourriture", 0)}
             >
-              <AppText style={styles.option}>Nourriture</AppText>
+              <AppText
+                style={
+                  sortOptionSelected === "Nourriture"
+                    ? styles.optionSelected
+                    : styles.option
+                }
+              >
+                Nourriture
+              </AppText>
             </TouchableOpacity>
             <View style={styles.separator} />
             <TouchableOpacity
               onPress={() => handleSortOptionChanged("Boisson alcoolisée", 1)}
             >
-              <AppText style={styles.option}>Boisson alcoolisée</AppText>
+              <AppText
+                style={
+                  sortOptionSelected === "Boisson alcoolisée"
+                    ? styles.optionSelected
+                    : styles.option
+                }
+              >
+                Boisson alcoolisée
+              </AppText>
             </TouchableOpacity>
             <View style={styles.separator} />
             <TouchableOpacity
               onPress={() => handleSortOptionChanged("Soft", 2)}
             >
-              <AppText style={styles.option}>Soft</AppText>
+              <AppText
+                style={
+                  sortOptionSelected === "Soft"
+                    ? styles.optionSelected
+                    : styles.option
+                }
+              >
+                Soft
+              </AppText>
             </TouchableOpacity>
           </View>
         )}
@@ -217,9 +249,18 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   option: {
-    marginBottom: 5,
+    padding: 5,
     width: "100%",
     textAlign: "center",
+    color: colors.light,
+  },
+  optionSelected: {
+    padding: 5,
+    fontSize: 20,
+    width: "100%",
+    textAlign: "center",
+    color: colors.white,
+    fontWeight: "bold",
   },
   product: {
     fontSize: 16,
@@ -232,14 +273,15 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   separator: {
-    height: 3,
-    width: "75%",
+    height: 1,
+    width: "100%",
     backgroundColor: colors.light,
     alignSelf: "center",
   },
   sortButton: {
     padding: 5,
-    borderRadius: 20,
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
   },
   sortTitle: {
     alignItems: "center",
@@ -253,10 +295,14 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     width: "100%",
     flexDirection: "column",
+    alignItems: "flex-end",
   },
   sortOptions: {
-    marginTop: 10,
-    width: "100%",
+    backgroundColor: colors.buttonPrimary,
+    borderRadius: 20,
+    borderTopRightRadius: 0,
+    width: 250,
+    padding: 5,
   },
 });
 
