@@ -46,55 +46,63 @@ function HomeScreen(props) {
   return (
     <Screen style={styles.container}>
       <AppText style={styles.welcome}>Bienvenue {user.firstName} !</AppText>
-      <View style={styles.sortView}>
-        <View style={styles.sortTitle}>
-          <AppText style={{ fontSize: 22 }}>
-            {sortDateOptions[sortDateOptionSelected].name} (
-            {displayedItems.length})
-          </AppText>
-          <TouchableOpacity
-            style={[
-              styles.sortButton,
-              {
-                backgroundColor: isSortOptionsVisible
-                  ? colors.buttonPrimary
-                  : colors.white,
-              },
-            ]}
-            onPress={() => setIsSortOptionsVisible(!isSortOptionsVisible)}
-          >
-            <MaterialCommunityIcons
-              name="filter-variant"
-              size={24}
-              color={isSortOptionsVisible ? colors.white : colors.buttonPrimary}
-            />
-          </TouchableOpacity>
-        </View>
-        {isSortOptionsVisible && (
-          <View style={styles.sortOptions}>
-            {sortDateOptions.map((sortOption) => (
-              <View key={sortOption.option}>
-                <TouchableOpacity
-                  key={sortOption.option}
-                  onPress={() => handleSortDateOptionChanged(sortOption.option)}
-                >
-                  <AppText
-                    style={
-                      sortDateOptionSelected === sortOption.option
-                        ? styles.optionSelected
-                        : styles.option
-                    }
-                  >
-                    {sortOption.name}
-                  </AppText>
-                </TouchableOpacity>
-                {sortOption.option !== sortDateOptions.length - 1 && (
-                  <View style={styles.separator} />
-                )}
-              </View>
-            ))}
+      <View style={styles.sortMenuContainer}>
+        <View style={styles.sortView}>
+          <View style={styles.sortTitle}>
+            <AppText style={{ fontSize: 22 }}>
+              {sortDateOptions[sortDateOptionSelected].name} (
+              {displayedItems.length})
+            </AppText>
+            <TouchableOpacity
+              style={[
+                styles.sortButton,
+                {
+                  backgroundColor: isSortOptionsVisible
+                    ? colors.buttonPrimary
+                    : colors.white,
+                },
+              ]}
+              onPress={() => setIsSortOptionsVisible(!isSortOptionsVisible)}
+            >
+              <MaterialCommunityIcons
+                name="filter-variant"
+                size={30}
+                color={
+                  isSortOptionsVisible ? colors.white : colors.buttonPrimary
+                }
+              />
+            </TouchableOpacity>
           </View>
-        )}
+          <View style={styles.sortOptionsView}>
+            {isSortOptionsVisible && (
+              <View style={styles.sortOptions}>
+                {sortDateOptions.map((sortOption) => (
+                  <View key={sortOption.option}>
+                    <TouchableOpacity
+                      key={sortOption.option}
+                      onPress={() =>
+                        handleSortDateOptionChanged(sortOption.option)
+                      }
+                    >
+                      <AppText
+                        style={
+                          sortDateOptionSelected === sortOption.option
+                            ? styles.optionSelected
+                            : styles.option
+                        }
+                      >
+                        {sortOption.name}
+                      </AppText>
+                    </TouchableOpacity>
+                    {sortOption.option !== sortDateOptions.length - 1 && (
+                      <View style={styles.separator} />
+                    )}
+                  </View>
+                ))}
+              </View>
+            )}
+          </View>
+        </View>
         <ScrollView horizontal>
           {sortRoleOptions.map((sortOption) => (
             <RadioButton
@@ -120,26 +128,38 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   option: {
-    marginBottom: 5,
+    padding: 5,
     width: "100%",
     textAlign: "center",
+    color: colors.light,
   },
   optionSelected: {
-    marginBottom: 5,
+    padding: 5,
+    fontSize: 20,
     width: "100%",
     textAlign: "center",
-    color: colors.buttonPrimary,
+    color: colors.white,
     fontWeight: "bold",
   },
   separator: {
-    height: 3,
-    width: "75%",
+    height: 1,
+    width: "100%",
     backgroundColor: colors.light,
     alignSelf: "center",
   },
   sortButton: {
     padding: 5,
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
+  },
+  sortMenuContainer: {
+    marginBottom: 20,
+  },
+  sortOptionsView: {
+    backgroundColor: colors.buttonPrimary,
     borderRadius: 20,
+    borderTopRightRadius: 0,
+    width: 250,
   },
   sortTitle: {
     alignItems: "center",
@@ -150,13 +170,12 @@ const styles = StyleSheet.create({
   sortView: {
     marginTop: 10,
     paddingHorizontal: 10,
-    marginBottom: 20,
     width: "100%",
     flexDirection: "column",
+    alignItems: "flex-end",
   },
   sortOptions: {
-    marginTop: 10,
-    width: "100%",
+    padding: 5,
   },
   welcome: {
     marginLeft: 10,
