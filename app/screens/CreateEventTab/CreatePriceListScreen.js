@@ -142,7 +142,7 @@ function CreatePriceListScreen(props) {
                   onPress: () => {
                     navigation.reset({
                       index: 0,
-                      routes: [{ name: "Home" }],
+                      routes: [{ name: "EventsNavigator" }],
                     });
                   },
                 },
