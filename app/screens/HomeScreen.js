@@ -25,9 +25,18 @@ function HomeScreen(props) {
   const getEventsJoined = () => {
     setIsLoading(true);
     userEventAPI.getAllEventsForUser(user.id, userAccessToken).then((res) => {
-      console.log(res.data);
       setEventsItems(res.data);
-      setDisplayedItems(res.data);
+      setDisplayedItems(
+        res.data.filter((event) => {
+          const today = new Date();
+          const eventStartDate = new Date(event.startdate);
+          const eventEndDate = new Date(event.enddate);
+          return (
+            eventStartDate >= today ||
+            (eventStartDate < today && eventEndDate >= today)
+          );
+        })
+      );
       setSortDateOptionSelected(0);
       setSortRoleOptionsSelected(0);
       setIsLoading(false);
@@ -35,8 +44,8 @@ function HomeScreen(props) {
   };
 
   const sortDateOptions = [
-    { name: "Tous les évènements", option: 0 },
-    { name: "Évènements à venir", option: 1 },
+    { name: "Tous les évènements", option: 1 },
+    { name: "Évènements à venir", option: 0 },
     { name: "Évènements terminés", option: 2 },
     { name: "Évènements en cours", option: 3 },
   ];
@@ -48,8 +57,42 @@ function HomeScreen(props) {
   ];
 
   const handleSortDateOptionChanged = (option) => {
+    setIsLoading(true);
     setSortDateOptionSelected(option);
     setIsSortOptionsVisible(false);
+    if (option === 0) {
+      setDisplayedItems(
+        eventsItems.filter((event) => {
+          const today = new Date();
+          const eventStartDate = new Date(event.startdate);
+          const eventEndDate = new Date(event.enddate);
+          return (
+            eventStartDate >= today ||
+            (eventStartDate < today && eventEndDate >= today)
+          );
+        })
+      );
+    } else if (option === 1) {
+      setDisplayedItems(eventsItems);
+    } else if (option === 2) {
+      setDisplayedItems(
+        eventsItems.filter((event) => {
+          const today = new Date();
+          const eventEndDate = new Date(event.enddate);
+          return eventEndDate < today;
+        })
+      );
+    } else if (option === 3) {
+      setDisplayedItems(
+        eventsItems.filter((event) => {
+          const today = new Date();
+          const eventStartDate = new Date(event.startdate);
+          const eventEndDate = new Date(event.enddate);
+          return eventStartDate < today && eventEndDate >= today;
+        })
+      );
+    }
+    setIsLoading(false);
   };
 
   const handleSortRoleOptionChanged = (option) => {
@@ -70,8 +113,15 @@ function HomeScreen(props) {
         <View style={styles.sortView}>
           <View style={styles.sortTitle}>
             <AppText style={{ fontSize: 22 }}>
-              {sortDateOptions[sortDateOptionSelected].name} (
-              {displayedItems.length})
+              {
+                //display the name of the sortDateOptions where sortDateOptionSelected is equal to the option
+              }
+              {
+                sortDateOptions.find(
+                  (option) => option.option === sortDateOptionSelected
+                ).name
+              }{" "}
+              ({displayedItems.length})
             </AppText>
             <TouchableOpacity
               style={[
