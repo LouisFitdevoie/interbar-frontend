@@ -52,3 +52,13 @@ exports.sellerJoinEvent = (
     },
   });
 };
+
+exports.getAllEventsForUser = (userId, accessToken) => {
+  return axios({
+    methode: "get",
+    url: `${BASE_URL}/users-events/${userId}`,
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};

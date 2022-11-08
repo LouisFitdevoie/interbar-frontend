@@ -1,24 +1,38 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { View, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useIsFocused } from "@react-navigation/native";
 
 import Screen from "../components/Screen";
 import { AuthContext } from "../auth/AuthContext";
 import colors from "../config/colors";
 import AppText from "../components/AppText";
 import RadioButton from "../components/RadioButton";
+import userEventAPI from "../api/userEvent.api";
+import LoadingIndicator from "../components/LoadingIndicator";
 
 function HomeScreen(props) {
-  const { user } = useContext(AuthContext);
+  const isFocused = useIsFocused();
+  const { user, setIsLoading, isLoading, userAccessToken } =
+    useContext(AuthContext);
   const [sortDateOptionSelected, setSortDateOptionSelected] = useState(0);
   const [sortRoleOptionsSelected, setSortRoleOptionsSelected] = useState(0);
   const [isSortOptionsVisible, setIsSortOptionsVisible] = useState(false);
-  const existingItems = [
-    { name: "test" },
-    { name: "test2" },
-    { name: "test3" },
-  ];
-  const [displayedItems, setDisplayedItems] = useState(existingItems);
+
+  const [eventsItems, setEventsItems] = useState([]);
+  const [displayedItems, setDisplayedItems] = useState(eventsItems);
+
+  const getEventsJoined = () => {
+    setIsLoading(true);
+    userEventAPI.getAllEventsForUser(user.id, userAccessToken).then((res) => {
+      console.log(res.data);
+      setEventsItems(res.data);
+      setDisplayedItems(res.data);
+      setSortDateOptionSelected(0);
+      setSortRoleOptionsSelected(0);
+      setIsLoading(false);
+    });
+  };
 
   const sortDateOptions = [
     { name: "Tous les évènements", option: 0 },
@@ -39,9 +53,15 @@ function HomeScreen(props) {
   };
 
   const handleSortRoleOptionChanged = (option) => {
-    setSortDateOptionSelected(option);
+    setSortRoleOptionsSelected(option);
     setIsSortOptionsVisible(false);
   };
+
+  useEffect(() => {
+    isFocused && getEventsJoined();
+    setSortDateOptionSelected(0);
+    setSortRoleOptionsSelected(0);
+  }, [isFocused]);
 
   return (
     <Screen style={styles.container}>
@@ -116,6 +136,7 @@ function HomeScreen(props) {
           ))}
         </ScrollView>
       </View>
+      {isLoading && <LoadingIndicator />}
     </Screen>
   );
 }
