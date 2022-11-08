@@ -56,43 +56,77 @@ function HomeScreen(props) {
     { name: "Participant", option: 3 },
   ];
 
-  const handleSortDateOptionChanged = (option) => {
+  const handleSort = () => {
     setIsLoading(true);
+    const itemsToDisplay = eventsItems.filter((event) => {
+      if (sortDateOptionSelected === 0) {
+        const today = new Date();
+        const eventStartDate = new Date(event.startdate);
+        const eventEndDate = new Date(event.enddate);
+        const isNextOrCurrent =
+          eventStartDate >= today ||
+          (eventStartDate < today && eventEndDate >= today);
+        if (sortRoleOptionsSelected === 0) {
+          return true && isNextOrCurrent;
+        } else if (sortRoleOptionsSelected === 1) {
+          return event.role === 2 && isNextOrCurrent;
+        } else if (sortRoleOptionsSelected === 2) {
+          return event.role === 1 && isNextOrCurrent;
+        } else if (sortRoleOptionsSelected === 3) {
+          return event.role === 0 && isNextOrCurrent;
+        }
+      } else if (sortDateOptionSelected === 1) {
+        if (sortRoleOptionsSelected === 0) {
+          return true;
+        } else if (sortRoleOptionsSelected === 1) {
+          return event.role === 2;
+        } else if (sortRoleOptionsSelected === 2) {
+          return event.role === 1;
+        } else if (sortRoleOptionsSelected === 3) {
+          return event.role === 0;
+        }
+      } else if (sortDateOptionSelected === 2) {
+        const today = new Date();
+        const eventEndDate = new Date(event.enddate);
+        const isPast = eventEndDate < today;
+        if (sortRoleOptionsSelected === 0) {
+          return true && isPast;
+        } else if (sortRoleOptionsSelected === 1) {
+          return event.role === 2 && isPast;
+        } else if (sortRoleOptionsSelected === 2) {
+          return event.role === 1 && isPast;
+        } else if (sortRoleOptionsSelected === 3) {
+          return event.role === 0 && isPast;
+        }
+      } else if (sortDateOptionSelected === 3) {
+        const today = new Date();
+        const eventStartDate = new Date(event.startdate);
+        const eventEndDate = new Date(event.enddate);
+        const isCurrent = eventStartDate < today && eventEndDate >= today;
+        if (sortRoleOptionsSelected === 0) {
+          return true && isCurrent;
+        } else if (sortRoleOptionsSelected === 1) {
+          return event.role === 2 && isCurrent;
+        } else if (sortRoleOptionsSelected === 2) {
+          return event.role === 1 && isCurrent;
+        } else if (sortRoleOptionsSelected === 3) {
+          return event.role === 0 && isCurrent;
+        }
+      }
+    });
+    console.log(itemsToDisplay.length);
+    console.log(`\n\n\nDone\n\n\n`);
+    setDisplayedItems(itemsToDisplay);
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    handleSort();
+  }, [sortDateOptionSelected, sortRoleOptionsSelected]);
+
+  const handleSortDateOptionChanged = (option) => {
     setSortDateOptionSelected(option);
     setIsSortOptionsVisible(false);
-    if (option === 0) {
-      setDisplayedItems(
-        eventsItems.filter((event) => {
-          const today = new Date();
-          const eventStartDate = new Date(event.startdate);
-          const eventEndDate = new Date(event.enddate);
-          return (
-            eventStartDate >= today ||
-            (eventStartDate < today && eventEndDate >= today)
-          );
-        })
-      );
-    } else if (option === 1) {
-      setDisplayedItems(eventsItems);
-    } else if (option === 2) {
-      setDisplayedItems(
-        eventsItems.filter((event) => {
-          const today = new Date();
-          const eventEndDate = new Date(event.enddate);
-          return eventEndDate < today;
-        })
-      );
-    } else if (option === 3) {
-      setDisplayedItems(
-        eventsItems.filter((event) => {
-          const today = new Date();
-          const eventStartDate = new Date(event.startdate);
-          const eventEndDate = new Date(event.enddate);
-          return eventStartDate < today && eventEndDate >= today;
-        })
-      );
-    }
-    setIsLoading(false);
   };
 
   const handleSortRoleOptionChanged = (option) => {
@@ -113,9 +147,6 @@ function HomeScreen(props) {
         <View style={styles.sortView}>
           <View style={styles.sortTitle}>
             <AppText style={{ fontSize: 22 }}>
-              {
-                //display the name of the sortDateOptions where sortDateOptionSelected is equal to the option
-              }
               {
                 sortDateOptions.find(
                   (option) => option.option === sortDateOptionSelected
