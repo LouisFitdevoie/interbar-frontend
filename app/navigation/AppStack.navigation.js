@@ -1,8 +1,8 @@
 import React from "react";
+import { createStackNavigator } from "@react-navigation/stack";
 
 import colors from "../config/colors";
 import DataUsageScreen from "../screens/DataUsageScreen";
-import { createStackNavigator } from "@react-navigation/stack";
 import AppTabNavigator from "./AppTabNavigator.navigation";
 import EditPersonalDataScreen from "../screens/SettingsTab/EditPersonalDataScreen";
 import EditPasswordScreen from "../screens/SettingsTab/EditPasswordScreen";

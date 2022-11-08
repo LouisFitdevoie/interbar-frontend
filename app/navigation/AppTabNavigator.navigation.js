@@ -9,6 +9,7 @@ import { AuthContext } from "../auth/AuthContext";
 import SettingsNavigator from "./SettingsNavigator.navigation.js";
 import CreateEventStack from "./CreateEventStack.navigation";
 import JoinEventStack from "./JoinEventStack.navigation";
+import EventsStack from "./EventsStack.navigation";
 
 const Tab = createBottomTabNavigator();
 
@@ -46,8 +47,8 @@ function AppTabNavigator(props) {
       }}
     >
       <Tab.Screen
-        name="Events"
-        component={LogoutTestScreen}
+        name="EventsNavigator"
+        component={EventsStack}
         options={{
           headerShown: false,
           tabBarIcon: ({ color }) => (
@@ -66,7 +67,7 @@ function AppTabNavigator(props) {
         }}
       />
       <Tab.Screen
-        name="Join"
+        name="JoinNavigator"
         component={JoinEventStack}
         options={{
           headerShown: false,

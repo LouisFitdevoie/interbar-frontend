@@ -61,7 +61,7 @@ function JoinEventDetailsScreen(props) {
           setIsLoading(false);
           if (res.data.success != null) {
             navigation.goBack();
-            navigation.navigate("Events");
+            navigation.navigate("Home");
             Alert.alert(
               "Succès",
               "Vous avez rejoint l'évènement en tant que vendeur"
@@ -95,7 +95,7 @@ function JoinEventDetailsScreen(props) {
           setIsLoading(false);
           if (res.data.success != null) {
             navigation.goBack();
-            navigation.navigate("Events");
+            navigation.navigate("Home");
             Alert.alert("Succès", "Vous avez rejoint l'évènement");
           }
         })
