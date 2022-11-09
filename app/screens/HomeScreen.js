@@ -1,5 +1,11 @@
 import React, { useContext, useState, useEffect } from "react";
-import { View, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  FlatList,
+} from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
 
@@ -10,6 +16,7 @@ import AppText from "../components/AppText";
 import RadioButton from "../components/RadioButton";
 import userEventAPI from "../api/userEvent.api";
 import LoadingIndicator from "../components/LoadingIndicator";
+import EventItem from "../components/lists/EventItem";
 
 function HomeScreen(props) {
   const isFocused = useIsFocused();
@@ -26,6 +33,7 @@ function HomeScreen(props) {
     setIsLoading(true);
     userEventAPI.getAllEventsForUser(user.id, userAccessToken).then((res) => {
       setEventsItems(res.data);
+      console.log(res.data[0]);
       setDisplayedItems(
         res.data.filter((event) => {
           const today = new Date();
@@ -114,8 +122,6 @@ function HomeScreen(props) {
         }
       }
     });
-    console.log(itemsToDisplay.length);
-    console.log(`\n\n\nDone\n\n\n`);
     setDisplayedItems(itemsToDisplay);
     setIsLoading(false);
   };
@@ -217,6 +223,26 @@ function HomeScreen(props) {
           ))}
         </ScrollView>
       </View>
+      <View style={styles.eventsContainer}>
+        <FlatList
+          data={displayedItems}
+          keyExtractor={(event) => event.id.toString()}
+          style={styles.eventList}
+          renderItem={({ item }) => (
+            <EventItem
+              eventName={item.name}
+              eventStartDate={
+                new Date(item.startdate) >= new Date() ? item.startdate : null
+              }
+              eventEndDate={
+                new Date(item.enddate) < new Date() ? item.enddate : null
+              }
+              eventRole={item.role}
+              onPress={() => console.log(item.id)}
+            />
+          )}
+        />
+      </View>
       {isLoading && <LoadingIndicator />}
     </Screen>
   );
@@ -227,7 +253,15 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     flex: 1,
     justifyContent: "flex-start",
-    padding: 10,
+    paddingVertical: 10,
+  },
+  eventsContainer: {
+    flex: 1,
+    width: "100%",
+  },
+  eventList: {
+    flex: 1,
+    width: "100%",
   },
   option: {
     padding: 5,
@@ -256,6 +290,7 @@ const styles = StyleSheet.create({
   },
   sortMenuContainer: {
     marginBottom: 20,
+    paddingHorizontal: 10,
   },
   sortOptionsView: {
     backgroundColor: colors.buttonPrimary,
@@ -271,7 +306,6 @@ const styles = StyleSheet.create({
   },
   sortView: {
     marginTop: 10,
-    paddingHorizontal: 10,
     width: "100%",
     flexDirection: "column",
     alignItems: "flex-end",
