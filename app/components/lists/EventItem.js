@@ -48,9 +48,11 @@ function EventItem({
             {endDate.split(" ")[1]}
           </AppText>
         )}
-        <AppText style={styles.organizer}>
-          Organisé par {eventOrganizer}
-        </AppText>
+        {eventRole != 2 && (
+          <AppText style={styles.organizer}>
+            Organisé par {eventOrganizer}
+          </AppText>
+        )}
         <AppText style={styles.role}>
           Vous{" "}
           {eventRole === 2

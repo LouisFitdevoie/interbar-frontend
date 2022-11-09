@@ -28,12 +28,12 @@ function HomeScreen(props) {
 
   const [eventsItems, setEventsItems] = useState([]);
   const [displayedItems, setDisplayedItems] = useState(eventsItems);
+  const [refreshing, setRefreshing] = useState(false);
 
   const getEventsJoined = () => {
     setIsLoading(true);
     userEventAPI.getAllEventsForUser(user.id, userAccessToken).then((res) => {
       setEventsItems(res.data);
-      console.log(res.data[0]);
       setDisplayedItems(
         res.data.filter((event) => {
           const today = new Date();
@@ -239,8 +239,13 @@ function HomeScreen(props) {
               }
               eventRole={item.role}
               onPress={() => console.log(item.id)}
+              eventOrganizer={item.role === 2 ? null : item.organizer}
             />
           )}
+          refreshing={refreshing}
+          onRefresh={() => {
+            getEventsJoined();
+          }}
         />
       </View>
       {isLoading && <LoadingIndicator />}
@@ -253,7 +258,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     flex: 1,
     justifyContent: "flex-start",
-    paddingVertical: 10,
+    paddingTop: 10,
   },
   eventsContainer: {
     flex: 1,
@@ -289,7 +294,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 15,
   },
   sortMenuContainer: {
-    marginBottom: 20,
+    marginBottom: 0,
     paddingHorizontal: 10,
   },
   sortOptionsView: {
