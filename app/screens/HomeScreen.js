@@ -23,6 +23,7 @@ function HomeScreen(props) {
   const isFocused = useIsFocused();
   const { user, setIsLoading, isLoading, userAccessToken, updateAccessToken } =
     useContext(AuthContext);
+  const { navigation } = props;
   const [sortDateOptionSelected, setSortDateOptionSelected] = useState(0);
   const [sortRoleOptionsSelected, setSortRoleOptionsSelected] = useState(0);
   const [isSortOptionsVisible, setIsSortOptionsVisible] = useState(false);
@@ -253,7 +254,9 @@ function HomeScreen(props) {
                   new Date(item.enddate) < new Date() ? item.enddate : null
                 }
                 eventRole={item.role}
-                onPress={() => console.log(item.id)}
+                onPress={() =>
+                  navigation.navigate("EventDefault", { event: item })
+                }
                 eventOrganizer={item.role === 2 ? null : item.organizer}
               />
             )}

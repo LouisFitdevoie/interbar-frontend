@@ -3,7 +3,6 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import LogoutTestScreen from "../screens/LogoutTestScreen";
 import colors from "../config/colors";
 import { AuthContext } from "../auth/AuthContext";
 import SettingsNavigator from "./SettingsNavigator.navigation.js";
