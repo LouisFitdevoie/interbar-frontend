@@ -14,7 +14,8 @@ import AppFormFieldNumber from "../../components/forms/AppFormFieldNumber";
 import eventProductAPI from "../../api/eventProduct.api";
 
 function EditEventProductScreen(props) {
-  const { isLoading, setIsLoading, userAccessToken } = useContext(AuthContext);
+  const { isLoading, setIsLoading, userAccessToken, updateAccessToken } =
+    useContext(AuthContext);
   const { navigation } = props;
 
   const [editEventProductError, setEditEventProductError] = useState(null);
@@ -71,6 +72,11 @@ function EditEventProductScreen(props) {
           ) {
             setEditEventProductError(
               "Vous ne pouvez pas modifier ce produit car l'évènement est en cours ou est terminé"
+            );
+          } else if (err.response.status === 403) {
+            updateAccessToken();
+            setEditEventProductError(
+              "Erreur lors de la modification, veuillez réessayer"
             );
           } else {
             setEditEventProductError(errMessage);

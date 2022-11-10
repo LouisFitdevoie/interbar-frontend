@@ -17,14 +17,16 @@ import RadioButton from "../components/RadioButton";
 import userEventAPI from "../api/userEvent.api";
 import LoadingIndicator from "../components/LoadingIndicator";
 import EventItem from "../components/lists/EventItem";
+import AppButton from "../components/AppButton";
 
 function HomeScreen(props) {
   const isFocused = useIsFocused();
-  const { user, setIsLoading, isLoading, userAccessToken } =
+  const { user, setIsLoading, isLoading, userAccessToken, updateAccessToken } =
     useContext(AuthContext);
   const [sortDateOptionSelected, setSortDateOptionSelected] = useState(0);
   const [sortRoleOptionsSelected, setSortRoleOptionsSelected] = useState(0);
   const [isSortOptionsVisible, setIsSortOptionsVisible] = useState(false);
+  const [errorMessage, setErrorMesssage] = useState(null);
 
   const [eventsItems, setEventsItems] = useState([]);
   const [displayedItems, setDisplayedItems] = useState(eventsItems);
@@ -32,23 +34,35 @@ function HomeScreen(props) {
 
   const getEventsJoined = () => {
     setIsLoading(true);
-    userEventAPI.getAllEventsForUser(user.id, userAccessToken).then((res) => {
-      setEventsItems(res.data);
-      setDisplayedItems(
-        res.data.filter((event) => {
-          const today = new Date();
-          const eventStartDate = new Date(event.startdate);
-          const eventEndDate = new Date(event.enddate);
-          return (
-            eventStartDate >= today ||
-            (eventStartDate < today && eventEndDate >= today)
+    setErrorMesssage(null);
+    userEventAPI
+      .getAllEventsForUser(user.id, userAccessToken)
+      .then((res) => {
+        setEventsItems(res.data);
+        setDisplayedItems(
+          res.data.filter((event) => {
+            const today = new Date();
+            const eventStartDate = new Date(event.startdate);
+            const eventEndDate = new Date(event.enddate);
+            return (
+              eventStartDate >= today ||
+              (eventStartDate < today && eventEndDate >= today)
+            );
+          })
+        );
+        setSortDateOptionSelected(0);
+        setSortRoleOptionsSelected(0);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        if (err.response.status === 403) {
+          updateAccessToken();
+          setErrorMesssage(
+            "Impossible de récupérer les événements, veuillez réessayer"
           );
-        })
-      );
-      setSortDateOptionSelected(0);
-      setSortRoleOptionsSelected(0);
-      setIsLoading(false);
-    });
+        }
+      });
   };
 
   const sortDateOptions = [
@@ -224,29 +238,37 @@ function HomeScreen(props) {
         </ScrollView>
       </View>
       <View style={styles.eventsContainer}>
-        <FlatList
-          data={displayedItems}
-          keyExtractor={(event) => event.id.toString()}
-          style={styles.eventList}
-          renderItem={({ item }) => (
-            <EventItem
-              eventName={item.name}
-              eventStartDate={
-                new Date(item.startdate) >= new Date() ? item.startdate : null
-              }
-              eventEndDate={
-                new Date(item.enddate) < new Date() ? item.enddate : null
-              }
-              eventRole={item.role}
-              onPress={() => console.log(item.id)}
-              eventOrganizer={item.role === 2 ? null : item.organizer}
-            />
-          )}
-          refreshing={refreshing}
-          onRefresh={() => {
-            getEventsJoined();
-          }}
-        />
+        {errorMessage === null && (
+          <FlatList
+            data={displayedItems}
+            keyExtractor={(event) => event.id.toString()}
+            style={styles.eventList}
+            renderItem={({ item }) => (
+              <EventItem
+                eventName={item.name}
+                eventStartDate={
+                  new Date(item.startdate) >= new Date() ? item.startdate : null
+                }
+                eventEndDate={
+                  new Date(item.enddate) < new Date() ? item.enddate : null
+                }
+                eventRole={item.role}
+                onPress={() => console.log(item.id)}
+                eventOrganizer={item.role === 2 ? null : item.organizer}
+              />
+            )}
+            refreshing={refreshing}
+            onRefresh={() => {
+              getEventsJoined();
+            }}
+          />
+        )}
+        {errorMessage != null && (
+          <View style={styles.errorMessage}>
+            <AppText style={styles.errorMessage}>{errorMessage}</AppText>
+            <AppButton title="Réessayer" onPress={() => getEventsJoined()} />
+          </View>
+        )}
       </View>
       {isLoading && <LoadingIndicator />}
     </Screen>
@@ -259,6 +281,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-start",
     paddingTop: 10,
+  },
+  errorMessage: {
+    padding: 10,
+    alignItems: "center",
   },
   eventsContainer: {
     flex: 1,

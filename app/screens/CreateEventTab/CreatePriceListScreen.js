@@ -16,16 +16,20 @@ import ErrorMessage from "../../components/forms/ErrorMessage";
 
 function CreatePriceListScreen(props) {
   const isFocused = useIsFocused();
-  const { isLoading, setIsLoading, userAccessToken } = useContext(AuthContext);
+  const { isLoading, setIsLoading, userAccessToken, updateAccessToken } =
+    useContext(AuthContext);
 
   const eventId = props.route.params.eventId;
   const [eventProducts, setEventProducts] = useState([]);
   const { navigation } = props;
   const [deleteError, setDeleteError] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [errorGettingEventProducts, setErrorGettingEventProducts] =
+    useState(null);
 
   const getAllEventProducts = (eventId) => {
     setIsLoading(true);
+    setErrorGettingEventProducts(null);
     eventProductAPI
       .getAllProductsAtEvent(eventId, userAccessToken)
       .then((res) => {
@@ -33,8 +37,13 @@ function CreatePriceListScreen(props) {
         setIsLoading(false);
       })
       .catch((err) => {
-        console.log(err);
         setIsLoading(false);
+        if (err.response.status === 403) {
+          updateAccessToken();
+          setErrorGettingEventProducts(
+            "Impossible de récupérer les produits ajoutés à l'évènement, veuillez réessayer"
+          );
+        }
       });
   };
 
@@ -44,7 +53,7 @@ function CreatePriceListScreen(props) {
 
   return (
     <Screen style={styles.container}>
-      {eventProducts.length > 0 && (
+      {eventProducts.length > 0 && errorGettingEventProducts === null && (
         <FlatList
           data={eventProducts}
           keyExtractor={(item) => item.events_products_id.toString()}
@@ -98,6 +107,9 @@ function CreatePriceListScreen(props) {
                                 setDeleteError(
                                   "Une erreur est survenue lors de la suppression du produit du tarif de cet évènement. Veuillez réessayer."
                                 );
+                                if (err.response.status === 403) {
+                                  updateAccessToken();
+                                }
                                 console.log(err);
                                 setIsLoading(false);
                               });
@@ -113,47 +125,57 @@ function CreatePriceListScreen(props) {
           style={styles.list}
         />
       )}
-      {eventProducts.length === 0 && (
+      {eventProducts.length === 0 && errorGettingEventProducts === null && (
         <View style={styles.noEventProducts}>
           <AppText style={{ textAlign: "center" }}>
             Aucun produit n'a encore été ajouté au tarif de l'évènement
           </AppText>
         </View>
       )}
-      <View style={styles.buttonContainer}>
-        <AppButton
-          title="Ajouter un produit"
-          onPress={() => navigation.navigate("AddProductTarif", { eventId })}
-          style={{ marginBottom: 5 }}
-        />
-        <AppButton
-          title="Valider le tarif"
-          onPress={() =>
-            Alert.alert(
-              "Voulez-vous vraiment valider le tarif ?",
-              "Vous pourrez toujours le modifier avant le début de l'évènement",
-              [
-                {
-                  text: "Annuler",
-                  style: "cancel",
-                },
-                {
-                  text: "Valider",
-                  onPress: () => {
-                    navigation.reset({
-                      index: 0,
-                      routes: [{ name: "EventsNavigator" }],
-                    });
+      {errorGettingEventProducts === null && (
+        <View style={styles.buttonContainer}>
+          <AppButton
+            title="Ajouter un produit"
+            onPress={() => navigation.navigate("AddProductTarif", { eventId })}
+            style={{ marginBottom: 5 }}
+          />
+          <AppButton
+            title="Valider le tarif"
+            onPress={() =>
+              Alert.alert(
+                "Voulez-vous vraiment valider le tarif ?",
+                "Vous pourrez toujours le modifier avant le début de l'évènement",
+                [
+                  {
+                    text: "Annuler",
+                    style: "cancel",
                   },
-                },
-              ]
-            )
-          }
-          style={{ marginTop: 5 }}
-        />
-        <ErrorMessage error={deleteError} visible={deleteError != null} />
-      </View>
-
+                  {
+                    text: "Valider",
+                    onPress: () => {
+                      navigation.reset({
+                        index: 0,
+                        routes: [{ name: "EventsNavigator" }],
+                      });
+                    },
+                  },
+                ]
+              )
+            }
+            style={{ marginTop: 5 }}
+          />
+          <ErrorMessage error={deleteError} visible={deleteError != null} />
+        </View>
+      )}
+      {errorGettingEventProducts !== null && (
+        <View style={styles.errorGettingEventProducts}>
+          <AppText>{errorGettingEventProducts}</AppText>
+          <AppButton
+            title="Réessayer"
+            onPress={() => getAllEventProducts(eventId)}
+          />
+        </View>
+      )}
       {isLoading && <LoadingIndicator />}
     </Screen>
   );
@@ -169,6 +191,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     flex: 1,
     justifyContent: "flex-start",
+    width: "100%",
+  },
+  errorGettingEventProducts: {
+    alignItems: "center",
+    padding: 10,
     width: "100%",
   },
   list: {

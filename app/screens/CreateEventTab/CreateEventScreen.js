@@ -19,7 +19,7 @@ import userEventAPI from "../../api/userEvent.api";
 import tabBarDisplayManager from "../../config/tabBarDisplayManager";
 
 function CreateEventScreen({ navigation }) {
-  const { isLoading, setIsLoading, userAccessToken, user } =
+  const { isLoading, setIsLoading, userAccessToken, user, updateAccessToken } =
     useContext(AuthContext);
   const [createEventError, setCreateEventError] = useState(null);
 
@@ -72,6 +72,11 @@ function CreateEventScreen({ navigation }) {
                 const errMessage = err.response.data.error;
                 if (err.response.status === 400) {
                   setCreateEventError("Une erreur est survenue");
+                } else if (err.response.status === 403) {
+                  updateAccessToken();
+                  setCreateEventError(
+                    "Erreur lors de la création de l'évènement, veuillez réessayer"
+                  );
                 } else {
                   setCreateEventError(errMessage);
                 }
@@ -91,6 +96,11 @@ function CreateEventScreen({ navigation }) {
               "Un évènement avec ce nom existe déjà pour les dates et l'adresse spécifiées !"
             );
             console.log(errMessage);
+          } else if (err.response.status === 403) {
+            updateAccessToken();
+            setCreateEventError(
+              "Erreur lors de la création de l'évènement, veuillez réessayer"
+            );
           } else {
             setCreateEventError("Une erreur est survenue");
             console.log(errMessage);

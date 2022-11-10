@@ -14,7 +14,8 @@ import AppFormFieldNumber from "../../components/forms/AppFormFieldNumber";
 import eventProductAPI from "../../api/eventProduct.api";
 
 function CreateEventProductScreen(props) {
-  const { isLoading, setIsLoading, userAccessToken } = useContext(AuthContext);
+  const { isLoading, setIsLoading, userAccessToken, updateAccessToken } =
+    useContext(AuthContext);
   const { navigation } = props;
 
   const [addProductToEventError, setAddProductToEventError] = useState(null);
@@ -59,6 +60,11 @@ function CreateEventProductScreen(props) {
               "Le produit a déjà été ajouté au tarif de l'évènement"
             );
             console.log(errMessage);
+          } else if (err.response.status === 403) {
+            updateAccessToken();
+            setAddProductToEventError(
+              "Erreur lors de l'ajout du produit à l'évènement, veuillez réessayer"
+            );
           } else {
             setAddProductToEventError("Une erreur inconnue est survenue");
             console.log(errMessage);

@@ -15,7 +15,8 @@ import ListSeparator from "../../components/lists/ListSeparator";
 
 function AddProductTarifScreen(props) {
   const isFocused = useIsFocused();
-  const { isLoading, setIsLoading, userAccessToken } = useContext(AuthContext);
+  const { isLoading, setIsLoading, userAccessToken, updateAccessToken } =
+    useContext(AuthContext);
   const eventId = props.route.params.eventId;
   const { navigation } = props;
 
@@ -27,15 +28,28 @@ function AddProductTarifScreen(props) {
     useState("Tous les produits");
   const [isSortOptionsVisible, setIsSortOptionsVisible] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [errorMessage, setErrorMesssage] = useState(null);
 
   const getExistingProducts = () => {
     setIsLoading(true);
-    productsAPI.getAllProducts(userAccessToken).then((res) => {
-      setExistingProducts(res.data);
-      setDisplayedProducts(res.data);
-      setSortOptionSelected("Tous les produits");
-      setIsLoading(false);
-    });
+    setErrorMesssage(null);
+    productsAPI
+      .getAllProducts(userAccessToken)
+      .then((res) => {
+        setExistingProducts(res.data);
+        setDisplayedProducts(res.data);
+        setSortOptionSelected("Tous les produits");
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        if (err.response.status === 403) {
+          updateAccessToken();
+          setErrorMesssage(
+            "Impossible de récupérer les produits, veuillez réessayer"
+          );
+        }
+      });
   };
 
   const handleTextChanged = (value) => {
@@ -166,55 +180,69 @@ function AddProductTarifScreen(props) {
           </View>
         )}
       </View>
-      <FlatList
-        data={displayedProducts}
-        keyExtractor={(item) => item.id.toString()}
-        refreshing={refreshing}
-        onRefresh={() => getExistingProducts()}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate("CreateEventProduct", {
-                eventId: eventId,
-                productId: item.id,
-                productName: item.name,
-                productCategory: item.category,
-                productDescription: item.description,
-              })
-            }
-          >
-            <View style={styles.productView}>
-              <AppText style={styles.product}>
-                {item.name.charAt(0).toUpperCase() + item.name.slice(1)}
-              </AppText>
-              <View style={styles.addButton}>
-                <AppText style={{ color: colors.buttonPrimary }}>
-                  Ajouter
+      {errorMessage === null && (
+        <FlatList
+          data={displayedProducts}
+          keyExtractor={(item) => item.id.toString()}
+          refreshing={refreshing}
+          onRefresh={() => getExistingProducts()}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("CreateEventProduct", {
+                  eventId: eventId,
+                  productId: item.id,
+                  productName: item.name,
+                  productCategory: item.category,
+                  productDescription: item.description,
+                })
+              }
+            >
+              <View style={styles.productView}>
+                <AppText style={styles.product}>
+                  {item.name.charAt(0).toUpperCase() + item.name.slice(1)}
                 </AppText>
-                <MaterialCommunityIcons
-                  name="plus"
-                  size={24}
-                  color={colors.buttonPrimary}
-                />
+                <View style={styles.addButton}>
+                  <AppText style={{ color: colors.buttonPrimary }}>
+                    Ajouter
+                  </AppText>
+                  <MaterialCommunityIcons
+                    name="plus"
+                    size={24}
+                    color={colors.buttonPrimary}
+                  />
+                </View>
               </View>
-            </View>
-          </TouchableOpacity>
-        )}
-        ItemSeparatorComponent={() => <ListSeparator />}
-        style={styles.list}
-      />
-      {displayedProducts.length === 0 && (
-        <View style={styles.noProductView}>
-          <AppText style={styles.noProductText}>
-            Aucun produit ne correspond à votre recherche
-          </AppText>
+            </TouchableOpacity>
+          )}
+          ItemSeparatorComponent={() => <ListSeparator />}
+          style={styles.list}
+        />
+      )}
+      {errorMessage ===
+        "Impossible de récupérer les produits, veuillez réessayer" && (
+        <View style={styles.errorView}>
+          <AppText>{errorMessage}</AppText>
+          <AppButton title="Réessayer" onPress={() => getExistingProducts()} />
         </View>
       )}
-      <AppButton
-        title="Ajouter un produit"
-        onPress={() => navigation.navigate("CreateProduct", { eventId })}
-        style={{ marginBottom: 20 }}
-      />
+      {displayedProducts.length === 0 &&
+        errorMessage !=
+          "Impossible de récupérer les produits, veuillez réessayer" && (
+          <View style={styles.noProductView}>
+            <AppText style={styles.noProductText}>
+              Aucun produit ne correspond à votre recherche
+            </AppText>
+          </View>
+        )}
+      {errorMessage !=
+        "Impossible de récupérer les produits, veuillez réessayer" && (
+        <AppButton
+          title="Ajouter un produit"
+          onPress={() => navigation.navigate("CreateProduct", { eventId })}
+          style={{ marginBottom: 20 }}
+        />
+      )}
       {isLoading && <LoadingIndicator />}
     </Screen>
   );
@@ -231,6 +259,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-start",
     paddingHorizontal: 10,
+    width: "100%",
+  },
+  errorView: {
+    alignItems: "center",
     width: "100%",
   },
   list: {
