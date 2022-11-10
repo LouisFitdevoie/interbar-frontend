@@ -23,8 +23,14 @@ import LoadingIndicator from "../../components/LoadingIndicator";
 import userAPI from "../../api/user.api";
 
 function EditPersonalDataScreen({ navigation }) {
-  const { userAccessToken, user, isLoading, setIsLoading, logout } =
-    useContext(AuthContext);
+  const {
+    userAccessToken,
+    user,
+    isLoading,
+    setIsLoading,
+    logout,
+    updateAccessToken,
+  } = useContext(AuthContext);
   const [editingError, setEditingError] = useState(null);
 
   const handleSubmit = ({ firstName, lastName, birthDate }) => {
@@ -62,6 +68,11 @@ function EditPersonalDataScreen({ navigation }) {
                   setEditingError("Impossible de communiquer avec le serveur");
                 } else if (err.response.status === 404) {
                   setEditingError("Utilisateur non trouvé");
+                } else if (err.response.status === 403) {
+                  updateAccessToken();
+                  setEditingError(
+                    "Erreur lors de la modification de vos données personnelles, veuillez réessayer"
+                  );
                 } else {
                   setEditingError("Une erreur est survenue");
                 }

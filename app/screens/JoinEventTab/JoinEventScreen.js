@@ -22,7 +22,8 @@ import tabBarDisplayManager from "../../config/tabBarDisplayManager";
 
 function JoinEventScreen({ navigation }) {
   const isFocused = useIsFocused();
-  const { isLoading, setIsLoading, userAccessToken } = useContext(AuthContext);
+  const { isLoading, setIsLoading, userAccessToken, updateAccessToken } =
+    useContext(AuthContext);
   const [isCameraViewVisible, setIsCameraViewVisible] = useState(false);
   const [joinEventError, setJoinEventError] = useState(null);
 
@@ -45,11 +46,12 @@ function JoinEventScreen({ navigation }) {
     tabBarDisplayManager.displayTabBar(navigation, insets);
   }, []);
 
-  // Try joining this event 32f0e734-b07d-4e91-ba18-49ebc1683a8e
+  // Try joining this event e6d388cc-86a1-4d5d-bdcf-5f7cc3c5fd0d
 
   const joinEvent = (eventId) => {
     setIsLoading(true);
     setScanned(false);
+    setJoinEventError(null);
     eventAPI
       .getEventById(eventId, userAccessToken)
       .then((res) => {
@@ -69,7 +71,10 @@ function JoinEventScreen({ navigation }) {
       })
       .catch((err) => {
         setIsLoading(false);
-        console.log(err);
+        if (err.response.status === 403) {
+          updateAccessToken();
+          setJoinEventError("Une erreur est survenue, veuillez réessayer");
+        }
       });
   };
 

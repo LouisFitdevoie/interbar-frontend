@@ -164,7 +164,11 @@ function CreatePriceListScreen(props) {
             }
             style={{ marginTop: 5 }}
           />
-          <ErrorMessage error={deleteError} visible={deleteError != null} />
+          <ErrorMessage
+            error={deleteError}
+            visible={deleteError != null}
+            style={{ paddingHorizontal: 10, marginBottom: 20 }}
+          />
         </View>
       )}
       {errorGettingEventProducts !== null && (

@@ -21,7 +21,7 @@ import tabBarDisplayManager from "../../config/tabBarDisplayManager";
 function JoinEventDetailsScreen(props) {
   const { navigation } = props;
   const { event } = props.route.params;
-  const { isLoading, setIsLoading, userAccessToken, user } =
+  const { isLoading, setIsLoading, userAccessToken, user, updateAccessToken } =
     useContext(AuthContext);
 
   useLayoutEffect(() => {
@@ -54,6 +54,7 @@ function JoinEventDetailsScreen(props) {
 
   const handleJoinEvent = (sellerPassword) => {
     setIsLoading(true);
+    setJoinEventError(null);
     if (sellerPassword != "" && isSellerVisible) {
       userEventAPI
         .sellerJoinEvent(event.id, user.id, sellerPassword, userAccessToken)
@@ -81,6 +82,11 @@ function JoinEventDetailsScreen(props) {
               errMessage.includes("password")
             ) {
               setJoinEventError("Le mot de passe vendeur fourni est incorrect");
+            } else if (err.response.status === 403) {
+              updateAccessToken();
+              setJoinEventError(
+                "Erreur lors de la création de l'évènement, veuillez réessayer"
+              );
             } else {
               console.log(err.response.data.error);
               setJoinEventError("Une erreur est survenue");
@@ -107,6 +113,11 @@ function JoinEventDetailsScreen(props) {
             const errMessage = err.response.data.error;
             if (err.response.status === 400 && errMessage.includes("already")) {
               setJoinEventError("Vous participez déjà à cet événement");
+            } else if (err.response.status === 403) {
+              updateAccessToken();
+              setJoinEventError(
+                "Erreur lors de la création de l'évènement, veuillez réessayer"
+              );
             } else {
               console.log(err.response.data.error);
               setJoinEventError("Une erreur est survenue");

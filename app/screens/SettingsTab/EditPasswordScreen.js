@@ -15,8 +15,14 @@ import LoadingIndicator from "../../components/LoadingIndicator";
 import userAPI from "../../api/user.api";
 
 function EditPasswordScreen(props) {
-  const { userAccessToken, user, isLoading, setIsLoading, logout } =
-    useContext(AuthContext);
+  const {
+    userAccessToken,
+    user,
+    isLoading,
+    setIsLoading,
+    logout,
+    updateAccessToken,
+  } = useContext(AuthContext);
   const [passwordEditingError, setPasswordEditingError] = useState(null);
 
   const handleSubmit = ({
@@ -63,6 +69,11 @@ function EditPasswordScreen(props) {
                   );
                 } else if (err.response.status === 404) {
                   setPasswordEditingError("Utilisateur non trouvé");
+                } else if (err.response.status === 403) {
+                  updateAccessToken();
+                  setPasswordEditingError(
+                    "Erreur lors de la modification de votre mot de passe, veuillez réessayer"
+                  );
                 } else {
                   setPasswordEditingError("Une erreur est survenue");
                 }
