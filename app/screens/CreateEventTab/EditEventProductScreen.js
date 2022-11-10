@@ -57,7 +57,7 @@ function EditEventProductScreen(props) {
           console.log(err);
         } else {
           const errMessage = err.response.data.error;
-          if (err.response.status === 400) {
+          if (err.response.status === 400 && errMessage.includes("edit")) {
             setEditEventProductError(
               "Aucune modification n'a été détectée pour ce produit"
             );
@@ -65,7 +65,10 @@ function EditEventProductScreen(props) {
             setEditEventProductError(
               "Le produit n'a pas encore été ajouté à l'évènement"
             );
-          } else if (err.response.status === 403) {
+          } else if (
+            err.response.status === 400 &&
+            errMessage.includes("currently")
+          ) {
             setEditEventProductError(
               "Vous ne pouvez pas modifier ce produit car l'évènement est en cours ou est terminé"
             );

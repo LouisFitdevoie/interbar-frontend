@@ -16,7 +16,8 @@ const Tab = createBottomTabNavigator();
 function AppTabNavigator(props) {
   const insets = useSafeAreaInsets();
 
-  const { isLoading, updateAccessToken } = useContext(AuthContext);
+  const { isLoading, updateAccessToken, userAccessToken } =
+    useContext(AuthContext);
 
   const timeToUpdateAccessToken = 10 * 60 * 1000; // 10 minutes
   useEffect(() => {
@@ -25,7 +26,7 @@ function AppTabNavigator(props) {
     }, timeToUpdateAccessToken);
 
     return () => clearInterval(interval);
-  }, [updateAccessToken]);
+  }, [userAccessToken]);
 
   return (
     <Tab.Navigator
