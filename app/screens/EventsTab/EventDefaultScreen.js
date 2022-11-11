@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { Alert } from "react-native";
+import UserCurrentEventScreen from "./UserCurrentEventScreen";
 
 import UserSellerBeforeEventScreen from "./UserSellerBeforeEventScreen";
 
@@ -77,7 +78,18 @@ function EventDefaultScreen(props) {
     }
   } else {
     if (role === 0) {
-      //Client pendant l'évènement
+      return (
+        <UserCurrentEventScreen
+          navigation={navigation}
+          organizer={eventToDisplay.organizer}
+          startDate={eventToDisplay.startDate}
+          endDate={eventToDisplay.endDate}
+          location={eventToDisplay.location}
+          description={eventToDisplay.description}
+          role={eventToDisplay.role}
+          eventId={eventToDisplay.eventId}
+        />
+      );
     } else if (role === 1) {
       //Vendeur pendant l'évènement
     } else if (role === 2) {
