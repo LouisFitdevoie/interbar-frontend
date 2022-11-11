@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Alert } from "react-native";
 
 import UserSellerBeforeEventScreen from "./UserSellerBeforeEventScreen";
@@ -6,7 +6,9 @@ import UserSellerBeforeEventScreen from "./UserSellerBeforeEventScreen";
 function EventDefaultScreen(props) {
   const { navigation } = props;
   const { event } = props.route.params;
-  navigation.setOptions({ headerTitle: event.name });
+  useEffect(() => {
+    navigation.setOptions({ title: event.name });
+  }, []);
 
   const today = new Date();
   const eventStartDate = new Date(event.startdate);

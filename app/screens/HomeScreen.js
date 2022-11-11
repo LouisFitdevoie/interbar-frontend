@@ -254,9 +254,9 @@ function HomeScreen(props) {
                   new Date(item.enddate) < new Date() ? item.enddate : null
                 }
                 eventRole={item.role}
-                onPress={() =>
-                  navigation.navigate("EventDefault", { event: item })
-                }
+                onPress={() => {
+                  navigation.navigate("EventDefault", { event: item });
+                }}
                 eventOrganizer={item.role === 2 ? null : item.organizer}
               />
             )}

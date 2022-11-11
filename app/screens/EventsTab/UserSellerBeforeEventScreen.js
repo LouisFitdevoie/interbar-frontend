@@ -1,10 +1,10 @@
 import React from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
-import AppButton from "../../components/AppButton";
-import AppText from "../../components/AppText";
+import { View, StyleSheet } from "react-native";
 
 import Screen from "../../components/Screen";
 import colors from "../../config/colors";
+import AppButton from "../../components/AppButton";
+import AppText from "../../components/AppText";
 
 function UserSellerBeforeEventScreen({
   navigation,
