@@ -1,5 +1,6 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
+import QRCode from "react-native-qrcode-svg";
 
 import Screen from "../../components/Screen";
 import colors from "../../config/colors";
@@ -18,51 +19,53 @@ function UserSellerBeforeEventScreen({
 }) {
   return (
     <Screen style={styles.container}>
-      <View>
+      <View style={styles.detailContainer}>
+        <AppText style={styles.title}>Organisé par :</AppText>
+        <AppText>{organizer}</AppText>
+      </View>
+      <View style={styles.detailContainer}>
+        <AppText style={styles.title}>Date de début :</AppText>
+        <AppText>
+          {startDate.toLocaleDateString("fr-BE", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
+        </AppText>
+      </View>
+      <View style={styles.detailContainer}>
+        <AppText style={styles.title}>Date de fin :</AppText>
+        <AppText>
+          {endDate.toLocaleDateString("fr-BE", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
+        </AppText>
+      </View>
+      <View style={styles.detailContainer}>
+        <AppText style={styles.title}>Lieu :</AppText>
+        <AppText>{location}</AppText>
+      </View>
+      {description != null && (
         <View style={styles.detailContainer}>
-          <AppText style={styles.title}>Organisé par :</AppText>
-          <AppText>{organizer}</AppText>
+          <AppText style={styles.title}>Description :</AppText>
+          <AppText>{description}</AppText>
         </View>
-        <View style={styles.detailContainer}>
-          <AppText style={styles.title}>Date de début :</AppText>
-          <AppText>
-            {startDate.toLocaleDateString("fr-BE", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-          </AppText>
-        </View>
-        <View style={styles.detailContainer}>
-          <AppText style={styles.title}>Date de fin :</AppText>
-          <AppText>
-            {endDate.toLocaleDateString("fr-BE", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-          </AppText>
-        </View>
-        <View style={styles.detailContainer}>
-          <AppText style={styles.title}>Lieu :</AppText>
-          <AppText>{location}</AppText>
-        </View>
-        {description != null && (
-          <View style={styles.detailContainer}>
-            <AppText style={styles.title}>Description :</AppText>
-            <AppText>{description}</AppText>
-          </View>
-        )}
-        <View style={styles.detailContainer}>
-          <AppText style={styles.title}>Rôle :</AppText>
-          <AppText>{role === 0 ? "Client" : "Vendeur"}</AppText>
+      )}
+      <View style={styles.detailContainer}>
+        <AppText style={styles.title}>Rôle :</AppText>
+        <AppText>{role === 0 ? "Client" : "Vendeur"}</AppText>
+      </View>
+      <View style={styles.qrCodeJoinEventContainer}>
+        <View style={styles.qrCode}>
+          <QRCode value={eventId.toString()} size={175} />
         </View>
       </View>
-      <View style={styles.qrCodeJoinEventContainer}></View>
       <View style={styles.buttonsContainer}>
         <AppButton
           title="Voir le tarif"
@@ -83,7 +86,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     aligntems: "center",
-    padding: 10,
+    paddingHorizontal: 5,
   },
   title: {
     fontWeight: "bold",
@@ -101,6 +104,8 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: colors.buttonPrimary,
     alignSelf: "center",
+    justifyContent: "center",
+    alignItems: "center",
     marginVertical: 10,
     borderRadius: 20,
   },
