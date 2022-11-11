@@ -1,15 +1,13 @@
 import React, { useEffect } from "react";
-import { Alert } from "react-native";
-import UserCurrentEventScreen from "./UserCurrentEventScreen";
+import { Alert, TouchableOpacity } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import UserSellerBeforeEventScreen from "./UserSellerBeforeEventScreen";
+import UserCurrentEventScreen from "./UserCurrentEventScreen";
 
 function EventDefaultScreen(props) {
   const { navigation } = props;
   const { event } = props.route.params;
-  useEffect(() => {
-    navigation.setOptions({ title: event.name });
-  }, []);
 
   const today = new Date();
   const eventStartDate = new Date(event.startdate);
@@ -28,7 +26,28 @@ function EventDefaultScreen(props) {
     createdAt: event.created_at,
   };
 
-  if (today < eventStartDate) {
+  useEffect(() => {
+    navigation.setOptions({ title: event.name });
+    if (
+      today > eventEndDate ||
+      (today >= eventStartDate && today < eventEndDate)
+    ) {
+      navigation.setOptions({
+        headerRight: () => (
+          <TouchableOpacity onPress={() => console.log(eventToDisplay.eventId)}>
+            <MaterialCommunityIcons
+              name="information-outline"
+              size={30}
+              color="white"
+              style={{ marginRight: 10 }}
+            />
+          </TouchableOpacity>
+        ),
+      });
+    }
+  }, []);
+
+  if (today <= eventStartDate) {
     if (role === 0) {
       return (
         <UserSellerBeforeEventScreen
