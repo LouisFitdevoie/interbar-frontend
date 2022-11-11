@@ -34,7 +34,21 @@ function EventDefaultScreen(props) {
     ) {
       navigation.setOptions({
         headerRight: () => (
-          <TouchableOpacity onPress={() => console.log(eventToDisplay.eventId)}>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate("EventDetails", {
+                organizer: eventToDisplay.organizer,
+                startDate: event.startdate,
+                endDate: event.enddate,
+                location: eventToDisplay.location,
+                description: eventToDisplay.description,
+                name: eventToDisplay.name,
+                eventId: eventToDisplay.eventId,
+                createdAt: eventToDisplay.createdAt,
+                role: eventToDisplay.role,
+              })
+            }
+          >
             <MaterialCommunityIcons
               name="information-outline"
               size={30}
