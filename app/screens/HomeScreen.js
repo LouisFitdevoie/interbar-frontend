@@ -239,7 +239,15 @@ function HomeScreen(props) {
         </ScrollView>
       </View>
       <View style={styles.eventsContainer}>
-        {errorMessage === null && (
+        {displayedItems.length === 0 && (
+          <View style={styles.noEvent}>
+            <AppText style={{ textAlign: "center" }}>
+              Aucun évènement ne correspond aux critères sélectionnés
+            </AppText>
+            <AppButton title="Actualiser" onPress={getEventsJoined} />
+          </View>
+        )}
+        {errorMessage === null && displayedItems != 0 && (
           <FlatList
             data={displayedItems}
             keyExtractor={(event) => event.id.toString()}
@@ -292,6 +300,9 @@ const styles = StyleSheet.create({
   eventList: {
     flex: 1,
     width: "100%",
+  },
+  noEvent: {
+    paddingHorizontal: 20,
   },
   option: {
     padding: 5,

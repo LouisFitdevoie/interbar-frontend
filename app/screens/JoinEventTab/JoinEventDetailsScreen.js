@@ -79,6 +79,13 @@ function JoinEventDetailsScreen(props) {
               setJoinEventError("Vous participez déjà à cet événement");
             } else if (
               err.response.status === 400 &&
+              errMessage.includes("ended")
+            ) {
+              setJoinEventError(
+                "L'évènement est terminé, vous ne pouvez plus le rejoindre"
+              );
+            } else if (
+              err.response.status === 400 &&
               errMessage.includes("password")
             ) {
               setJoinEventError("Le mot de passe vendeur fourni est incorrect");
