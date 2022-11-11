@@ -247,12 +247,8 @@ function HomeScreen(props) {
             renderItem={({ item }) => (
               <EventItem
                 eventName={item.name}
-                eventStartDate={
-                  new Date(item.startdate) >= new Date() ? item.startdate : null
-                }
-                eventEndDate={
-                  new Date(item.enddate) < new Date() ? item.enddate : null
-                }
+                eventStartDate={item.startdate}
+                eventEndDate={item.enddate}
                 eventRole={item.role}
                 onPress={() => {
                   navigation.navigate("EventDefault", { event: item });

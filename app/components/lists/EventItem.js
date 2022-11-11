@@ -15,55 +15,102 @@ function EventItem({
   let startDate;
   let endDate;
   if (eventStartDate != null) {
-    startDate = new Date(eventStartDate).toLocaleString("fr-BE", {
+    startDate = new Date(eventStartDate).toLocaleDateString("fr-BE", {
       year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
+      month: "long",
+      day: "numeric",
       hour: "2-digit",
       minute: "2-digit",
     });
   }
   if (eventEndDate != null) {
-    endDate = new Date(eventEndDate).toLocaleString("fr-BE", {
+    endDate = new Date(eventEndDate).toLocaleDateString("fr-BE", {
       year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
+      month: "long",
+      day: "numeric",
       hour: "2-digit",
       minute: "2-digit",
     });
   }
-  return (
-    <View style={styles.container}>
-      <TouchableOpacity style={styles.subContainer} onPress={onPress}>
-        <AppText style={styles.eventName}>{eventName}</AppText>
-        {eventStartDate != null && (
+
+  if (eventStartDate != null && new Date(eventStartDate) > new Date()) {
+    return (
+      <View style={styles.container}>
+        <TouchableOpacity style={styles.subContainer} onPress={onPress}>
+          <AppText style={styles.eventName}>{eventName}</AppText>
           <AppText style={styles.eventStartDate}>
-            L'évènement débute le {startDate.split(" ")[0]} à{" "}
-            {startDate.split(" ")[1]}
+            L'évènement débute le {startDate}
           </AppText>
-        )}
-        {eventEndDate != null && (
+          {eventRole != 2 && (
+            <AppText style={styles.organizer}>
+              Organisé par {eventOrganizer}
+            </AppText>
+          )}
+          <AppText style={styles.role}>
+            Vous{" "}
+            {eventRole === 2
+              ? "êtes l'organisateur de cet évènement"
+              : eventRole === 1
+              ? "êtes vendeur pour cet évènement"
+              : "participez à cet évènement"}
+          </AppText>
+        </TouchableOpacity>
+      </View>
+    );
+  } else if (
+    eventStartDate != null &&
+    eventEndDate != null &&
+    new Date(eventStartDate) < new Date() &&
+    new Date() < new Date(eventEndDate)
+  ) {
+    return (
+      <View style={styles.container}>
+        <TouchableOpacity style={styles.subContainer} onPress={onPress}>
+          <AppText style={styles.eventName}>{eventName}</AppText>
+          <AppText style={styles.eventStartDate}>
+            L'évènement a commencé le {startDate} et se terminera le {endDate}
+          </AppText>
+          {eventRole != 2 && (
+            <AppText style={styles.organizer}>
+              Organisé par {eventOrganizer}
+            </AppText>
+          )}
+          <AppText style={styles.role}>
+            Vous{" "}
+            {eventRole === 2
+              ? "êtes l'organisateur de cet évènement"
+              : eventRole === 1
+              ? "êtes vendeur pour cet évènement"
+              : "participez à cet évènement"}
+          </AppText>
+        </TouchableOpacity>
+      </View>
+    );
+  } else if (eventEndDate != null && new Date(eventEndDate) < new Date()) {
+    return (
+      <View style={styles.container}>
+        <TouchableOpacity style={styles.subContainer} onPress={onPress}>
+          <AppText style={styles.eventName}>{eventName}</AppText>
           <AppText style={styles.eventEndDate}>
-            L'évènement s'est terminé le {endDate.split(" ")[0]} à{" "}
-            {endDate.split(" ")[1]}
+            L'évènement s'est terminé le {endDate}
           </AppText>
-        )}
-        {eventRole != 2 && (
-          <AppText style={styles.organizer}>
-            Organisé par {eventOrganizer}
+          {eventRole != 2 && (
+            <AppText style={styles.organizer}>
+              Organisé par {eventOrganizer}
+            </AppText>
+          )}
+          <AppText style={styles.role}>
+            Vous{" "}
+            {eventRole === 2
+              ? "êtes l'organisateur de cet évènement"
+              : eventRole === 1
+              ? "êtes vendeur pour cet évènement"
+              : "participez à cet évènement"}
           </AppText>
-        )}
-        <AppText style={styles.role}>
-          Vous{" "}
-          {eventRole === 2
-            ? "êtes l'organisateur de cet évènement"
-            : eventRole === 1
-            ? "êtes vendeur pour cet évènement"
-            : "participez à cet évènement"}
-        </AppText>
-      </TouchableOpacity>
-    </View>
-  );
+        </TouchableOpacity>
+      </View>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
