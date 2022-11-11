@@ -6,6 +6,7 @@ import Screen from "../../components/Screen";
 import colors from "../../config/colors";
 import AppText from "../../components/AppText";
 import RadioButton from "../../components/RadioButton";
+import AppButton from "../../components/AppButton";
 
 function UserCurrentEventScreen({
   navigation,
@@ -121,11 +122,20 @@ function UserCurrentEventScreen({
           ))}
         </ScrollView>
       </View>
+      <View style={styles.buttonContainer}>
+        <AppButton
+          title="Nouvelle commande"
+          onPress={() => console.log("nouvelle commande")}
+        />
+      </View>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
+  buttonContainer: {
+    paddingHorizontal: 10,
+  },
   container: {
     backgroundColor: colors.white,
     flex: 1,
