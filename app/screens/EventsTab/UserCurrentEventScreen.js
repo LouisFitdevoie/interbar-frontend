@@ -122,6 +122,13 @@ function UserCurrentEventScreen({
           ))}
         </ScrollView>
       </View>
+      {displayedItems.length === 0 && (
+        <View style={styles.noCommandContainer}>
+          <AppText style={{ textAlign: "center" }}>
+            Aucune commande ne correspond aux critères sélectionnés
+          </AppText>
+        </View>
+      )}
       <View style={styles.buttonContainer}>
         <AppButton
           title="Nouvelle commande"
@@ -141,6 +148,9 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-start",
     paddingTop: 10,
+  },
+  noCommandContainer: {
+    paddingHorizontal: 10,
   },
   option: {
     padding: 5,
