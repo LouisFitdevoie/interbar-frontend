@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
@@ -13,9 +13,8 @@ function SortMenu({
   setScrollOptionSelected,
   sortOptions,
   scrollOptions,
-  defaultItems,
   displayedItems,
-  setDisplayedItems,
+  handleSort,
 }) {
   const [isSortOptionsVisible, setIsSortOptionsVisible] = useState(false);
 
@@ -27,6 +26,10 @@ function SortMenu({
   const handleScrollOptionChanged = (option) => {
     setScrollOptionSelected(option);
   };
+
+  useEffect(() => {
+    handleSort();
+  }, [sortOptionSelected, scrollOptionSelected]);
 
   return (
     <View style={styles.sortMenuContainer}>
