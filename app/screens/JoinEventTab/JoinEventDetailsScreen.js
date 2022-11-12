@@ -142,11 +142,15 @@ function JoinEventDetailsScreen(props) {
       <View style={styles.detailsContainer}>
         <View style={styles.textDetailContainer}>
           <AppText style={styles.title}>Nom de l'évènement :</AppText>
-          <AppText style={styles.detail}>{eventDetails.name}</AppText>
+          <AppText style={styles.detail} numberOfLines={1} ellipsizeMode="tail">
+            {eventDetails.name}
+          </AppText>
         </View>
         <View style={styles.textDetailContainer}>
           <AppText style={styles.title}>Organisé par :</AppText>
-          <AppText style={styles.detail}>{eventDetails.organizer}</AppText>
+          <AppText style={styles.detail} numberOfLines={1} ellipsizeMode="tail">
+            {eventDetails.organizer}
+          </AppText>
         </View>
         <View style={styles.textDetailContainer}>
           <AppText style={styles.title}>Du</AppText>
@@ -160,7 +164,7 @@ function JoinEventDetailsScreen(props) {
             {eventDetails.location}
           </AppText>
         </View>
-        {eventDetails.description !== "" && (
+        {eventDetails.description !== null && (
           <View style={styles.detailsMultilineContainer}>
             <AppText style={styles.title}>Description :</AppText>
             <AppText style={styles.detailsMultiline}>
@@ -243,7 +247,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     marginBottom: 10,
   },
-  detail: { paddingHorizontal: 5 },
+  detail: { paddingHorizontal: 5, flex: 1 },
   detailsContainer: {
     marginVertical: 20,
     width: "100%",

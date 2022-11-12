@@ -19,10 +19,12 @@ function UserSellerBeforeEventScreen({
 }) {
   return (
     <Screen style={styles.container}>
-      <View style={styles.detailContainer}>
-        <AppText style={styles.title}>Organisé par :</AppText>
-        <AppText>{organizer}</AppText>
-      </View>
+      {role != 2 && (
+        <View style={styles.detailContainer}>
+          <AppText style={styles.title}>Organisé par :</AppText>
+          <AppText>{organizer}</AppText>
+        </View>
+      )}
       <View style={styles.detailContainer}>
         <AppText style={styles.title}>Date de début :</AppText>
         <AppText>
@@ -59,25 +61,55 @@ function UserSellerBeforeEventScreen({
       )}
       <View style={styles.detailContainer}>
         <AppText style={styles.title}>Rôle :</AppText>
-        <AppText>{role === 0 ? "Client" : "Vendeur"}</AppText>
+        <AppText>
+          {role === 0 ? "Client" : role === 1 ? "Vendeur" : "Organisateur"}
+        </AppText>
       </View>
       <View style={styles.qrCodeJoinEventContainer}>
         <View style={styles.qrCode}>
-          <QRCode value={eventId.toString()} size={175} />
+          <QRCode value={eventId.toString()} size={150} />
         </View>
       </View>
-      <View style={styles.buttonsContainer}>
-        <AppButton
-          title="Voir le tarif"
-          onPress={() => console.log("tarif")}
-          style={{ marginVertical: 5 }}
-        />
-        <AppButton
-          title="Quitter l'évènement"
-          onPress={() => console.log("quitter")}
-          style={{ marginVertical: 5 }}
-        />
-      </View>
+      {role != 2 && (
+        <View style={styles.buttonsContainer}>
+          <AppButton
+            title="Voir le tarif"
+            onPress={() => console.log("tarif")}
+            style={{ marginVertical: 5 }}
+          />
+          {role === 1 && (
+            <AppButton
+              title="Ne plus être vendeur"
+              onPress={() => console.log("ne plus être vendeur")}
+              style={{ marginVertical: 5 }}
+            />
+          )}
+          <AppButton
+            title="Quitter l'évènement"
+            onPress={() => console.log("quitter")}
+            style={{ marginVertical: 5 }}
+          />
+        </View>
+      )}
+      {role === 2 && (
+        <View style={styles.buttonsContainer}>
+          <AppButton
+            title="Modifier l'évènement"
+            onPress={() => console.log("modifier")}
+            style={{ marginVertical: 5 }}
+          />
+          <AppButton
+            title="Modifier le tarif"
+            onPress={() => console.log("modifier le tarif")}
+            style={{ marginVertical: 5 }}
+          />
+          <AppButton
+            title="Annuler l'évènement"
+            onPress={() => console.log("annuler")}
+            style={{ marginVertical: 5 }}
+          />
+        </View>
+      )}
     </Screen>
   );
 }
@@ -100,8 +132,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   qrCodeJoinEventContainer: {
-    width: 200,
-    height: 200,
+    width: 175,
+    height: 175,
     borderWidth: 2,
     borderColor: colors.buttonPrimary,
     alignSelf: "center",

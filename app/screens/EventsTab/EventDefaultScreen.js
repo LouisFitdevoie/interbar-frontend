@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Alert, TouchableOpacity } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-import UserSellerBeforeEventScreen from "./UserSellerBeforeEventScreen";
+import BeforeEventScreen from "./BeforeEventScreen";
 import UserCurrentEventScreen from "./UserCurrentEventScreen";
 
 function EventDefaultScreen(props) {
@@ -64,7 +64,7 @@ function EventDefaultScreen(props) {
   if (today <= eventStartDate) {
     if (role === 0) {
       return (
-        <UserSellerBeforeEventScreen
+        <BeforeEventScreen
           navigation={navigation}
           organizer={eventToDisplay.organizer}
           startDate={eventToDisplay.startDate}
@@ -77,7 +77,7 @@ function EventDefaultScreen(props) {
       );
     } else if (role === 1) {
       return (
-        <UserSellerBeforeEventScreen
+        <BeforeEventScreen
           navigation={navigation}
           organizer={eventToDisplay.organizer}
           startDate={eventToDisplay.startDate}
@@ -89,7 +89,18 @@ function EventDefaultScreen(props) {
         />
       );
     } else if (role === 2) {
-      //Organisateur avant l'événement
+      return (
+        <BeforeEventScreen
+          navigation={navigation}
+          organizer={eventToDisplay.organizer}
+          startDate={eventToDisplay.startDate}
+          endDate={eventToDisplay.endDate}
+          location={eventToDisplay.location}
+          description={eventToDisplay.description}
+          role={eventToDisplay.role}
+          eventId={eventToDisplay.eventId}
+        />
+      );
     } else {
       Alert.alert(
         "Une erreur est survenue, vous allez être redirigé vers la page d'accueil"
