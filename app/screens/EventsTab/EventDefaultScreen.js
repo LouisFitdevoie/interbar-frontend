@@ -109,11 +109,11 @@ function EventDefaultScreen(props) {
     }
   } else if (today > eventEndDate) {
     if (role === 0) {
-      //Client après l'évènement
+      //TODO : Client après l'évènement
     } else if (role === 1) {
-      //Vendeur après l'évènement
+      //TODO : Vendeur après l'évènement
     } else if (role === 2) {
-      //Organisateur après l'événement
+      //TODO : Organisateur après l'événement
     } else {
       Alert.alert(
         "Une erreur est survenue, vous allez être redirigé vers la page d'accueil"
@@ -135,9 +135,9 @@ function EventDefaultScreen(props) {
         />
       );
     } else if (role === 1) {
-      //Vendeur pendant l'évènement
+      //TODO : Vendeur pendant l'évènement
     } else if (role === 2) {
-      //Organisateur pendant l'événement
+      //TODO : Organisateur pendant l'événement
     } else {
       Alert.alert(
         "Une erreur est survenue, vous allez être redirigé vers la page d'accueil"

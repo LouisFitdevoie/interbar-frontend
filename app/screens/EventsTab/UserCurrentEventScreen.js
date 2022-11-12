@@ -69,6 +69,14 @@ function UserCurrentEventScreen({
     setIsLoading(false);
   };
 
+  //TODO
+  // - Get the commands the user has made for this event
+  // - Display them in a flatlist
+  // - Add the ability to sort the items by highest or lowest price (line 61 & 64)
+  // - Verify the ability to sort by newest or oldest (line 57 & 59)
+  // - Verify the ability to filter by paid or unpaid (line 49 to 53)
+  // - Add the ability to the user to make a new command by redirecting him to a newCommandScreen (line 102)
+
   return (
     <Screen style={styles.container}>
       <SortMenu

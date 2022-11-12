@@ -17,6 +17,19 @@ function UserSellerBeforeEventScreen({
   role,
   eventId,
 }) {
+  //TODO :
+  // - USER
+  // --- Redirect to tarif screen (line 91)
+  // --- Leave event function (line 103)
+  // - SELLER
+  // --- Redirect to tarif screen (line 91)
+  // --- Function to become client and don't be seller anymore (line 97)
+  // --- Leave event function (line 103)
+  // - ORGANIZER
+  // --- Redirect to edit event screen (line 112)
+  // --- Redirect to edit tarif screen (line 117)
+  // --- Cancel event function (line 122)
+
   return (
     <Screen style={styles.container}>
       {role != 2 && (

@@ -37,3 +37,13 @@ exports.getEventById = (eventId, accessToken) => {
     },
   });
 };
+
+exports.cancelEvent = (eventId, accessToken) => {
+  return axios({
+    method: "put",
+    url: `${BASE_URL}/delete-event/${eventId}`,
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};

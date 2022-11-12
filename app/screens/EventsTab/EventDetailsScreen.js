@@ -44,6 +44,13 @@ function EventDetailsScreen(props) {
     });
   }, []);
 
+  //TODO:
+  // - ORGANIZER
+  // --- Redirect to stats screen (line 109)
+  // --- Redirect to edit event screen (line 114)
+  // --- Function to end event (maybe just changing the end date to NOW()?) (line 125)
+  // --- If event has ended or not yet started, function to delete/cancel event (line 125)
+
   return (
     <Screen style={styles.container}>
       {(role === 0 || role === 1) && (
