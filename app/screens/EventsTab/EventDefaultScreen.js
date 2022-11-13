@@ -3,7 +3,7 @@ import { Alert, TouchableOpacity } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import BeforeEventScreen from "./BeforeEventScreen";
-import UserCurrentEventScreen from "./UserCurrentEventScreen";
+import CurrentEventScreen from "./CurrentEventScreen";
 
 function EventDefaultScreen(props) {
   const { navigation } = props;
@@ -62,51 +62,18 @@ function EventDefaultScreen(props) {
   }, []);
 
   if (today <= eventStartDate) {
-    if (role === 0) {
-      return (
-        <BeforeEventScreen
-          navigation={navigation}
-          organizer={eventToDisplay.organizer}
-          startDate={eventToDisplay.startDate}
-          endDate={eventToDisplay.endDate}
-          location={eventToDisplay.location}
-          description={eventToDisplay.description}
-          role={eventToDisplay.role}
-          eventId={eventToDisplay.eventId}
-        />
-      );
-    } else if (role === 1) {
-      return (
-        <BeforeEventScreen
-          navigation={navigation}
-          organizer={eventToDisplay.organizer}
-          startDate={eventToDisplay.startDate}
-          endDate={eventToDisplay.endDate}
-          location={eventToDisplay.location}
-          description={eventToDisplay.description}
-          role={eventToDisplay.role}
-          eventId={eventToDisplay.eventId}
-        />
-      );
-    } else if (role === 2) {
-      return (
-        <BeforeEventScreen
-          navigation={navigation}
-          organizer={eventToDisplay.organizer}
-          startDate={eventToDisplay.startDate}
-          endDate={eventToDisplay.endDate}
-          location={eventToDisplay.location}
-          description={eventToDisplay.description}
-          role={eventToDisplay.role}
-          eventId={eventToDisplay.eventId}
-        />
-      );
-    } else {
-      Alert.alert(
-        "Une erreur est survenue, vous allez être redirigé vers la page d'accueil"
-      );
-      navigation.navigate("Home");
-    }
+    return (
+      <BeforeEventScreen
+        navigation={navigation}
+        organizer={eventToDisplay.organizer}
+        startDate={eventToDisplay.startDate}
+        endDate={eventToDisplay.endDate}
+        location={eventToDisplay.location}
+        description={eventToDisplay.description}
+        role={eventToDisplay.role}
+        eventId={eventToDisplay.eventId}
+      />
+    );
   } else if (today > eventEndDate) {
     if (role === 0) {
       //TODO : Client après l'évènement
@@ -121,29 +88,18 @@ function EventDefaultScreen(props) {
       navigation.navigate("Home");
     }
   } else {
-    if (role === 0) {
-      return (
-        <UserCurrentEventScreen
-          navigation={navigation}
-          organizer={eventToDisplay.organizer}
-          startDate={eventToDisplay.startDate}
-          endDate={eventToDisplay.endDate}
-          location={eventToDisplay.location}
-          description={eventToDisplay.description}
-          role={eventToDisplay.role}
-          eventId={eventToDisplay.eventId}
-        />
-      );
-    } else if (role === 1) {
-      //TODO : Vendeur pendant l'évènement
-    } else if (role === 2) {
-      //TODO : Organisateur pendant l'événement
-    } else {
-      Alert.alert(
-        "Une erreur est survenue, vous allez être redirigé vers la page d'accueil"
-      );
-      navigation.navigate("Home");
-    }
+    return (
+      <CurrentEventScreen
+        navigation={navigation}
+        organizer={eventToDisplay.organizer}
+        startDate={eventToDisplay.startDate}
+        endDate={eventToDisplay.endDate}
+        location={eventToDisplay.location}
+        description={eventToDisplay.description}
+        role={eventToDisplay.role}
+        eventId={eventToDisplay.eventId}
+      />
+    );
   }
 }
 

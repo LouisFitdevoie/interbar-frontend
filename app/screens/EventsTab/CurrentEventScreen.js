@@ -31,10 +31,10 @@ function UserCurrentEventScreen({
   const [displayedItems, setDisplayedItems] = useState(commandItems);
 
   const sortOptions = [
-    { name: "Du plus récent au plus ancien", value: "newest" },
-    { name: "Du plus ancien au plus récent", value: "oldest" },
-    { name: "Du plus cher au moins cher", value: "highest" },
-    { name: "Du moins cher au plus cher", value: "lowest" },
+    { name: "La plus récente d'abord", value: "newest" },
+    { name: "La plus ancienne d'abord", value: "oldest" },
+    { name: "La plus chère d'abord", value: "highest" },
+    { name: "La moins chère d'abord", value: "lowest" },
   ];
 
   const paidOptions = [
@@ -70,21 +70,36 @@ function UserCurrentEventScreen({
   };
 
   //TODO
-  // - Get the commands the user has made for this event
-  // - Display them in a flatlist
-  // - Add the ability to sort the items by highest or lowest price (line 61 & 64)
-  // - Verify the ability to sort by newest or oldest (line 57 & 59)
-  // - Verify the ability to filter by paid or unpaid (line 49 to 53)
-  // - Add the ability to the user to make a new command by redirecting him to a newCommandScreen (line 102)
+  // - USER
+  // --- Get the commands the user has made for this event
+  // --- Display them in a flatlist
+  // --- Add the ability to sort the items by highest or lowest price (line 61 & 64)
+  // --- Verify the ability to sort by newest or oldest (line 57 & 59)
+  // --- Add the ability to the user to make a new command by redirecting him to a newCommandScreen (line 102)
+  // - SELLER & ORGANIZER
+  // --- Get the commands the seller has served for this event
+  // --- Display them in a flatlist
+  // --- Change the color of the command item if the command is not paid or served
+  // --- Verify the ability to filter by paid or unpaid (line 49 to 53)
 
   return (
     <Screen style={styles.container}>
+      <View style={styles.titleContainer}>
+        <AppText style={styles.title}>
+          {role === 0
+            ? "Mes commandes"
+            : role === 1
+            ? "Commandes traitées"
+            : "Toutes les commandes"}
+        </AppText>
+      </View>
       <SortMenu
         sortOptionSelected={sortOptionSelected}
         setSortOptionSelected={setSortOptionSelected}
         scrollOptionSelected={paidOptionSelected}
         setScrollOptionSelected={setPaidOptionSelected}
         sortOptions={sortOptions}
+        role={role}
         scrollOptions={paidOptions}
         displayedItems={displayedItems}
         handleSort={() => handleSort()}
@@ -119,6 +134,16 @@ const styles = StyleSheet.create({
   },
   noCommandContainer: {
     paddingHorizontal: 10,
+  },
+  title: {
+    fontSize: 26,
+    fontWeight: "bold",
+    marginBottom: 5,
+    paddingHorizontal: 10,
+    color: colors.primary,
+  },
+  titleContainer: {
+    alignItems: "center",
   },
 });
 
