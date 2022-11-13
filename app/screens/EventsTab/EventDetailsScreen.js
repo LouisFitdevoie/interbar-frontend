@@ -45,11 +45,12 @@ function EventDetailsScreen(props) {
   }, []);
 
   //TODO:
+  // Verify if event is finished or not to edit the buttons displayed on the screen when user is organizer
   // - ORGANIZER
-  // --- Redirect to stats screen (line 109)
-  // --- Redirect to edit event screen (line 114)
-  // --- Function to end event (maybe just changing the end date to NOW()?) (line 125)
-  // --- If event has ended or not yet started, function to delete/cancel event (line 125)
+  // --- Redirect to stats screen (line 110)
+  // --- Redirect to edit event screen (line 115)
+  // --- Function to end event (maybe just changing the end date to NOW()?) (line 126)
+  // --- If event has ended or not yet started, function to delete/cancel event (line 126)
 
   return (
     <Screen style={styles.container}>

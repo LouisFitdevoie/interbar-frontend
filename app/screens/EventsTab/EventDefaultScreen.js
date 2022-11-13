@@ -28,10 +28,7 @@ function EventDefaultScreen(props) {
 
   useEffect(() => {
     navigation.setOptions({ title: event.name });
-    if (
-      today > eventEndDate ||
-      (today >= eventStartDate && today < eventEndDate)
-    ) {
+    if (today >= eventStartDate && today < eventEndDate) {
       navigation.setOptions({
         headerRight: () => (
           <TouchableOpacity
