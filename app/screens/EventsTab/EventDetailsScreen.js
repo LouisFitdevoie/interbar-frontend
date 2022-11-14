@@ -52,12 +52,8 @@ function EventDetailsScreen(props) {
   }, []);
 
   //TODO:
-  // Verify if event is finished or not to edit the buttons displayed on the screen when user is organizer
   // - ORGANIZER
   // --- Redirect to stats screen (line 110)
-  // --- Redirect to edit event screen (line 115)
-  // --- New button to add more time to the event ?
-  // --- If event has ended or not yet started, function to delete/cancel event (line 126) --> maybe not necessary anymore because only current events have access to the details screen
 
   const endEvent = () => {
     setError(null);
