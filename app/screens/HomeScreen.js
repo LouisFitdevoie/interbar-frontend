@@ -163,7 +163,10 @@ function HomeScreen(props) {
 
   return (
     <Screen style={styles.container}>
-      <AppText style={styles.welcome}>Bienvenue {user.firstName} !</AppText>
+      <AppText style={styles.welcome}>
+        Bienvenue{" "}
+        {user.firstName.charAt(0).toUpperCase() + user.firstName.slice(1)} !
+      </AppText>
       <View style={styles.sortMenuContainer}>
         <View style={styles.sortView}>
           <View style={styles.sortTitle}>
