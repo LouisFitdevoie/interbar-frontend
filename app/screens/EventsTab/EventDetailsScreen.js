@@ -149,6 +149,13 @@ function EventDetailsScreen(props) {
             style={{ marginVertical: 5 }}
           />
           <AppButton
+            title="Changer l'heure de fin"
+            onPress={() =>
+              navigation.navigate("EditEventEndDate", props.route.params)
+            }
+            style={{ marginVertical: 5 }}
+          />
+          <AppButton
             title={
               today < eventStartDate
                 ? "Annuler l'évènement"

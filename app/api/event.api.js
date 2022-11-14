@@ -64,3 +64,20 @@ exports.endEvent = (eventId, accessToken) => {
     },
   });
 };
+
+exports.editEventEndDate = (eventId, endDate, accessToken) => {
+  return axios({
+    method: "put",
+    url: `${BASE_URL}/update-event/${eventId}`,
+    data: {
+      endDate,
+      startDate: null,
+      name: null,
+      location: null,
+      description: null,
+    },
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};
