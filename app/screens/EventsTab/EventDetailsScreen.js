@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import React, { useEffect, useContext, useState } from "react";
+import { View, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
@@ -7,8 +7,15 @@ import Screen from "../../components/Screen";
 import AppButton from "../../components/AppButton";
 import AppText from "../../components/AppText";
 import colors from "../../config/colors";
+import { AuthContext } from "../../auth/AuthContext";
+import LoadingIndicator from "../../components/LoadingIndicator";
+import eventAPI from "../../api/event.api";
+import ErrorMessage from "../../components/forms/ErrorMessage";
 
 function EventDetailsScreen(props) {
+  const { userAccessToken, updateAccessToken, isLoading, setIsLoading } =
+    useContext(AuthContext);
+  const [error, setError] = useState(null);
   const { navigation } = props;
   const {
     organizer,
@@ -49,8 +56,39 @@ function EventDetailsScreen(props) {
   // - ORGANIZER
   // --- Redirect to stats screen (line 110)
   // --- Redirect to edit event screen (line 115)
-  // --- Function to end event (maybe just changing the end date to NOW()?) (line 126)
-  // --- If event has ended or not yet started, function to delete/cancel event (line 126)
+  // --- New button to add more time to the event ?
+  // --- If event has ended or not yet started, function to delete/cancel event (line 126) --> maybe not necessary anymore because only current events have access to the details screen
+
+  const endEvent = () => {
+    setError(null);
+    setIsLoading(true);
+    eventAPI
+      .endEvent(eventId, userAccessToken)
+      .then((response) => {
+        setIsLoading(false);
+        if (response.status === 200) {
+          Alert.alert("Event ended successfully!");
+          navigation.navigate("Home");
+        } else {
+          setError("Une erreur est survenue, veuillez réeessayer");
+        }
+      })
+      .catch((error) => {
+        setIsLoading(false);
+        if (error.response === undefined) {
+          setError("Impossible de communiquer avec le serveur");
+          console.log(error);
+        } else {
+          if (error.response.status === 403) {
+            updateAccessToken();
+            endEvent();
+          } else {
+            setError("Une erreur est survenue, veuillez réeessayer");
+            console.log(error.response.data.error);
+          }
+        }
+      });
+  };
 
   return (
     <Screen style={styles.container}>
@@ -111,11 +149,6 @@ function EventDetailsScreen(props) {
             style={{ marginVertical: 5 }}
           />
           <AppButton
-            title="Modifier l'évènement"
-            onPress={() => console.log("Edit")}
-            style={{ marginVertical: 5 }}
-          />
-          <AppButton
             title={
               today < eventStartDate
                 ? "Annuler l'évènement"
@@ -123,11 +156,21 @@ function EventDetailsScreen(props) {
                 ? "Supprimer l'évènement"
                 : "Terminer l'évènement"
             }
-            onPress={() => console.log("Delete")}
+            onPress={() => {
+              if (today < eventStartDate) {
+                console.log("Cancel");
+              } else if (eventEndDate <= today) {
+                console.log("Delete");
+              } else {
+                endEvent();
+              }
+            }}
             style={{ marginVertical: 5 }}
           />
+          <ErrorMessage error={error} visible={error != null} />
         </View>
       )}
+      {isLoading && <LoadingIndicator />}
     </Screen>
   );
 }

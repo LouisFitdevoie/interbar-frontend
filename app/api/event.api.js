@@ -47,3 +47,20 @@ exports.cancelEvent = (eventId, accessToken) => {
     },
   });
 };
+
+exports.endEvent = (eventId, accessToken) => {
+  return axios({
+    method: "put",
+    url: `${BASE_URL}/update-event/${eventId}`,
+    data: {
+      endDate: new Date(),
+      startDate: null,
+      name: null,
+      location: null,
+      description: null,
+    },
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};
