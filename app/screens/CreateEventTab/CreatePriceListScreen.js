@@ -47,6 +47,26 @@ function CreatePriceListScreen(props) {
       });
   };
 
+  const deleteEventProduct = (eventProductId) => {
+    setDeleteError(null);
+    setIsLoading(true);
+    eventProductAPI
+      .deleteEventProduct(eventProductId, userAccessToken)
+      .then((res) => {
+        getAllEventProducts(eventId);
+      })
+      .catch((err) => {
+        setDeleteError(
+          "Une erreur est survenue lors de la suppression du produit du tarif de cet évènement. Veuillez réessayer."
+        );
+        if (err.response.status === 403) {
+          updateAccessToken();
+        }
+        console.log(err);
+        setIsLoading(false);
+      });
+  };
+
   useEffect(() => {
     isFocused && getAllEventProducts(eventId);
   }, [isFocused]);
@@ -92,28 +112,8 @@ function CreatePriceListScreen(props) {
                         },
                         {
                           text: "Supprimer",
-                          onPress: () => {
-                            setDeleteError(null);
-                            setIsLoading(true);
-                            eventProductAPI
-                              .deleteEventProduct(
-                                item.events_products_id,
-                                userAccessToken
-                              )
-                              .then((res) => {
-                                getAllEventProducts(eventId);
-                              })
-                              .catch((err) => {
-                                setDeleteError(
-                                  "Une erreur est survenue lors de la suppression du produit du tarif de cet évènement. Veuillez réessayer."
-                                );
-                                if (err.response.status === 403) {
-                                  updateAccessToken();
-                                }
-                                console.log(err);
-                                setIsLoading(false);
-                              });
-                          },
+                          onPress: () =>
+                            deleteEventProduct(item.events_products_id),
                         },
                       ]
                     );

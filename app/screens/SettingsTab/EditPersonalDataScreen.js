@@ -15,7 +15,7 @@ import {
   SubmitButton,
   ErrorMessage,
 } from "../../components/forms";
-import editPersonalData from "../../validators/editPersonalData.validator";
+import editPersonalDataValidator from "../../validators/editPersonalData.validator";
 import colors from "../../config/colors";
 import AppText from "../../components/AppText";
 import { AuthContext } from "../../auth/AuthContext";
@@ -33,6 +33,39 @@ function EditPersonalDataScreen({ navigation }) {
   } = useContext(AuthContext);
   const [editingError, setEditingError] = useState(null);
 
+  const editPersonalData = (firstName, lastName, birthDate) => {
+    setIsLoading(true);
+    userAPI
+      .editPersonalData(
+        user.id,
+        firstName,
+        lastName,
+        birthDate,
+        userAccessToken
+      )
+      .then((res) => {
+        if (res.data.success) {
+          setIsLoading(false);
+          logout();
+        }
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        if (err.response === undefined) {
+          setEditingError("Impossible de communiquer avec le serveur");
+        } else if (err.response.status === 404) {
+          setEditingError("Utilisateur non trouvé");
+        } else if (err.response.status === 403) {
+          updateAccessToken();
+          setEditingError(
+            "Erreur lors de la modification de vos données personnelles, veuillez réessayer"
+          );
+        } else {
+          setEditingError("Une erreur est survenue");
+        }
+      });
+  };
+
   const handleSubmit = ({ firstName, lastName, birthDate }) => {
     setEditingError(null);
     Alert.alert(
@@ -47,36 +80,7 @@ function EditPersonalDataScreen({ navigation }) {
           text: "Modifier",
           style: "destructive",
           onPress: () => {
-            setIsLoading(true);
-            userAPI
-              .editPersonalData(
-                user.id,
-                firstName,
-                lastName,
-                birthDate,
-                userAccessToken
-              )
-              .then((res) => {
-                if (res.data.success) {
-                  setIsLoading(false);
-                  logout();
-                }
-              })
-              .catch((err) => {
-                setIsLoading(false);
-                if (err.response === undefined) {
-                  setEditingError("Impossible de communiquer avec le serveur");
-                } else if (err.response.status === 404) {
-                  setEditingError("Utilisateur non trouvé");
-                } else if (err.response.status === 403) {
-                  updateAccessToken();
-                  setEditingError(
-                    "Erreur lors de la modification de vos données personnelles, veuillez réessayer"
-                  );
-                } else {
-                  setEditingError("Une erreur est survenue");
-                }
-              });
+            editPersonalData(firstName, lastName, birthDate);
           },
         },
       ],
@@ -103,7 +107,7 @@ function EditPersonalDataScreen({ navigation }) {
               }),
             }}
             onSubmit={(values) => handleSubmit(values)}
-            validationSchema={editPersonalData}
+            validationSchema={editPersonalDataValidator}
           >
             <AppFormField
               autoCapitalize="words"

@@ -81,9 +81,9 @@ function EventDetailsScreen(props) {
         } else {
           if (error.response.status === 403) {
             updateAccessToken();
-            endEvent();
-          } else {
             setError("Une erreur est survenue, veuillez réeessayer");
+          } else {
+            setError("Une erreur est survenue");
             console.log(error.response.data.error);
           }
         }
