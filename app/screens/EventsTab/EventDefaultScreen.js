@@ -4,6 +4,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import BeforeEventScreen from "./BeforeEventScreen";
 import CurrentEventScreen from "./CurrentEventScreen";
+import AfterEventScreen from "./AfterEventScreen";
 
 function EventDefaultScreen(props) {
   const { navigation } = props;
@@ -72,18 +73,18 @@ function EventDefaultScreen(props) {
       />
     );
   } else if (today > eventEndDate) {
-    if (role === 0) {
-      //TODO : Client après l'évènement
-    } else if (role === 1) {
-      //TODO : Vendeur après l'évènement
-    } else if (role === 2) {
-      //TODO : Organisateur après l'événement
-    } else {
-      Alert.alert(
-        "Une erreur est survenue, vous allez être redirigé vers la page d'accueil"
-      );
-      navigation.navigate("Home");
-    }
+    return (
+      <AfterEventScreen
+        navigation={navigation}
+        organizer={eventToDisplay.organizer}
+        startDate={eventToDisplay.startDate}
+        endDate={eventToDisplay.endDate}
+        location={eventToDisplay.location}
+        description={eventToDisplay.description}
+        role={eventToDisplay.role}
+        eventId={eventToDisplay.eventId}
+      />
+    );
   } else {
     return (
       <CurrentEventScreen

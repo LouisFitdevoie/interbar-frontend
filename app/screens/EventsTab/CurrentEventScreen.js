@@ -25,7 +25,6 @@ function UserCurrentEventScreen({
 
   const [sortOptionSelected, setSortOptionSelected] = useState("newest");
   const [paidOptionSelected, setPaidOptionSelected] = useState("all");
-  const [isSortOptionsVisible, setIsSortOptionsVisible] = useState(false);
 
   const [commandItems, setCommandItems] = useState([]);
   const [displayedItems, setDisplayedItems] = useState(commandItems);
@@ -73,14 +72,14 @@ function UserCurrentEventScreen({
   // - USER
   // --- Get the commands the user has made for this event
   // --- Display them in a flatlist
-  // --- Add the ability to sort the items by highest or lowest price (line 61 & 64)
-  // --- Verify the ability to sort by newest or oldest (line 57 & 59)
-  // --- Add the ability to the user to make a new command by redirecting him to a newCommandScreen (line 102)
+  // --- Add the ability to sort the items by highest or lowest price (line 60 & 63)
+  // --- Verify the ability to sort by newest or oldest (line 56 & 58)
+  // --- Add the ability to the user to make a new command by redirecting him to a newCommandScreen (line 101)
   // - SELLER & ORGANIZER
   // --- Get the commands the seller has served for this event
   // --- Display them in a flatlist
   // --- Change the color of the command item if the command is not paid or served
-  // --- Verify the ability to filter by paid or unpaid (line 49 to 53)
+  // --- Verify the ability to filter by paid or unpaid (line 49 to 52)
 
   return (
     <Screen style={styles.container}>
