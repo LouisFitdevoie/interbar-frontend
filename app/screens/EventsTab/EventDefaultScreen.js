@@ -1,13 +1,19 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useLayoutEffect } from "react";
 import { Alert, TouchableOpacity } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import BeforeEventScreen from "./BeforeEventScreen";
 import CurrentEventScreen from "./CurrentEventScreen";
 import AfterEventScreen from "./AfterEventScreen";
+import tabBarDisplayManager from "../../config/tabBarDisplayManager";
 
 function EventDefaultScreen(props) {
   const { navigation } = props;
+  const insets = useSafeAreaInsets();
+  useLayoutEffect(() => {
+    tabBarDisplayManager.displayTabBar(navigation, insets);
+  }, []);
   const { event } = props.route.params;
 
   const today = new Date();

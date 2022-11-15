@@ -83,7 +83,7 @@ function UserSellerBeforeEventScreen({
   // --- Leave event function (line 103) -> DONE
   // - SELLER
   // --- Redirect to tarif screen (line 91)
-  // --- Function to become client and don't be seller anymore (line 97)
+  // --- Function to become client and don't be seller anymore (line 97) -> DONE
   // --- Leave event function (line 103) -> DONE
   // - ORGANIZER
   // --- Redirect to edit event screen (line 112)
@@ -176,7 +176,7 @@ function UserSellerBeforeEventScreen({
           {role === 0 && (
             <AppButton
               title="Devenir vendeur"
-              onPress={() => console.log("devenir vendeur")}
+              onPress={() => navigation.navigate("UserToSeller", { eventId })}
               style={{ marginVertical: 5 }}
             />
           )}

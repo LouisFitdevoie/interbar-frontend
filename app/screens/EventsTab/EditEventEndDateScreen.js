@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useLayoutEffect } from "react";
 import { View, StyleSheet, Alert } from "react-native";
 
 import Screen from "../../components/Screen";
@@ -7,8 +7,13 @@ import AppDateTimePicker from "../../components/forms/AppDateTimePicker";
 import { AuthContext } from "../../auth/AuthContext";
 import LoadingIndicator from "../../components/LoadingIndicator";
 import eventAPI from "../../api/event.api";
+import tabBarDisplayManager from "../../config/tabBarDisplayManager";
 
 function EditEventEndDateScreen(props) {
+  const { navigation } = props;
+  useLayoutEffect(() => {
+    tabBarDisplayManager.hideTabBar(navigation);
+  }, []);
   const { startDate, endDate, eventId } = props.route.params;
   const { isLoading, setIsLoading, userAccessToken, updateAccessToken } =
     useContext(AuthContext);
@@ -23,7 +28,7 @@ function EditEventEndDateScreen(props) {
         setIsLoading(false);
         if (res.data.success != null) {
           Alert.alert("Succès", "La date de fin de l'événement a été modifiée");
-          props.navigation.navigate("Home");
+          navigation.navigate("Home");
         } else {
           setEditEventEndDateError(res.data.error);
         }

@@ -6,6 +6,7 @@ import HomeScreen from "../screens/HomeScreen";
 import EventDefaultScreen from "../screens/EventsTab/EventDefaultScreen";
 import EventDetailsScreen from "../screens/EventsTab/EventDetailsScreen";
 import EditEventEndDateScreen from "../screens/EventsTab/EditEventEndDateScreen";
+import UserToSellerScreen from "../screens/EventsTab/UserToSellerScreen";
 
 const Stack = createStackNavigator();
 
@@ -69,6 +70,23 @@ function EventsStack(props) {
             headerBackTitleVisible: false,
             headerTintColor: colors.white,
             headerTitle: "Changer la date de fin",
+            headerTitleStyle: {
+              fontWeight: "bold",
+              fontSize: 20,
+            },
+          }}
+        />
+        <Stack.Screen
+          name="UserToSeller"
+          component={UserToSellerScreen}
+          options={{
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: colors.buttonPrimary,
+            },
+            headerBackTitleVisible: false,
+            headerTintColor: colors.white,
+            headerTitle: "Devenir vendeur",
             headerTitleStyle: {
               fontWeight: "bold",
               fontSize: 20,

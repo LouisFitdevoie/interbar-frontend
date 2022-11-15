@@ -90,3 +90,18 @@ exports.fromSellerToUser = (eventId, userId, accessToken) => {
     },
   });
 };
+
+exports.fromUserToSeller = (eventId, userId, sellerPassword, accessToken) => {
+  return axios({
+    method: "put",
+    url: `${BASE_URL}/user-to-seller`,
+    data: {
+      eventId,
+      userId,
+      sellerPassword,
+    },
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};

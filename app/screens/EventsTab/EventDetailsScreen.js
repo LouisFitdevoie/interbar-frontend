@@ -1,7 +1,8 @@
-import React, { useEffect, useContext, useState } from "react";
+import React, { useEffect, useContext, useState, useLayoutEffect } from "react";
 import { View, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import Screen from "../../components/Screen";
 import AppButton from "../../components/AppButton";
@@ -11,12 +12,17 @@ import { AuthContext } from "../../auth/AuthContext";
 import LoadingIndicator from "../../components/LoadingIndicator";
 import eventAPI from "../../api/event.api";
 import ErrorMessage from "../../components/forms/ErrorMessage";
+import tabBarDisplayManager from "../../config/tabBarDisplayManager";
 
 function EventDetailsScreen(props) {
   const { userAccessToken, updateAccessToken, isLoading, setIsLoading } =
     useContext(AuthContext);
   const [error, setError] = useState(null);
   const { navigation } = props;
+  const insets = useSafeAreaInsets();
+  useLayoutEffect(() => {
+    tabBarDisplayManager.displayTabBar(navigation, insets);
+  }, []);
   const {
     organizer,
     startDate,
