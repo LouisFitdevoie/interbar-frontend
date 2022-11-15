@@ -10,6 +10,7 @@ import { AuthContext } from "../../auth/AuthContext";
 import LoadingIndicator from "../../components/LoadingIndicator";
 import { ErrorMessage } from "../../components/forms";
 import userEventAPI from "../../api/userEvent.api";
+import eventAPI from "../../api/event.api";
 
 function UserSellerBeforeEventScreen({
   navigation,
@@ -74,6 +75,47 @@ function UserSellerBeforeEventScreen({
           setError("Une erreur est survenue");
         }
       });
+  };
+
+  const handleCancelEvent = () => {
+    Alert.alert(
+      "Annuler l'évènement",
+      "Êtes-vous sûr de vouloir annuler l'évènement ?\n Si vous changez d'avis, vous devrez recréer un nouvel évènement",
+      [
+        {
+          text: "Annuler",
+          style: "cancel",
+        },
+        {
+          text: "Confirmer",
+          onPress: () => {
+            setError(null);
+            setIsLoading(true);
+            eventAPI
+              .deleteEvent(eventId, userAccessToken)
+              .then((res) => {
+                setIsLoading(false);
+                if (res.data.success != null) {
+                  Alert.alert("Succés", "L'événement a été annulé");
+                  navigation.navigate("Home");
+                } else {
+                  setError(res.data.error);
+                }
+              })
+              .catch((err) => {
+                setIsLoading(false);
+                if (err.response.status === 403) {
+                  updateAccessToken();
+                  setError("Une erreur est survenue, veuillez réessayer");
+                } else {
+                  setError("Une erreur est survenue");
+                }
+              });
+          },
+          style: "destructive",
+        },
+      ]
+    );
   };
 
   //TODO :
@@ -185,7 +227,7 @@ function UserSellerBeforeEventScreen({
             onPress={() =>
               Alert.alert(
                 "Quitter l'évènement",
-                "Êtes-vous sûr de vouloir quitter l'évènement ? Vous pourrez toujours le rejoindre après si vous le souhaitez",
+                "Êtes-vous sûr de vouloir quitter l'évènement ?\nVous pourrez toujours le rejoindre après si vous le souhaitez",
                 [
                   {
                     text: "Annuler",
@@ -218,7 +260,7 @@ function UserSellerBeforeEventScreen({
           />
           <AppButton
             title="Annuler l'évènement"
-            onPress={() => console.log("annuler")}
+            onPress={() => handleCancelEvent()}
             style={{ marginVertical: 5 }}
           />
           <ErrorMessage error={error} visible={error != null} />

@@ -69,7 +69,7 @@ function EventDetailsScreen(props) {
       .then((response) => {
         setIsLoading(false);
         if (response.status === 200) {
-          Alert.alert("Event ended successfully!");
+          Alert.alert("L'évènement a bien été terminé");
           navigation.navigate("Home");
         } else {
           setError("Une erreur est survenue, veuillez réeessayer");
