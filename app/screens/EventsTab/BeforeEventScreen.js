@@ -97,6 +97,13 @@ function UserSellerBeforeEventScreen({
               style={{ marginVertical: 5 }}
             />
           )}
+          {role === 0 && (
+            <AppButton
+              title="Devenir vendeur"
+              onPress={() => console.log("devenir vendeur")}
+              style={{ marginVertical: 5 }}
+            />
+          )}
           <AppButton
             title="Quitter l'évènement"
             onPress={() => console.log("quitter")}
