@@ -17,6 +17,11 @@ function AfterEventScreen({
   role,
   eventId,
 }) {
+  //TODO
+  // - ORGANIZER
+  // --- Display a button to redirect to the statistics screen
+  // --- Display a button to delete the event -> Alert to confirm and say that data won't be accessible for the user anymore
+
   const { isLoading, setIsLoading } = useContext(AuthContext);
 
   const [sortOptionSelected, setSortOptionSelected] = useState("newest");
@@ -41,13 +46,12 @@ function AfterEventScreen({
 
   const handleSort = () => {
     setIsLoading(true);
-    let itemsToDisplay = commandItems.filter((command) => {
-      if (paidOptionSelected === "all") {
-        return true;
-      } else {
+    let itemsToDisplay = commandItems;
+    if (paidOptionSelected != "all") {
+      itemsToDisplay = itemsToDisplay.filter((command) => {
         return command.isPaid;
-      }
-    });
+      });
+    }
     itemsToDisplay = itemsToDisplay.sort((a, b) => {
       if (sortOptionSelected === "newest") {
         return new Date(b.created_at) - new Date(a.created_at);

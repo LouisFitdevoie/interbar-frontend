@@ -44,13 +44,12 @@ function UserCurrentEventScreen({
 
   const handleSort = () => {
     setIsLoading(true);
-    let itemsToDisplay = commandItems.filter((command) => {
-      if (paidOptionSelected === "all") {
-        return true;
-      } else {
+    let itemsToDisplay = commandItems;
+    if (paidOptionSelected != "all") {
+      itemsToDisplay = itemsToDisplay.filter((command) => {
         return command.isPaid;
-      }
-    });
+      });
+    }
     itemsToDisplay = itemsToDisplay.sort((a, b) => {
       if (sortOptionSelected === "newest") {
         return new Date(b.created_at) - new Date(a.created_at);

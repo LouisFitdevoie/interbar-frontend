@@ -79,7 +79,7 @@ function UserSellerBeforeEventScreen({
   //TODO :
   // - USER
   // --- Redirect to tarif screen (line 91)
-  // --- Function to become seller
+  // --- Function to become seller -> DONE
   // --- Leave event function (line 103) -> DONE
   // - SELLER
   // --- Redirect to tarif screen (line 91)
