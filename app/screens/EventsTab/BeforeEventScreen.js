@@ -51,15 +51,40 @@ function UserSellerBeforeEventScreen({
       });
   };
 
+  const fromSellerToUser = () => {
+    setError(null);
+    setIsLoading(true);
+    userEventAPI
+      .fromSellerToUser(eventId, user.id, userAccessToken)
+      .then((res) => {
+        setIsLoading(false);
+        if (res.data.success != null) {
+          Alert.alert("Succés", "Vous n'êtes plus vendeur pour cet événement");
+          navigation.navigate("Home");
+        } else {
+          setError(res.data.error);
+        }
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        if (err.response.status === 403) {
+          updateAccessToken();
+          setError("Une erreur est survenue, veuillez réessayer");
+        } else {
+          setError("Une erreur est survenue");
+        }
+      });
+  };
+
   //TODO :
   // - USER
   // --- Redirect to tarif screen (line 91)
   // --- Function to become seller
-  // --- Leave event function (line 103)
+  // --- Leave event function (line 103) -> DONE
   // - SELLER
   // --- Redirect to tarif screen (line 91)
   // --- Function to become client and don't be seller anymore (line 97)
-  // --- Leave event function (line 103)
+  // --- Leave event function (line 103) -> DONE
   // - ORGANIZER
   // --- Redirect to edit event screen (line 112)
   // --- Redirect to edit tarif screen (line 117)
@@ -128,7 +153,23 @@ function UserSellerBeforeEventScreen({
           {role === 1 && (
             <AppButton
               title="Ne plus être vendeur"
-              onPress={() => console.log("ne plus être vendeur")}
+              onPress={() =>
+                Alert.alert(
+                  "Ne plus être vendeur",
+                  "Êtes-vous sûr de ne plus vouloir être vendeur ?",
+                  [
+                    {
+                      text: "Annuler",
+                      style: "cancel",
+                    },
+                    {
+                      text: "Confirmer",
+                      onPress: () => fromSellerToUser(),
+                      style: "destructive",
+                    },
+                  ]
+                )
+              }
               style={{ marginVertical: 5 }}
             />
           )}

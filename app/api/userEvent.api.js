@@ -76,3 +76,17 @@ exports.leaveEvent = (eventId, userId, accessToken) => {
     },
   });
 };
+
+exports.fromSellerToUser = (eventId, userId, accessToken) => {
+  return axios({
+    method: "put",
+    url: `${BASE_URL}/seller-to-user`,
+    data: {
+      eventId,
+      userId,
+    },
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};
