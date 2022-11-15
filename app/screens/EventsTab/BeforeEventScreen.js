@@ -1,11 +1,15 @@
-import React from "react";
-import { View, StyleSheet } from "react-native";
+import React, { useState, useContext } from "react";
+import { View, StyleSheet, Alert } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 
 import Screen from "../../components/Screen";
 import colors from "../../config/colors";
 import AppButton from "../../components/AppButton";
 import AppText from "../../components/AppText";
+import { AuthContext } from "../../auth/AuthContext";
+import LoadingIndicator from "../../components/LoadingIndicator";
+import { ErrorMessage } from "../../components/forms";
+import userEventAPI from "../../api/userEvent.api";
 
 function UserSellerBeforeEventScreen({
   navigation,
@@ -17,9 +21,40 @@ function UserSellerBeforeEventScreen({
   role,
   eventId,
 }) {
+  const { userAccessToken, user, isLoading, setIsLoading, updateAccessToken } =
+    useContext(AuthContext);
+
+  const [error, setError] = useState(null);
+
+  const handleLeaveEvent = () => {
+    setError(null);
+    setIsLoading(true);
+    userEventAPI
+      .leaveEvent(eventId, user.id, userAccessToken)
+      .then((res) => {
+        setIsLoading(false);
+        if (res.data.success != null) {
+          Alert.alert("Succés", "Vous avez quitté l'événement");
+          navigation.navigate("Home");
+        } else {
+          setError(res.data.error);
+        }
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        if (err.response.status === 403) {
+          updateAccessToken();
+          setError("Une erreur est survenue, veuillez réessayer");
+        } else {
+          setError("Une erreur est survenue");
+        }
+      });
+  };
+
   //TODO :
   // - USER
   // --- Redirect to tarif screen (line 91)
+  // --- Function to become seller
   // --- Leave event function (line 103)
   // - SELLER
   // --- Redirect to tarif screen (line 91)
@@ -106,9 +141,26 @@ function UserSellerBeforeEventScreen({
           )}
           <AppButton
             title="Quitter l'évènement"
-            onPress={() => console.log("quitter")}
+            onPress={() =>
+              Alert.alert(
+                "Quitter l'évènement",
+                "Êtes-vous sûr de vouloir quitter l'évènement ? Vous pourrez toujours le rejoindre après si vous le souhaitez",
+                [
+                  {
+                    text: "Annuler",
+                    style: "cancel",
+                  },
+                  {
+                    text: "Quitter",
+                    onPress: () => handleLeaveEvent(),
+                    style: "destructive",
+                  },
+                ]
+              )
+            }
             style={{ marginVertical: 5 }}
           />
+          <ErrorMessage error={error} visible={error != null} />
         </View>
       )}
       {role === 2 && (
@@ -128,8 +180,10 @@ function UserSellerBeforeEventScreen({
             onPress={() => console.log("annuler")}
             style={{ marginVertical: 5 }}
           />
+          <ErrorMessage error={error} visible={error != null} />
         </View>
       )}
+      {isLoading && <LoadingIndicator />}
     </Screen>
   );
 }

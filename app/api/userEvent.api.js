@@ -62,3 +62,17 @@ exports.getAllEventsForUser = (userId, accessToken) => {
     },
   });
 };
+
+exports.leaveEvent = (eventId, userId, accessToken) => {
+  return axios({
+    method: "put",
+    url: `${BASE_URL}/quit-event`,
+    data: {
+      eventId,
+      userId,
+    },
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};
