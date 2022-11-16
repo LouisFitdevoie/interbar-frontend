@@ -24,7 +24,7 @@ function HomeScreen(props) {
   const { user, setIsLoading, isLoading, userAccessToken, updateAccessToken } =
     useContext(AuthContext);
   const { navigation } = props;
-  const [sortDateOptionSelected, setSortDateOptionSelected] = useState(0);
+  const [sortDateOptionSelected, setSortDateOptionSelected] = useState(3);
   const [sortRoleOptionsSelected, setSortRoleOptionsSelected] = useState(0);
   const [isSortOptionsVisible, setIsSortOptionsVisible] = useState(false);
   const [errorMessage, setErrorMesssage] = useState(null);
@@ -45,13 +45,11 @@ function HomeScreen(props) {
             const today = new Date();
             const eventStartDate = new Date(event.startdate);
             const eventEndDate = new Date(event.enddate);
-            return (
-              eventStartDate >= today ||
-              (eventStartDate < today && eventEndDate >= today)
-            );
+            const isCurrent = eventStartDate < today && eventEndDate >= today;
+            return true && isCurrent;
           })
         );
-        setSortDateOptionSelected(0);
+        setSortDateOptionSelected(3);
         setSortRoleOptionsSelected(0);
         setIsLoading(false);
       })
@@ -85,18 +83,15 @@ function HomeScreen(props) {
       if (sortDateOptionSelected === 0) {
         const today = new Date();
         const eventStartDate = new Date(event.startdate);
-        const eventEndDate = new Date(event.enddate);
-        const isNextOrCurrent =
-          eventStartDate >= today ||
-          (eventStartDate < today && eventEndDate >= today);
+        const isNext = eventStartDate >= today;
         if (sortRoleOptionsSelected === 0) {
-          return true && isNextOrCurrent;
+          return true && isNext;
         } else if (sortRoleOptionsSelected === 1) {
-          return event.role === 2 && isNextOrCurrent;
+          return event.role === 2 && isNext;
         } else if (sortRoleOptionsSelected === 2) {
-          return event.role === 1 && isNextOrCurrent;
+          return event.role === 1 && isNext;
         } else if (sortRoleOptionsSelected === 3) {
-          return event.role === 0 && isNextOrCurrent;
+          return event.role === 0 && isNext;
         }
       } else if (sortDateOptionSelected === 1) {
         if (sortRoleOptionsSelected === 0) {
@@ -157,7 +152,7 @@ function HomeScreen(props) {
 
   useEffect(() => {
     isFocused && getEventsJoined();
-    setSortDateOptionSelected(0);
+    setSortDateOptionSelected(3);
     setSortRoleOptionsSelected(0);
   }, [isFocused]);
 

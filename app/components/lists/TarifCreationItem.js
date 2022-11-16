@@ -6,7 +6,7 @@ import Swipeable from "react-native-gesture-handler/Swipeable";
 import colors from "../../config/colors";
 import AppText from "../AppText";
 
-function TarifItem({
+function TarifCreationItem({
   name,
   buyingPrice,
   sellingPrice,
@@ -85,4 +85,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TarifItem;
+export default TarifCreationItem;

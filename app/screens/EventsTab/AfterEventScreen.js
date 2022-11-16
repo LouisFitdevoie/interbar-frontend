@@ -24,7 +24,7 @@ function AfterEventScreen({
   //TODO
   // - ORGANIZER
   // --- Display a button to redirect to the statistics screen
-  // --- Display a button to delete the event -> Alert to confirm and say that data won't be accessible for the user anymore
+  // DONE --- Display a button to delete the event -> Alert to confirm and say that data won't be accessible for the user anymore
 
   const { isLoading, setIsLoading, userAccessToken, updateAccessToken } =
     useContext(AuthContext);

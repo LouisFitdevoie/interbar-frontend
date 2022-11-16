@@ -3,7 +3,7 @@ import { View, StyleSheet, FlatList, Alert } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 
 import Screen from "../../components/Screen";
-import TarifItem from "../../components/lists/TarifItem";
+import TarifCreationItem from "../../components/lists/TarifCreationItem";
 import ListSeparator from "../../components/lists/ListSeparator";
 import colors from "../../config/colors";
 import AppButton from "../../components/AppButton";
@@ -81,7 +81,7 @@ function CreatePriceListScreen(props) {
           refreshing={refreshing}
           onRefresh={() => getAllEventProducts(eventId)}
           renderItem={({ item }) => (
-            <TarifItem
+            <TarifCreationItem
               name={item.name}
               category={item.category}
               description={item.description}
