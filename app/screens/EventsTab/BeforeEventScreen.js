@@ -12,7 +12,7 @@ import { ErrorMessage } from "../../components/forms";
 import userEventAPI from "../../api/userEvent.api";
 import eventAPI from "../../api/event.api";
 
-function UserSellerBeforeEventScreen({
+function BeforeEventScreen({
   navigation,
   organizer,
   startDate,
@@ -120,11 +120,11 @@ function UserSellerBeforeEventScreen({
 
   //TODO :
   // - USER
-  // --- Redirect to tarif screen (line 91)
+  // --- Redirect to tarif screen (line 91) ) -> DONE
   // --- Function to become seller -> DONE
   // --- Leave event function (line 103) -> DONE
   // - SELLER
-  // --- Redirect to tarif screen (line 91)
+  // --- Redirect to tarif screen (line 91) ) -> DONE
   // --- Function to become client and don't be seller anymore (line 97) -> DONE
   // --- Leave event function (line 103) -> DONE
   // - ORGANIZER
@@ -189,7 +189,7 @@ function UserSellerBeforeEventScreen({
         <View style={styles.buttonsContainer}>
           <AppButton
             title="Voir le tarif"
-            onPress={() => console.log("tarif")}
+            onPress={() => navigation.navigate("Tarif", { eventId })}
             style={{ marginVertical: 5 }}
           />
           {role === 1 && (
@@ -301,4 +301,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default UserSellerBeforeEventScreen;
+export default BeforeEventScreen;

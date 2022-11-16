@@ -11,7 +11,7 @@ import SortMenu from "../../components/SortMenu";
 import { AuthContext } from "../../auth/AuthContext";
 import LoadingIndicator from "../../components/LoadingIndicator";
 
-function UserCurrentEventScreen({
+function CurrentEventScreen({
   navigation,
   organizer,
   startDate,
@@ -145,4 +145,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default UserCurrentEventScreen;
+export default CurrentEventScreen;
