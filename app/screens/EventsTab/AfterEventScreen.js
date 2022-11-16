@@ -1,11 +1,15 @@
 import React, { useState, useContext } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Alert } from "react-native";
 
 import Screen from "../../components/Screen";
 import AppText from "../../components/AppText";
 import colors from "../../config/colors";
 import SortMenu from "../../components/SortMenu";
 import { AuthContext } from "../../auth/AuthContext";
+import AppButton from "../../components/AppButton";
+import LoadingIndicator from "../../components/LoadingIndicator";
+import { ErrorMessage } from "../../components/forms";
+import eventAPI from "../../api/event.api";
 
 function AfterEventScreen({
   navigation,
@@ -22,11 +26,12 @@ function AfterEventScreen({
   // --- Display a button to redirect to the statistics screen
   // --- Display a button to delete the event -> Alert to confirm and say that data won't be accessible for the user anymore
 
-  const { isLoading, setIsLoading } = useContext(AuthContext);
+  const { isLoading, setIsLoading, userAccessToken, updateAccessToken } =
+    useContext(AuthContext);
 
   const [sortOptionSelected, setSortOptionSelected] = useState("newest");
   const [paidOptionSelected, setPaidOptionSelected] = useState("all");
-  const [isSortOptionsVisible, setIsSortOptionsVisible] = useState(false);
+  const [error, setError] = useState(null);
 
   const [commandItems, setCommandItems] = useState([]);
   const [displayedItems, setDisplayedItems] = useState(commandItems);
@@ -67,6 +72,47 @@ function AfterEventScreen({
     });
     setDisplayedItems(itemsToDisplay);
     setIsLoading(false);
+  };
+
+  const handleDeleteEvent = () => {
+    Alert.alert(
+      "Supprimer l'évènement",
+      "Êtes-vous sûr de vouloir supprimer l'évènement ?\n Vous n'aurez plus accès aux données de l'évènement après sa suppression",
+      [
+        {
+          text: "Annuler",
+          style: "cancel",
+        },
+        {
+          text: "Confirmer",
+          onPress: () => {
+            setError(null);
+            setIsLoading(true);
+            eventAPI
+              .deleteEvent(eventId, userAccessToken)
+              .then((res) => {
+                setIsLoading(false);
+                if (res.data.success != null) {
+                  Alert.alert("Succés", "L'événement a été supprimé");
+                  navigation.navigate("Home");
+                } else {
+                  setError(res.data.error);
+                }
+              })
+              .catch((err) => {
+                setIsLoading(false);
+                if (err.response.status === 403) {
+                  updateAccessToken();
+                  setError("Une erreur est survenue, veuillez réessayer");
+                } else {
+                  setError("Une erreur est survenue");
+                }
+              });
+          },
+          style: "destructive",
+        },
+      ]
+    );
   };
 
   return (
@@ -139,6 +185,20 @@ function AfterEventScreen({
           handleSort={() => handleSort()}
         />
       </View>
+      {role === 2 && (
+        <View
+          style={{
+            width: "100%",
+          }}
+        >
+          <AppButton
+            title="Supprimer l'évènement"
+            onPress={() => handleDeleteEvent()}
+          />
+          <ErrorMessage error={error} visible={error != null} />
+        </View>
+      )}
+      {isLoading && <LoadingIndicator />}
     </Screen>
   );
 }
@@ -146,6 +206,7 @@ function AfterEventScreen({
 const styles = StyleSheet.create({
   commandsContainer: {
     paddingHorizontal: 10,
+    flex: 1,
   },
   commandsTitle: {
     fontSize: 24,
@@ -158,6 +219,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     paddingHorizontal: 5,
+    width: "100%",
     backgroundColor: colors.white,
   },
   detailContainer: {

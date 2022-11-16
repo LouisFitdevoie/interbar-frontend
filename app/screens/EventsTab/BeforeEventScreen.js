@@ -130,7 +130,7 @@ function UserSellerBeforeEventScreen({
   // - ORGANIZER
   // --- Redirect to edit event screen (line 112)
   // --- Redirect to edit tarif screen (line 117)
-  // --- Cancel event function (line 122)
+  // --- Cancel event function (line 122) -> DONE
 
   return (
     <Screen style={styles.container}>
