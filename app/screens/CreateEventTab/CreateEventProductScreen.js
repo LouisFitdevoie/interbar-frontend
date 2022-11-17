@@ -21,6 +21,7 @@ function CreateEventProductScreen(props) {
   const [addProductToEventError, setAddProductToEventError] = useState(null);
   const eventId = props.route.params.eventId;
   const productId = props.route.params.productId;
+  const isEditing = props.route.params.isEditing;
 
   const handleSubmit = ({
     eventId,
@@ -43,7 +44,11 @@ function CreateEventProductScreen(props) {
       .then((res) => {
         setIsLoading(false);
         if (res.data.success != null) {
-          navigation.navigate("CreatePriceList", { eventId });
+          if (!isEditing) {
+            navigation.navigate("CreatePriceList", { eventId });
+          } else {
+            navigation.navigate("EditPriceList", { eventId, isEditing });
+          }
         }
       })
       .catch((err) => {

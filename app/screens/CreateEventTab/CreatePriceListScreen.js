@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from "react";
+import React, { useEffect, useContext, useState, useLayoutEffect } from "react";
 import { View, StyleSheet, FlatList, Alert } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 
@@ -13,6 +13,7 @@ import AppText from "../../components/AppText";
 import LoadingIndicator from "../../components/LoadingIndicator";
 import TarifItemDeleteAction from "../../components/lists/TarifItemDeleteAction";
 import ErrorMessage from "../../components/forms/ErrorMessage";
+import tabBarDisplayManager from "../../config/tabBarDisplayManager";
 
 function CreatePriceListScreen(props) {
   const isFocused = useIsFocused();
@@ -20,12 +21,17 @@ function CreatePriceListScreen(props) {
     useContext(AuthContext);
 
   const eventId = props.route.params.eventId;
+  const isEditing = props.route.params.isEditing != null;
   const [eventProducts, setEventProducts] = useState([]);
   const { navigation } = props;
   const [deleteError, setDeleteError] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const [errorGettingEventProducts, setErrorGettingEventProducts] =
     useState(null);
+
+  useLayoutEffect(() => {
+    tabBarDisplayManager.hideTabBar(navigation);
+  }, []);
 
   const getAllEventProducts = (eventId) => {
     setIsLoading(true);
@@ -97,6 +103,7 @@ function CreatePriceListScreen(props) {
                   buyingPrice: item.buyingPrice,
                   sellingPrice: item.sellingPrice,
                   stock: item.stock,
+                  isEditing,
                 })
               }
               renderRightActions={() => (
@@ -114,6 +121,7 @@ function CreatePriceListScreen(props) {
                           text: "Supprimer",
                           onPress: () =>
                             deleteEventProduct(item.events_products_id),
+                          style: "destructive",
                         },
                       ]
                     );
@@ -136,7 +144,9 @@ function CreatePriceListScreen(props) {
         <View style={styles.buttonContainer}>
           <AppButton
             title="Ajouter un produit"
-            onPress={() => navigation.navigate("AddProductTarif", { eventId })}
+            onPress={() =>
+              navigation.navigate("AddProductTarif", { eventId, isEditing })
+            }
             style={{ marginBottom: 5 }}
           />
           <AppButton
@@ -153,10 +163,14 @@ function CreatePriceListScreen(props) {
                   {
                     text: "Valider",
                     onPress: () => {
-                      navigation.reset({
-                        index: 0,
-                        routes: [{ name: "EventsNavigator" }],
-                      });
+                      if (!isEditing) {
+                        navigation.reset({
+                          index: 0,
+                          routes: [{ name: "EventsNavigator" }],
+                        });
+                      } else {
+                        navigation.goBack();
+                      }
                     },
                   },
                 ]

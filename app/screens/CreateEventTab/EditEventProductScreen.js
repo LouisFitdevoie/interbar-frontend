@@ -28,6 +28,7 @@ function EditEventProductScreen(props) {
     buyingPrice,
     sellingPrice,
     stock,
+    isEditing,
   } = props.route.params;
 
   const handleSubmit = ({ newBuyingPrice, newSellingPrice, newStock }) => {
@@ -48,7 +49,11 @@ function EditEventProductScreen(props) {
       .then((res) => {
         setIsLoading(false);
         if (res.data.success != null) {
-          navigation.navigate("CreatePriceList", { eventId });
+          if (!isEditing) {
+            navigation.navigate("CreatePriceList", { eventId });
+          } else {
+            navigation.navigate("EditPriceList", { eventId, isEditing });
+          }
         }
       })
       .catch((err) => {

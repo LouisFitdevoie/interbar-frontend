@@ -9,6 +9,11 @@ import EditEventEndDateScreen from "../screens/EventsTab/EditEventEndDateScreen"
 import UserToSellerScreen from "../screens/EventsTab/UserToSellerScreen";
 import TarifScreen from "../screens/EventsTab/TarifScreen";
 import EditEventScreen from "../screens/EventsTab/EditEventScreen";
+import CreatePriceListScreen from "../screens/CreateEventTab/CreatePriceListScreen";
+import AddProductTarifScreen from "../screens/CreateEventTab/AddProductTarifScreen";
+import CreateProductScreen from "../screens/CreateEventTab/CreateProductScreen";
+import CreateEventProductScreen from "../screens/CreateEventTab/CreateEventProductScreen";
+import EditEventProductScreen from "../screens/CreateEventTab/EditEventProductScreen";
 
 const Stack = createStackNavigator();
 
@@ -53,6 +58,91 @@ function EventsStack(props) {
               fontWeight: "bold",
               fontSize: 20,
             },
+          }}
+        />
+        <Stack.Screen
+          name="EditPriceList"
+          component={CreatePriceListScreen}
+          options={{
+            headerShown: true,
+            headerTitle: "Modifier le tarif",
+            headerTitleStyle: {
+              fontSize: 22,
+              color: colors.white,
+            },
+            headerStyle: {
+              backgroundColor: colors.buttonPrimary,
+            },
+            headerTintColor: colors.white,
+            headerBackTitleVisible: false,
+          }}
+        />
+        <Stack.Screen
+          name="AddProductTarif"
+          component={AddProductTarifScreen}
+          options={{
+            headerShown: true,
+            headerTitle: "Nouveau produit",
+            headerTitleStyle: {
+              fontSize: 22,
+              color: colors.white,
+            },
+            headerStyle: {
+              backgroundColor: colors.buttonPrimary,
+            },
+            headerTintColor: colors.white,
+            headerBackTitleVisible: false,
+          }}
+        />
+        <Stack.Screen
+          name="CreateProduct"
+          component={CreateProductScreen}
+          options={{
+            headerShown: true,
+            headerTitle: "Nouveau produit",
+            headerTitleStyle: {
+              fontSize: 22,
+              color: colors.white,
+            },
+            headerStyle: {
+              backgroundColor: colors.buttonPrimary,
+            },
+            headerTintColor: colors.white,
+            headerBackTitleVisible: false,
+          }}
+        />
+        <Stack.Screen
+          name="CreateEventProduct"
+          component={CreateEventProductScreen}
+          options={{
+            headerShown: true,
+            headerTitle: "Ajouter le produit",
+            headerTitleStyle: {
+              fontSize: 22,
+              color: colors.white,
+            },
+            headerStyle: {
+              backgroundColor: colors.buttonPrimary,
+            },
+            headerTintColor: colors.white,
+            headerBackTitleVisible: false,
+          }}
+        />
+        <Stack.Screen
+          name="EditEventProduct"
+          component={EditEventProductScreen}
+          options={{
+            headerShown: true,
+            headerTitle: "Modifier le produit",
+            headerTitleStyle: {
+              fontSize: 22,
+              color: colors.white,
+            },
+            headerStyle: {
+              backgroundColor: colors.buttonPrimary,
+            },
+            headerTintColor: colors.white,
+            headerBackTitleVisible: false,
           }}
         />
       </Stack.Group>

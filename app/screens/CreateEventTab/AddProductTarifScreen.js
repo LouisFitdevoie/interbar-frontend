@@ -18,6 +18,7 @@ function AddProductTarifScreen(props) {
   const { isLoading, setIsLoading, userAccessToken, updateAccessToken } =
     useContext(AuthContext);
   const eventId = props.route.params.eventId;
+  const isEditing = props.route.params.isEditing;
   const { navigation } = props;
 
   const [existingProducts, setExistingProducts] = useState([]);
@@ -195,6 +196,7 @@ function AddProductTarifScreen(props) {
                   productName: item.name,
                   productCategory: item.category,
                   productDescription: item.description,
+                  isEditing,
                 })
               }
             >
@@ -239,7 +241,9 @@ function AddProductTarifScreen(props) {
         "Impossible de récupérer les produits, veuillez réessayer" && (
         <AppButton
           title="Ajouter un produit"
-          onPress={() => navigation.navigate("CreateProduct", { eventId })}
+          onPress={() =>
+            navigation.navigate("CreateProduct", { eventId, isEditing })
+          }
           style={{ marginBottom: 20 }}
         />
       )}

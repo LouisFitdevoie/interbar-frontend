@@ -128,7 +128,7 @@ function BeforeEventScreen({
   // --- Function to become client and don't be seller anymore (line 97) -> DONE
   // --- Leave event function (line 103) -> DONE
   // - ORGANIZER
-  // --- Redirect to edit event screen (line 112)
+  // --- Redirect to edit event screen (line 112) -> DONE
   // --- Redirect to edit tarif screen (line 117)
   // --- Cancel event function (line 122) -> DONE
 
@@ -255,7 +255,9 @@ function BeforeEventScreen({
           />
           <AppButton
             title="Modifier le tarif"
-            onPress={() => console.log("modifier le tarif")}
+            onPress={() =>
+              navigation.navigate("EditPriceList", { eventId, isEditing: true })
+            }
             style={{ marginVertical: 5 }}
           />
           <AppButton

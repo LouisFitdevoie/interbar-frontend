@@ -23,6 +23,7 @@ function CreateProductScreen(props) {
   const { navigation } = props;
   const eventId =
     props.route.params.eventId != null ? props.route.params.eventId : null;
+  const isEditing = props.route.params.isEditing;
 
   const handleSubmit = ({ name, category, description }) => {
     setIsLoading(true);
@@ -32,7 +33,7 @@ function CreateProductScreen(props) {
       .then((res) => {
         setIsLoading(false);
         if (res.data.success != null) {
-          navigation.navigate("AddProductTarif", { eventId });
+          navigation.navigate("AddProductTarif", { eventId, isEditing });
         }
       })
       .catch((err) => {
