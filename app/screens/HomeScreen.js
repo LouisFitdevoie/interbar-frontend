@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, useLayoutEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import Screen from "../components/Screen";
 import { AuthContext } from "../auth/AuthContext";
@@ -18,9 +19,11 @@ import userEventAPI from "../api/userEvent.api";
 import LoadingIndicator from "../components/LoadingIndicator";
 import EventItem from "../components/lists/EventItem";
 import AppButton from "../components/AppButton";
+import tabBarDisplayManager from "../config/tabBarDisplayManager";
 
 function HomeScreen(props) {
   const isFocused = useIsFocused();
+  const insets = useSafeAreaInsets();
   const { user, setIsLoading, isLoading, userAccessToken, updateAccessToken } =
     useContext(AuthContext);
   const { navigation } = props;
@@ -32,6 +35,10 @@ function HomeScreen(props) {
   const [eventsItems, setEventsItems] = useState([]);
   const [displayedItems, setDisplayedItems] = useState(eventsItems);
   const [refreshing, setRefreshing] = useState(false);
+
+  useLayoutEffect(() => {
+    tabBarDisplayManager.displayTabBar(navigation, insets);
+  }, []);
 
   const getEventsJoined = () => {
     setIsLoading(true);

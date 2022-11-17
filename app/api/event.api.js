@@ -91,3 +91,28 @@ exports.deleteEvent = (eventId, accessToken) => {
     },
   });
 };
+
+exports.editEvent = (
+  eventId,
+  name,
+  startDate,
+  endDate,
+  location,
+  description,
+  accessToken
+) => {
+  return axios({
+    method: "put",
+    url: `${BASE_URL}/update-event/${eventId}`,
+    data: {
+      name,
+      startDate,
+      endDate,
+      location,
+      description,
+    },
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};

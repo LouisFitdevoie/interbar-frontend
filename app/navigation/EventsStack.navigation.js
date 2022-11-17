@@ -8,6 +8,7 @@ import EventDetailsScreen from "../screens/EventsTab/EventDetailsScreen";
 import EditEventEndDateScreen from "../screens/EventsTab/EditEventEndDateScreen";
 import UserToSellerScreen from "../screens/EventsTab/UserToSellerScreen";
 import TarifScreen from "../screens/EventsTab/TarifScreen";
+import EditEventScreen from "../screens/EventsTab/EditEventScreen";
 
 const Stack = createStackNavigator();
 
@@ -105,6 +106,23 @@ function EventsStack(props) {
             headerBackTitleVisible: false,
             headerTintColor: colors.white,
             headerTitle: "Tarif",
+            headerTitleStyle: {
+              fontWeight: "bold",
+              fontSize: 20,
+            },
+          }}
+        />
+        <Stack.Screen
+          name="EditEvent"
+          component={EditEventScreen}
+          options={{
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: colors.buttonPrimary,
+            },
+            headerBackTitleVisible: false,
+            headerTintColor: colors.white,
+            headerTitle: "Modifier l'évènement",
             headerTitleStyle: {
               fontWeight: "bold",
               fontSize: 20,

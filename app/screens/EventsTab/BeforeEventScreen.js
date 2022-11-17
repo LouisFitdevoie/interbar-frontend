@@ -250,7 +250,7 @@ function BeforeEventScreen({
         <View style={styles.buttonsContainer}>
           <AppButton
             title="Modifier l'évènement"
-            onPress={() => console.log("modifier")}
+            onPress={() => navigation.navigate("EditEvent", { eventId })}
             style={{ marginVertical: 5 }}
           />
           <AppButton
