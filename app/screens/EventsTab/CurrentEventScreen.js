@@ -26,7 +26,8 @@ function CurrentEventScreen({
   role,
   eventId,
 }) {
-  const { isLoading, setIsLoading, userAccessToken } = useContext(AuthContext);
+  const { isLoading, setIsLoading, userAccessToken, user } =
+    useContext(AuthContext);
   const isFocused = useIsFocused();
   const [error, setError] = useState(null);
 
@@ -59,9 +60,17 @@ function CurrentEventScreen({
         setCommandItems(res.data);
         console.log(res.data);
         setDisplayedItems(
-          res.data.sort(
-            (a, b) => new Date(b.created_at) - new Date(a.created_at)
-          )
+          res.data
+            .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+            .filter((command) => {
+              if (role === 0) {
+                return command.client_id === user.id;
+              } else if (role === 1) {
+                return command.servedBy_id === user.id;
+              } else {
+                return true;
+              }
+            })
         );
         setIsLoading(false);
       })
@@ -77,9 +86,13 @@ function CurrentEventScreen({
   const handleSort = () => {
     setIsLoading(true);
     let itemsToDisplay = commandItems;
-    if (paidOptionSelected != "all") {
+    if (paidOptionSelected === "paid") {
       itemsToDisplay = itemsToDisplay.filter((command) => {
         return command.isPaid;
+      });
+    } else if (paidOptionSelected === "unpaid") {
+      itemsToDisplay = itemsToDisplay.filter((command) => {
+        return !command.isPaid;
       });
     }
     itemsToDisplay = itemsToDisplay.sort((a, b) => {
@@ -101,15 +114,15 @@ function CurrentEventScreen({
 
   //TODO
   // - USER
-  // --- Get the commands the user has made for this event
-  // --- Display them in a flatlist
+  // --- Get the commands the user has made for this event -> DONE
+  // --- Display them in a flatlist -> DONE
   // --- Add the ability to sort the items by highest or lowest price (line 60 & 63)
   // --- Verify the ability to sort by newest or oldest (line 56 & 58)
   // --- Add the ability to the user to make a new command by redirecting him to a newCommandScreen (line 101)
   // - SELLER & ORGANIZER
-  // --- Get the commands the seller has served for this event
-  // --- Display them in a flatlist
-  // --- Change the color of the command item if the command is not paid or served
+  // --- Get the commands the seller has served for this event -> DONE
+  // --- Display them in a flatlist -> DONE
+  // --- Change the color of the command item if the command is not paid or served -> DONE
   // --- Verify the ability to filter by paid or unpaid (line 49 to 52)
 
   return (

@@ -52,9 +52,13 @@ function AfterEventScreen({
   const handleSort = () => {
     setIsLoading(true);
     let itemsToDisplay = commandItems;
-    if (paidOptionSelected != "all") {
+    if (paidOptionSelected === "paid") {
       itemsToDisplay = itemsToDisplay.filter((command) => {
         return command.isPaid;
+      });
+    } else if (paidOptionSelected === "unpaid") {
+      itemsToDisplay = itemsToDisplay.filter((command) => {
+        return !command.isPaid;
       });
     }
     itemsToDisplay = itemsToDisplay.sort((a, b) => {
