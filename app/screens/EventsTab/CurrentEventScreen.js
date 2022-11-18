@@ -14,6 +14,7 @@ import LoadingIndicator from "../../components/LoadingIndicator";
 import commandAPI from "../../api/command.api";
 import { FlatList } from "react-native";
 import CommandItem from "../../components/lists/CommandItem";
+import CommandItemActions from "../../components/lists/CommandItemActions";
 
 function CurrentEventScreen({
   navigation,
@@ -152,6 +153,14 @@ function CurrentEventScreen({
               totalPrice="2,5"
               isPaid={item.isPaid}
               isServed={item.isServed}
+              renderRightActions={() => (
+                <CommandItemActions
+                  onPaidPress={() => console.log("paid")}
+                  onServedPress={() => console.log("served")}
+                  isPaid={item.isPaid}
+                  isServed={item.isServed}
+                />
+              )}
             />
           )}
         />

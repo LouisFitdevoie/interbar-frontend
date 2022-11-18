@@ -1,6 +1,7 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import Swipeable from "react-native-gesture-handler/Swipeable";
 
 import AppText from "../AppText";
 import colors from "../../config/colors";
@@ -12,37 +13,40 @@ function CommandItem({
   totalPrice,
   isPaid,
   isServed,
+  renderRightActions,
 }) {
   let productNumber = 0;
   products.forEach((product) => {
     productNumber += product.number;
   });
   return (
-    <TouchableOpacity onPress={() => console.log(commandId)}>
-      <View style={styles.container}>
-        <View style={styles.clientNameContainer}>
-          <AppText
-            style={isPaid && isServed ? {} : styles.notComplete}
-            numberOfLines={1}
-            ellipsizeMode="middle"
-          >
-            {clientName
-              .split(" ")
-              .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-              .join(" ")}{" "}
-            ({productNumber} produits)
-          </AppText>
+    <Swipeable renderRightActions={renderRightActions}>
+      <TouchableOpacity onPress={() => console.log(commandId)}>
+        <View style={styles.container}>
+          <View style={styles.clientNameContainer}>
+            <AppText
+              style={isPaid && isServed ? {} : styles.notComplete}
+              numberOfLines={1}
+              ellipsizeMode="middle"
+            >
+              {clientName
+                .split(" ")
+                .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(" ")}{" "}
+              ({productNumber} produits)
+            </AppText>
+          </View>
+          <View style={styles.endView}>
+            <AppText style={styles.totalPrice}>{totalPrice} €</AppText>
+            <MaterialCommunityIcons
+              name="chevron-right"
+              size={30}
+              color={colors.buttonPrimary}
+            />
+          </View>
         </View>
-        <View style={styles.endView}>
-          <AppText style={styles.totalPrice}>{totalPrice} €</AppText>
-          <MaterialCommunityIcons
-            name="chevron-right"
-            size={30}
-            color={colors.buttonPrimary}
-          />
-        </View>
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
+    </Swipeable>
   );
 }
 
@@ -57,6 +61,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderBottomWidth: 1,
     borderColor: colors.light,
+    backgroundColor: colors.white,
   },
   clientNameContainer: {
     flexDirection: "row",
