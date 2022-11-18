@@ -13,6 +13,7 @@ import { AuthContext } from "../../auth/AuthContext";
 import LoadingIndicator from "../../components/LoadingIndicator";
 import commandAPI from "../../api/command.api";
 import { FlatList } from "react-native";
+import CommandItem from "../../components/lists/CommandItem";
 
 function CurrentEventScreen({
   navigation,
@@ -144,17 +145,14 @@ function CurrentEventScreen({
           data={displayedItems}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
-            <View
-              style={{ width: "100%", height: 100, backgroundColor: "red" }}
-            >
-              <AppText>
-                {item.client_name
-                  .split(" ")
-                  .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                  .join(" ")}{" "}
-                ({item.events_products_commands.length} produits)
-              </AppText>
-            </View>
+            <CommandItem
+              clientName={item.client_name}
+              products={item.events_products_commands}
+              commandId={item.id}
+              totalPrice="2,5"
+              isPaid={item.isPaid}
+              isServed={item.isServed}
+            />
           )}
         />
       )}
