@@ -117,20 +117,7 @@ function BeforeEventScreen({
       ]
     );
   };
-
-  //TODO :
-  // - USER
-  // --- Redirect to tarif screen (line 91) ) -> DONE
-  // --- Function to become seller -> DONE
-  // --- Leave event function (line 103) -> DONE
-  // - SELLER
-  // --- Redirect to tarif screen (line 91) ) -> DONE
-  // --- Function to become client and don't be seller anymore (line 97) -> DONE
-  // --- Leave event function (line 103) -> DONE
-  // - ORGANIZER
-  // --- Redirect to edit event screen (line 112) -> DONE
-  // --- Redirect to edit tarif screen (line 117)
-  // --- Cancel event function (line 122) -> DONE
+  console.log(userAccessToken);
 
   return (
     <Screen style={styles.container}>

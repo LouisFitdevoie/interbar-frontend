@@ -1,6 +1,7 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { View, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useIsFocused } from "@react-navigation/native";
 
 import Screen from "../../components/Screen";
 import colors from "../../config/colors";
@@ -10,6 +11,8 @@ import AppButton from "../../components/AppButton";
 import SortMenu from "../../components/SortMenu";
 import { AuthContext } from "../../auth/AuthContext";
 import LoadingIndicator from "../../components/LoadingIndicator";
+import commandAPI from "../../api/command.api";
+import { FlatList } from "react-native";
 
 function CurrentEventScreen({
   navigation,
@@ -21,7 +24,9 @@ function CurrentEventScreen({
   role,
   eventId,
 }) {
-  const { isLoading, setIsLoading } = useContext(AuthContext);
+  const { isLoading, setIsLoading, userAccessToken } = useContext(AuthContext);
+  const isFocused = useIsFocused();
+  const [error, setError] = useState(null);
 
   const [sortOptionSelected, setSortOptionSelected] = useState("newest");
   const [paidOptionSelected, setPaidOptionSelected] = useState("all");
@@ -41,6 +46,31 @@ function CurrentEventScreen({
     { name: "Payées", value: "paid" },
     { name: "Non payées", value: "unpaid" },
   ];
+
+  const getCommands = () => {
+    setIsLoading(true);
+    setError(null);
+    commandAPI
+      .getCommandsByEventId(eventId, userAccessToken)
+      .then((res) => {
+        console.log(`Found ${res.data.length} command(s) for this event`);
+        setCommandItems(res.data);
+        console.log(res.data);
+        setDisplayedItems(
+          res.data.sort(
+            (a, b) => new Date(b.created_at) - new Date(a.created_at)
+          )
+        );
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err.response.data.error);
+      });
+  };
+
+  useEffect(() => {
+    getCommands();
+  }, [isFocused]);
 
   const handleSort = () => {
     setIsLoading(true);
@@ -108,6 +138,25 @@ function CurrentEventScreen({
             Aucune commande ne correspond aux critères sélectionnés
           </AppText>
         </View>
+      )}
+      {displayedItems.length > 0 && (
+        <FlatList
+          data={displayedItems}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <View
+              style={{ width: "100%", height: 100, backgroundColor: "red" }}
+            >
+              <AppText>
+                {item.client_name
+                  .split(" ")
+                  .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                  .join(" ")}{" "}
+                ({item.events_products_commands.length} produits)
+              </AppText>
+            </View>
+          )}
+        />
       )}
       <View style={styles.buttonContainer}>
         <AppButton
