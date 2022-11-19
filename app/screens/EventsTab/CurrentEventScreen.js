@@ -237,7 +237,7 @@ function CurrentEventScreen({
               clientName={item.client_name}
               products={item.events_products_commands}
               commandId={item.id}
-              totalPrice="2,5"
+              totalPrice={item.totalPrice}
               isPaid={item.isPaid}
               isServed={item.isServed}
               setCommandPaid={() => setCommandPaid(item.id)}
