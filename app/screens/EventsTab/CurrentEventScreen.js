@@ -116,10 +116,10 @@ function CurrentEventScreen({
       } else if (sortOptionSelected === "oldest") {
         return new Date(a.created_at) - new Date(b.created_at);
       } else if (sortOptionSelected === "highest") {
-        //Edit to get the total price of the command <=========================== TODO
+        //TODO -> Edit to get the total price of the command <=========================== TODO
         return b.totalPrice - a.totalPrice;
       } else if (sortOptionSelected === "lowest") {
-        //Edit to get the total price of the command <=========================== TODO
+        //TODO -> Edit to get the total price of the command <=========================== TODO
         return a.totalPrice - b.totalPrice;
       }
     });
@@ -185,14 +185,16 @@ function CurrentEventScreen({
   // - USER
   // --- Get the commands the user has made for this event -> DONE
   // --- Display them in a flatlist -> DONE
-  // --- Add the ability to sort the items by highest or lowest price (line 60 & 63)
-  // --- Verify the ability to sort by newest or oldest (line 56 & 58)
-  // --- Add the ability to the user to make a new command by redirecting him to a newCommandScreen (line 101)
+  //TODO --- Add the ability to sort the items by highest or lowest price (line 60 & 63)
+  //--- Verify the ability to sort by newest or oldest (line 56 & 58) -> DONE
+  //TODO --- Add the ability to the user to make a new command by redirecting him to a newCommandScreen (line 101)
   // - SELLER & ORGANIZER
   // --- Get the commands the seller has served for this event -> DONE
   // --- Display them in a flatlist -> DONE
   // --- Change the color of the command item if the command is not paid or served -> DONE
-  // --- Verify the ability to filter by paid or unpaid (line 49 to 52)
+  // --- Verify the ability to filter by paid or unpaid (line 49 to 52) -> DONE
+  // --- Add the ability to the seller/organizer to change the values of isPaid & isServed from this screen -> DONE
+  //TODO --- Add the ability to the seller/organizer to make a new command by redirecting him to a newCommandScreen (line 101)
 
   return (
     <Screen style={styles.container}>
