@@ -15,6 +15,7 @@ import commandAPI from "../../api/command.api";
 import { FlatList } from "react-native";
 import CommandItem from "../../components/lists/CommandItem";
 import CommandItemActions from "../../components/lists/CommandItemActions";
+import ErrorMessage from "../../components/forms/ErrorMessage";
 
 function CurrentEventScreen({
   navigation,
@@ -26,10 +27,11 @@ function CurrentEventScreen({
   role,
   eventId,
 }) {
-  const { isLoading, setIsLoading, userAccessToken, user } =
+  const { isLoading, setIsLoading, userAccessToken, user, updateAccessToken } =
     useContext(AuthContext);
   const isFocused = useIsFocused();
   const [error, setError] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   const [sortOptionSelected, setSortOptionSelected] = useState("newest");
   const [paidOptionSelected, setPaidOptionSelected] = useState("all");
@@ -58,7 +60,8 @@ function CurrentEventScreen({
       .then((res) => {
         console.log(`Found ${res.data.length} command(s) for this event`);
         setCommandItems(res.data);
-        console.log(res.data);
+        setSortOptionSelected("newest");
+        setPaidOptionSelected("all");
         setDisplayedItems(
           res.data
             .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
@@ -75,7 +78,19 @@ function CurrentEventScreen({
         setIsLoading(false);
       })
       .catch((err) => {
-        console.log(err.response.data.error);
+        if (err.response === undefined) {
+          setError("Impossible de communiquer avec le serveur");
+        } else {
+          if (err.response.status === 404) {
+            setError("Aucune commande n'a été trouvée");
+          } else if (err.response.status === 403) {
+            updateAccessToken();
+            setError("Une erreur est survenue, veuillez réessayer");
+          } else {
+            setError("Une erreur est survenue");
+            console.log(err.response.data.error);
+          }
+        }
       });
   };
 
@@ -110,6 +125,60 @@ function CurrentEventScreen({
     });
     setDisplayedItems(itemsToDisplay);
     setIsLoading(false);
+  };
+
+  const setCommandPaid = (commandId) => {
+    setIsLoading(true);
+    setError(null);
+    commandAPI
+      .setCommandPaid(commandId, userAccessToken)
+      .then((res) => {
+        setIsLoading(false);
+        getCommands();
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        if (err.response === undefined) {
+          setError("Impossible de communiquer avec le serveur");
+        } else {
+          if (err.response.status === 404) {
+            setError("Aucune commande n'a été trouvée");
+          } else if (err.response.status === 403) {
+            updateAccessToken();
+            setError("Une erreur est survenue, veuillez réessayer");
+          } else {
+            setError("Une erreur est survenue");
+            console.log(err.response.data.error);
+          }
+        }
+      });
+  };
+
+  const setCommandServed = (commandId) => {
+    setIsLoading(true);
+    setError(null);
+    commandAPI
+      .setCommandServed(commandId, userAccessToken)
+      .then((res) => {
+        setIsLoading(false);
+        getCommands();
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        if (err.response === undefined) {
+          setError("Impossible de communiquer avec le serveur");
+        } else {
+          if (err.response.status === 404) {
+            setError("Aucune commande n'a été trouvée");
+          } else if (err.response.status === 403) {
+            updateAccessToken();
+            setError("Une erreur est survenue, veuillez réessayer");
+          } else {
+            setError("Une erreur est survenue");
+            console.log(err.response.data.error);
+          }
+        }
+      });
   };
 
   //TODO
@@ -158,6 +227,9 @@ function CurrentEventScreen({
         <FlatList
           data={displayedItems}
           keyExtractor={(item) => item.id.toString()}
+          style={{ marginTop: 10 }}
+          refreshing={refreshing}
+          onRefresh={() => getCommands()}
           renderItem={({ item }) => (
             <CommandItem
               clientName={item.client_name}
@@ -183,6 +255,7 @@ function CurrentEventScreen({
           title="Nouvelle commande"
           onPress={() => console.log("nouvelle commande")}
         />
+        <ErrorMessage error={error} visible={error != null} />
       </View>
       {isLoading && <LoadingIndicator />}
     </Screen>

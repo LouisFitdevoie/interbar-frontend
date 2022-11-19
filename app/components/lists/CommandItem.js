@@ -5,6 +5,7 @@ import Swipeable from "react-native-gesture-handler/Swipeable";
 
 import AppText from "../AppText";
 import colors from "../../config/colors";
+import CommandItemActions from "./CommandItemActions";
 
 function CommandItem({
   clientName,
