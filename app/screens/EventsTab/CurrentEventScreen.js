@@ -78,11 +78,12 @@ function CurrentEventScreen({
         setIsLoading(false);
       })
       .catch((err) => {
+        setIsLoading(false);
         if (err.response === undefined) {
           setError("Impossible de communiquer avec le serveur");
         } else {
           if (err.response.status === 404) {
-            setError("Aucune commande n'a été trouvée");
+            setError(null);
           } else if (err.response.status === 403) {
             updateAccessToken();
             setError("Une erreur est survenue, veuillez réessayer");
@@ -238,14 +239,19 @@ function CurrentEventScreen({
               totalPrice="2,5"
               isPaid={item.isPaid}
               isServed={item.isServed}
-              renderRightActions={() => (
-                <CommandItemActions
-                  onPaidPress={() => console.log("paid")}
-                  onServedPress={() => console.log("served")}
-                  isPaid={item.isPaid}
-                  isServed={item.isServed}
-                />
-              )}
+              renderRightActions={() => {
+                if (role === 0) {
+                  return;
+                }
+                return (
+                  <CommandItemActions
+                    onPaidPress={() => setCommandPaid(item.id)}
+                    onServedPress={() => setCommandServed(item.id)}
+                    isPaid={item.isPaid}
+                    isServed={item.isServed}
+                  />
+                );
+              }}
             />
           )}
         />
