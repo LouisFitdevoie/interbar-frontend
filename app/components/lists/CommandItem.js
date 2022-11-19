@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Swipeable from "react-native-gesture-handler/Swipeable";
@@ -14,14 +14,38 @@ function CommandItem({
   totalPrice,
   isPaid,
   isServed,
-  renderRightActions,
+  setCommandPaid,
+  setCommandServed,
+  role,
 }) {
   let productNumber = 0;
   products.forEach((product) => {
     productNumber += product.number;
   });
+  const swipeableRef = useRef(null);
   return (
-    <Swipeable renderRightActions={renderRightActions}>
+    <Swipeable
+      ref={swipeableRef}
+      renderRightActions={() => {
+        if (role === 0) {
+          return;
+        }
+        return (
+          <CommandItemActions
+            onPaidPress={() => {
+              setCommandPaid(commandId);
+              swipeableRef.current.close();
+            }}
+            onServedPress={() => {
+              setCommandServed(commandId);
+              swipeableRef.current.close();
+            }}
+            isPaid={isPaid}
+            isServed={isServed}
+          />
+        );
+      }}
+    >
       <TouchableOpacity onPress={() => console.log(commandId)}>
         <View style={styles.container}>
           <View style={styles.clientNameContainer}>

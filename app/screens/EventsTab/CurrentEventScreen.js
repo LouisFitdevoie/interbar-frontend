@@ -14,7 +14,6 @@ import LoadingIndicator from "../../components/LoadingIndicator";
 import commandAPI from "../../api/command.api";
 import { FlatList } from "react-native";
 import CommandItem from "../../components/lists/CommandItem";
-import CommandItemActions from "../../components/lists/CommandItemActions";
 import ErrorMessage from "../../components/forms/ErrorMessage";
 
 function CurrentEventScreen({
@@ -239,19 +238,9 @@ function CurrentEventScreen({
               totalPrice="2,5"
               isPaid={item.isPaid}
               isServed={item.isServed}
-              renderRightActions={() => {
-                if (role === 0) {
-                  return;
-                }
-                return (
-                  <CommandItemActions
-                    onPaidPress={() => setCommandPaid(item.id)}
-                    onServedPress={() => setCommandServed(item.id)}
-                    isPaid={item.isPaid}
-                    isServed={item.isServed}
-                  />
-                );
-              }}
+              setCommandPaid={() => setCommandPaid(item.id)}
+              setCommandServed={() => setCommandServed(item.id)}
+              role={role}
             />
           )}
         />
