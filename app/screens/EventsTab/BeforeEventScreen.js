@@ -117,7 +117,6 @@ function BeforeEventScreen({
       ]
     );
   };
-  console.log(userAccessToken);
 
   return (
     <Screen style={styles.container}>

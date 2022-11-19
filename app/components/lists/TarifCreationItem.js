@@ -1,10 +1,11 @@
-import React from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import React, { useRef } from "react";
+import { View, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Swipeable from "react-native-gesture-handler/Swipeable";
 
 import colors from "../../config/colors";
 import AppText from "../AppText";
+import TarifItemDeleteAction from "./TarifItemDeleteAction";
 
 function TarifCreationItem({
   name,
@@ -13,10 +14,37 @@ function TarifCreationItem({
   stock,
   productId,
   onPress,
-  renderRightActions,
+  onPressDelete,
 }) {
+  const swipeableRef = useRef(null);
   return (
-    <Swipeable renderRightActions={renderRightActions}>
+    <Swipeable
+      ref={swipeableRef}
+      renderRightActions={() => (
+        <TarifItemDeleteAction
+          onPress={() => {
+            Alert.alert(
+              "Suppression",
+              "Voulez-vous vraiment supprimer ce produit du tarif de cet évènement ?",
+              [
+                {
+                  text: "Annuler",
+                  style: "cancel",
+                },
+                {
+                  text: "Supprimer",
+                  onPress: () => {
+                    onPressDelete();
+                    swipeableRef.current.close();
+                  },
+                  style: "destructive",
+                },
+              ]
+            );
+          }}
+        />
+      )}
+    >
       <TouchableOpacity style={styles.touchableContainer} onPress={onPress}>
         <View style={styles.container}>
           <View style={styles.dataContainer}>

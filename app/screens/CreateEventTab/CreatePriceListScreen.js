@@ -106,28 +106,7 @@ function CreatePriceListScreen(props) {
                   isEditing,
                 })
               }
-              renderRightActions={() => (
-                <TarifItemDeleteAction
-                  onPress={() => {
-                    Alert.alert(
-                      "Suppression",
-                      "Voulez-vous vraiment supprimer ce produit du tarif de cet évènement ?",
-                      [
-                        {
-                          text: "Annuler",
-                          style: "cancel",
-                        },
-                        {
-                          text: "Supprimer",
-                          onPress: () =>
-                            deleteEventProduct(item.events_products_id),
-                          style: "destructive",
-                        },
-                      ]
-                    );
-                  }}
-                />
-              )}
+              onPressDelete={() => deleteEventProduct(item.events_products_id)}
             />
           )}
           style={styles.list}
