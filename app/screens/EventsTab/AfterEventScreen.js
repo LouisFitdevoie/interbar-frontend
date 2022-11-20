@@ -73,6 +73,15 @@ function AfterEventScreen({
             return true;
           }
         })
+        .filter((command) => {
+          if (role === 0) {
+            return command.client_id === user.id;
+          } else if (role === 1) {
+            return command.servedBy_id === user.id;
+          } else {
+            return true;
+          }
+        })
     );
     setIsLoading(false);
   };

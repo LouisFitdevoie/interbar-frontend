@@ -122,6 +122,15 @@ function CurrentEventScreen({
             return true;
           }
         })
+        .filter((command) => {
+          if (role === 0) {
+            return command.client_id === user.id;
+          } else if (role === 1) {
+            return command.servedBy_id === user.id;
+          } else {
+            return true;
+          }
+        })
     );
     setIsLoading(false);
   };
@@ -184,8 +193,8 @@ function CurrentEventScreen({
   // - USER
   // --- Get the commands the user has made for this event -> DONE
   // --- Display them in a flatlist -> DONE
-  //TODO --- Add the ability to sort the items by highest or lowest price (line 60 & 63)
-  //--- Verify the ability to sort by newest or oldest (line 56 & 58) -> DONE
+  // --- Add the ability to sort the items by highest or lowest price (line 60 & 63) -> DONE
+  // --- Verify the ability to sort by newest or oldest (line 56 & 58) -> DONE
   //TODO --- Add the ability to the user to make a new command by redirecting him to a newCommandScreen (line 101)
   // - SELLER & ORGANIZER
   // --- Get the commands the seller has served for this event -> DONE
