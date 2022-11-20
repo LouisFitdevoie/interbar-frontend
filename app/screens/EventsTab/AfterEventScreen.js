@@ -51,30 +51,29 @@ function AfterEventScreen({
 
   const handleSort = () => {
     setIsLoading(true);
-    let itemsToDisplay = commandItems;
-    if (paidOptionSelected === "paid") {
-      itemsToDisplay = itemsToDisplay.filter((command) => {
-        return command.isPaid;
-      });
-    } else if (paidOptionSelected === "unpaid") {
-      itemsToDisplay = itemsToDisplay.filter((command) => {
-        return !command.isPaid;
-      });
-    }
-    itemsToDisplay = itemsToDisplay.sort((a, b) => {
-      if (sortOptionSelected === "newest") {
-        return new Date(b.created_at) - new Date(a.created_at);
-      } else if (sortOptionSelected === "oldest") {
-        return new Date(a.created_at) - new Date(b.created_at);
-      } else if (sortOptionSelected === "highest") {
-        //Edit to get the total price of the command <=========================== TODO
-        return b.totalPrice - a.totalPrice;
-      } else if (sortOptionSelected === "lowest") {
-        //Edit to get the total price of the command <=========================== TODO
-        return a.totalPrice - b.totalPrice;
-      }
-    });
-    setDisplayedItems(itemsToDisplay);
+    setDisplayedItems(
+      commandItems
+        .sort((a, b) => {
+          if (sortOptionSelected === "newest") {
+            return new Date(b.created_at) - new Date(a.created_at);
+          } else if (sortOptionSelected === "oldest") {
+            return new Date(a.created_at) - new Date(b.created_at);
+          } else if (sortOptionSelected === "highest") {
+            return parseFloat(b.totalPrice) - parseFloat(a.totalPrice);
+          } else if (sortOptionSelected === "lowest") {
+            return parseFloat(a.totalPrice) - parseFloat(b.totalPrice);
+          }
+        })
+        .filter((command) => {
+          if (paidOptionSelected === "paid") {
+            return command.isPaid;
+          } else if (paidOptionSelected === "unpaid") {
+            return !command.isPaid;
+          } else {
+            return true;
+          }
+        })
+    );
     setIsLoading(false);
   };
 
