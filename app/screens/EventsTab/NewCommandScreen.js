@@ -7,6 +7,7 @@ import { AuthContext } from "../../auth/AuthContext";
 import eventProductAPI from "../../api/eventProduct.api";
 import LoadingIndicator from "../../components/LoadingIndicator";
 import { ErrorMessage } from "../../components/forms";
+import userEventAPI from "../../api/userEvent.api";
 
 function NewCommandScreen(props) {
   const { navigation } = props;
@@ -52,6 +53,35 @@ function NewCommandScreen(props) {
       </Screen>
     );
   }
+
+  const [usersAtEvent, setUsersAtEvent] = useState([]);
+
+  const getAllUsersAtEvent = () => {
+    setIsLoading(true);
+    setError(null);
+    userEventAPI
+      .getAllUsersFromEvent(eventId, userAccessToken)
+      .then((res) => {
+        setUsersAtEvent(res.data);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        if (err.response.status === 403) {
+          updateAccessToken();
+          setError(
+            "Impossible de récupérer les utilisateurs participant à l'évènement, veuillez réessayer"
+          );
+        } else {
+          console.log(err.response.data);
+          setError("Une erreur est survenue");
+        }
+      });
+  };
+
+  useEffect(() => {
+    getAllUsersAtEvent();
+  }, []);
 
   return (
     <Screen style={styles.container}>

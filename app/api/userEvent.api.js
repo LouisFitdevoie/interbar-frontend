@@ -105,3 +105,13 @@ exports.fromUserToSeller = (eventId, userId, sellerPassword, accessToken) => {
     },
   });
 };
+
+exports.getAllUsersFromEvent = (eventId, accessToken) => {
+  return axios({
+    method: "get",
+    url: `${BASE_URL}/users-for-event/${eventId}`,
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};
