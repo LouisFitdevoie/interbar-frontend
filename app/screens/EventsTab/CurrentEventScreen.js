@@ -258,7 +258,9 @@ function CurrentEventScreen({
       <View style={styles.buttonContainer}>
         <AppButton
           title="Nouvelle commande"
-          onPress={() => console.log("nouvelle commande")}
+          onPress={() =>
+            navigation.navigate("NewCommand", { eventId: eventId })
+          }
         />
         <ErrorMessage error={error} visible={error != null} />
       </View>
