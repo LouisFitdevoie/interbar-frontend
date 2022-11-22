@@ -37,3 +37,13 @@ exports.setCommandServed = (commandId, accessToken) => {
     },
   });
 };
+
+exports.getClientNamesForEvent = (eventId, accessToken) => {
+  return axios({
+    method: "get",
+    url: `${BASE_URL}/event-client-names/${eventId}`,
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};
