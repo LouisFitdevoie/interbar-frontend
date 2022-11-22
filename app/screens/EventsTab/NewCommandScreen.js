@@ -28,6 +28,7 @@ function NewCommandScreen(props) {
   const [productsSold, setProductsSold] = useState([]);
   const [productsDisplayed, setProductsDisplayed] = useState(productsSold);
   const [quantities, setQuantities] = useState([]);
+  const [quantityError, setQuantityError] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
@@ -43,6 +44,7 @@ function NewCommandScreen(props) {
             .map((product) => ({
               productId: product.events_products_id,
               quantity: 0,
+              error: false,
             }))
         );
         setIsLoading(false);
@@ -60,6 +62,14 @@ function NewCommandScreen(props) {
         }
       });
   }, []);
+
+  useEffect(() => {
+    if (quantities.filter((quantity) => quantity.error === true).length > 0) {
+      setQuantityError(true);
+    } else {
+      setQuantityError(false);
+    }
+  }, [quantities]);
 
   if (role === 0) {
     // Client -> pas besoin de choisir le nom du client
@@ -84,6 +94,7 @@ function NewCommandScreen(props) {
         <AppButton
           title="Valider la commande"
           onPress={() => console.log("ok")} // Enregistrer la commande + Alert qui dit que la commande a bien été enregistrée et qu'elle sera traitée dans les plus brefs délais + rediriger vers la page de l'évènement
+          disabled={quantityError}
         />
         <ErrorMessage error={error} visible={error != null} />
         {isLoading && <LoadingIndicator />}

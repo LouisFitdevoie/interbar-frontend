@@ -3,16 +3,16 @@ import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 
 import colors from "../config/colors";
 
-function AppButton({
-  color = "buttonPrimary",
-  onPress,
-  style,
-  title,
-  disabled,
-}) {
+function AppButton({ onPress, style, title, disabled }) {
   return (
     <TouchableOpacity
-      style={[styles.button, { backgroundColor: colors[color] }, style]}
+      style={[
+        styles.button,
+        disabled
+          ? { backgroundColor: colors.buttonPrimaryDisabled }
+          : { backgroundColor: colors.buttonPrimary },
+        style,
+      ]}
       onPress={onPress}
       disabled={disabled}
     >
@@ -24,7 +24,6 @@ function AppButton({
 const styles = StyleSheet.create({
   button: {
     alignItems: "center",
-    backgroundColor: colors.buttonPrimary,
     borderRadius: 25,
     height: 50,
     justifyContent: "center",
