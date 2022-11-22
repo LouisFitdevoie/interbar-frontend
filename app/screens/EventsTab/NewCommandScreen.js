@@ -27,6 +27,7 @@ function NewCommandScreen(props) {
 
   const [productsSold, setProductsSold] = useState([]);
   const [productsDisplayed, setProductsDisplayed] = useState(productsSold);
+  const [quantities, setQuantities] = useState([]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -34,8 +35,16 @@ function NewCommandScreen(props) {
     eventProductAPI
       .getAllProductsAtEvent(eventId, userAccessToken)
       .then((res) => {
-        setProductsSold(res.data);
-        setProductsDisplayed(res.data);
+        setProductsSold(res.data.filter((product) => product.stock > 0));
+        setProductsDisplayed(res.data.filter((product) => product.stock > 0));
+        setQuantities(
+          res.data
+            .filter((product) => product.stock > 0)
+            .map((product) => ({
+              productId: product.events_products_id,
+              quantity: 0,
+            }))
+        );
         setIsLoading(false);
       })
       .catch((err) => {
@@ -56,15 +65,22 @@ function NewCommandScreen(props) {
     // Client -> pas besoin de choisir le nom du client
     return (
       <Screen style={styles.container}>
-        <FlatList
-          data={productsDisplayed}
-          keyExtractor={(product) => product.events_products_id.toString()}
-          renderItem={({ item }) => (
-            <NewProductCommandItem product={item} role={role} />
-          )}
-          ItemSeparatorComponent={() => <View style={styles.separator} />}
-          style={{ width: "100%" }}
-        />
+        {!isLoading && (
+          <FlatList
+            data={productsDisplayed}
+            keyExtractor={(product) => product.events_products_id.toString()}
+            renderItem={({ item }) => (
+              <NewProductCommandItem
+                product={item}
+                role={role}
+                quantities={quantities}
+                setQuantities={setQuantities}
+              />
+            )}
+            ItemSeparatorComponent={() => <View style={styles.separator} />}
+            style={{ width: "100%" }}
+          />
+        )}
         <AppButton
           title="Valider la commande"
           onPress={() => console.log("ok")} // Enregistrer la commande + Alert qui dit que la commande a bien été enregistrée et qu'elle sera traitée dans les plus brefs délais + rediriger vers la page de l'évènement

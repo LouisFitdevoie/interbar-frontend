@@ -4,9 +4,7 @@ import colors from "../../config/colors";
 import AppText from "../AppText";
 import AppTextInput from "../AppTextInput";
 
-function NewProductCommandItem({ product, role }) {
-  const [quantity, setQuantity] = useState("0");
-
+function NewProductCommandItem({ product, role, quantities, setQuantities }) {
   return (
     <View style={styles.container}>
       <View style={styles.product}>
@@ -15,13 +13,35 @@ function NewProductCommandItem({ product, role }) {
       </View>
       <View style={styles.addMenu}>
         <AppTextInput
-          onChangeText={(value) => setQuantity(value)}
+          onChangeText={(value) =>
+            setQuantities(
+              quantities.map((q) => {
+                if (q.productId === product.events_products_id) {
+                  return {
+                    productId: q.productId,
+                    quantity: value,
+                  };
+                }
+                return q;
+              })
+            )
+          }
           onBlur={() => {
-            if (quantity === "") {
-              setQuantity("0");
-            }
+            setQuantities(
+              quantities.map((q) => {
+                if (q.productId === product.events_products_id) {
+                  return {
+                    productId: q.productId,
+                    quantity: parseInt(q.quantity) ? parseInt(q.quantity) : 0,
+                  };
+                }
+                return q;
+              })
+            );
           }}
-          value={quantity}
+          value={quantities
+            .filter((q) => q.productId === product.events_products_id)[0]
+            .quantity.toString()}
           keyboardType="numeric"
           style={{ textAlign: "center" }}
         />
