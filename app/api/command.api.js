@@ -61,3 +61,16 @@ exports.createClientCommand = (eventId, clientId, accessToken) => {
     },
   });
 };
+
+exports.setServedById = (commandId, sellerId, accessToken) => {
+  return axios({
+    method: "put",
+    url: `${BASE_URL}/set-command-served-by/${commandId}`,
+    data: {
+      sellerId,
+    },
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};

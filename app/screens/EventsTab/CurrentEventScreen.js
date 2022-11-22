@@ -68,7 +68,10 @@ function CurrentEventScreen({
               if (role === 0) {
                 return command.client_id === user.id;
               } else if (role === 1) {
-                return command.servedBy_id === user.id;
+                return (
+                  command.servedBy_id === user.id ||
+                  command.servedBy_id === null
+                );
               } else {
                 return true;
               }
@@ -135,58 +138,143 @@ function CurrentEventScreen({
     setIsLoading(false);
   };
 
-  const setCommandPaid = (commandId) => {
+  const setCommandPaid = (command) => {
     setIsLoading(true);
     setError(null);
-    commandAPI
-      .setCommandPaid(commandId, userAccessToken)
-      .then((res) => {
-        setIsLoading(false);
-        getCommands();
-      })
-      .catch((err) => {
-        setIsLoading(false);
-        if (err.response === undefined) {
-          setError("Impossible de communiquer avec le serveur");
-        } else {
-          if (err.response.status === 404) {
-            setError("Aucune commande n'a été trouvée");
-          } else if (err.response.status === 403) {
-            updateAccessToken();
-            setError("Une erreur est survenue, veuillez réessayer");
+    if (role != 0 && command.servedBy_id === null) {
+      commandAPI
+        .setServedById(command.id, user.id, userAccessToken)
+        .then(() => {
+          commandAPI
+            .setCommandPaid(command.id, userAccessToken)
+            .then(() => {
+              getCommands();
+            })
+            .catch((err) => {
+              setIsLoading(false);
+              if (err.response === undefined) {
+                setError("Impossible de communiquer avec le serveur");
+              } else {
+                if (err.response.status === 404) {
+                  setError(null);
+                } else if (err.response.status === 403) {
+                  updateAccessToken();
+                  setError("Une erreur est survenue, veuillez réessayer");
+                } else {
+                  setError("Une erreur est survenue");
+                  console.log(err.response.data.error);
+                }
+              }
+            });
+        })
+        .catch((err) => {
+          setIsLoading(false);
+          if (err.response === undefined) {
+            setError("Impossible de communiquer avec le serveur");
           } else {
-            setError("Une erreur est survenue");
-            console.log(err.response.data.error);
+            if (err.response.status === 403) {
+              updateAccessToken();
+              setError("Une erreur est survenue, veuillez réessayer");
+            } else {
+              setError("Une erreur est survenue");
+              console.log(err.response.data.error);
+            }
           }
-        }
-      });
+        });
+    } else {
+      commandAPI
+        .setCommandPaid(command.id, userAccessToken)
+        .then((res) => {
+          setIsLoading(false);
+          getCommands();
+        })
+        .catch((err) => {
+          setIsLoading(false);
+          if (err.response === undefined) {
+            setError("Impossible de communiquer avec le serveur");
+          } else {
+            if (err.response.status === 404) {
+              setError("Aucune commande n'a été trouvée");
+            } else if (err.response.status === 403) {
+              updateAccessToken();
+              setError("Une erreur est survenue, veuillez réessayer");
+            } else {
+              setError("Une erreur est survenue");
+              console.log(err.response.data.error);
+            }
+          }
+        });
+    }
   };
 
-  const setCommandServed = (commandId) => {
+  const setCommandServed = (command) => {
     setIsLoading(true);
     setError(null);
-    commandAPI
-      .setCommandServed(commandId, userAccessToken)
-      .then((res) => {
-        setIsLoading(false);
-        getCommands();
-      })
-      .catch((err) => {
-        setIsLoading(false);
-        if (err.response === undefined) {
-          setError("Impossible de communiquer avec le serveur");
-        } else {
-          if (err.response.status === 404) {
-            setError("Aucune commande n'a été trouvée");
-          } else if (err.response.status === 403) {
-            updateAccessToken();
-            setError("Une erreur est survenue, veuillez réessayer");
+    if (role != 0 && command.servedBy_id === null) {
+      commandAPI
+        .setServedById(command.id, user.id, userAccessToken)
+        .then(() => {
+          commandAPI
+            .setCommandServed(command.id, userAccessToken)
+            .then((res) => {
+              setIsLoading(false);
+              getCommands();
+            })
+            .catch((err) => {
+              setIsLoading(false);
+              if (err.response === undefined) {
+                setError("Impossible de communiquer avec le serveur");
+              } else {
+                if (err.response.status === 404) {
+                  setError("Aucune commande n'a été trouvée");
+                } else if (err.response.status === 403) {
+                  updateAccessToken();
+                  setError("Une erreur est survenue, veuillez réessayer");
+                } else {
+                  setError("Une erreur est survenue");
+                  console.log(err.response.data.error);
+                }
+              }
+            });
+        })
+        .catch((err) => {
+          setIsLoading(false);
+          if (err.response === undefined) {
+            setError("Impossible de communiquer avec le serveur");
           } else {
-            setError("Une erreur est survenue");
-            console.log(err.response.data.error);
+            if (err.response.status === 403) {
+              updateAccessToken();
+              setError("Une erreur est survenue, veuillez réessayer");
+            } else {
+              setError("Une erreur est survenue");
+              console.log(err.response.data.error);
+            }
           }
-        }
-      });
+        });
+    } else {
+      commandAPI
+        .setCommandServed(command.id, userAccessToken)
+        .then((res) => {
+          setIsLoading(false);
+          getCommands();
+        })
+        .catch((err) => {
+          setIsLoading(false);
+          if (err.response === undefined) {
+            setError("Impossible de communiquer avec le serveur");
+          } else {
+            if (err.response.status === 404) {
+              setError("Aucune commande n'a été trouvée");
+            } else if (err.response.status === 403) {
+              updateAccessToken();
+              setError("Une erreur est survenue, veuillez réessayer");
+            } else {
+              setError("Une erreur est survenue");
+              console.log(err.response.data.error);
+            }
+          }
+        });
+    }
   };
 
   //TODO
@@ -195,7 +283,7 @@ function CurrentEventScreen({
   // --- Display them in a flatlist -> DONE
   // --- Add the ability to sort the items by highest or lowest price (line 60 & 63) -> DONE
   // --- Verify the ability to sort by newest or oldest (line 56 & 58) -> DONE
-  //TODO --- Add the ability to the user to make a new command by redirecting him to a newCommandScreen (line 101)
+  // --- Add the ability to the user to make a new command by redirecting him to a newCommandScreen (line 101) -> DONE
   // - SELLER & ORGANIZER
   // --- Get the commands the seller has served for this event -> DONE
   // --- Display them in a flatlist -> DONE
@@ -248,8 +336,8 @@ function CurrentEventScreen({
               totalPrice={item.totalPrice}
               isPaid={item.isPaid}
               isServed={item.isServed}
-              setCommandPaid={() => setCommandPaid(item.id)}
-              setCommandServed={() => setCommandServed(item.id)}
+              setCommandPaid={() => setCommandPaid(item)}
+              setCommandServed={() => setCommandServed(item)}
               role={role}
             />
           )}
