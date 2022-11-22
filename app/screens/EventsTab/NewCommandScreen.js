@@ -1,5 +1,5 @@
-import React, { useState, useContext, useEffect } from "react";
-import { View, StyleSheet } from "react-native";
+import React, { useState, useContext, useEffect, useLayoutEffect } from "react";
+import { View, StyleSheet, FlatList } from "react-native";
 
 import Screen from "../../components/Screen";
 import AppText from "../../components/AppText";
@@ -9,9 +9,17 @@ import LoadingIndicator from "../../components/LoadingIndicator";
 import { ErrorMessage } from "../../components/forms";
 import userEventAPI from "../../api/userEvent.api";
 import commandAPI from "../../api/command.api";
+import AppButton from "../../components/AppButton";
+import tabBarDisplayManager from "../../config/tabBarDisplayManager";
+import NewProductCommandItem from "../../components/lists/NewProductCommandItem";
+import colors from "../../config/colors";
 
 function NewCommandScreen(props) {
   const { navigation } = props;
+  useLayoutEffect(() => {
+    tabBarDisplayManager.hideTabBar(navigation);
+  }, []);
+
   const { eventId, role } = props.route.params;
   const { userAccessToken, updateAccessToken, isLoading, setIsLoading } =
     useContext(AuthContext);
@@ -48,7 +56,19 @@ function NewCommandScreen(props) {
     // Client -> pas besoin de choisir le nom du client
     return (
       <Screen style={styles.container}>
-        <AppText>Client</AppText>
+        <FlatList
+          data={productsDisplayed}
+          keyExtractor={(product) => product.events_products_id.toString()}
+          renderItem={({ item }) => (
+            <NewProductCommandItem product={item} role={role} />
+          )}
+          ItemSeparatorComponent={() => <View style={styles.separator} />}
+          style={{ width: "100%" }}
+        />
+        <AppButton
+          title="Valider la commande"
+          onPress={() => console.log("ok")} // Enregistrer la commande + Alert qui dit que la commande a bien été enregistrée et qu'elle sera traitée dans les plus brefs délais + rediriger vers la page de l'évènement
+        />
         <ErrorMessage error={error} visible={error != null} />
         {isLoading && <LoadingIndicator />}
       </Screen>
@@ -125,6 +145,12 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     width: "100%",
     padding: 10,
+    backgroundColor: colors.white,
+  },
+  separator: {
+    width: "100%",
+    height: 1,
+    backgroundColor: colors.light,
   },
 });
 
