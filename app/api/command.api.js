@@ -47,3 +47,17 @@ exports.getClientNamesForEvent = (eventId, accessToken) => {
     },
   });
 };
+
+exports.createClientCommand = (eventId, clientId, accessToken) => {
+  return axios({
+    method: "post",
+    url: `${BASE_URL}/create-command`,
+    data: {
+      eventId,
+      clientId,
+    },
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};

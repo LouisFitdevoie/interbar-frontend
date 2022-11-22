@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect, useLayoutEffect } from "react";
-import { View, StyleSheet, FlatList } from "react-native";
+import { View, StyleSheet, FlatList, Alert } from "react-native";
 
 import Screen from "../../components/Screen";
 import AppText from "../../components/AppText";
@@ -9,6 +9,7 @@ import LoadingIndicator from "../../components/LoadingIndicator";
 import { ErrorMessage } from "../../components/forms";
 import userEventAPI from "../../api/userEvent.api";
 import commandAPI from "../../api/command.api";
+import eventProductCommandAPI from "../../api/eventProductCommand.api";
 import AppButton from "../../components/AppButton";
 import tabBarDisplayManager from "../../config/tabBarDisplayManager";
 import NewProductCommandItem from "../../components/lists/NewProductCommandItem";
@@ -21,7 +22,7 @@ function NewCommandScreen(props) {
   }, []);
 
   const { eventId, role } = props.route.params;
-  const { userAccessToken, updateAccessToken, isLoading, setIsLoading } =
+  const { userAccessToken, updateAccessToken, isLoading, setIsLoading, user } =
     useContext(AuthContext);
   const [error, setError] = useState(null);
 
@@ -66,16 +67,92 @@ function NewCommandScreen(props) {
   useEffect(() => {
     if (quantities.filter((quantity) => quantity.error === true).length > 0) {
       setQuantityError(true);
-    } else {
+    } else if (
+      quantities.filter((quantity) => quantity.quantity > 0).length > 0
+    ) {
       setQuantityError(false);
+    } else {
+      setQuantityError(true);
     }
   }, [quantities]);
 
   if (role === 0) {
     // Client -> pas besoin de choisir le nom du client
+
+    const handleClientCommand = () => {
+      setIsLoading(true);
+      setError(null);
+      commandAPI
+        .createClientCommand(eventId, user.id, userAccessToken)
+        .then((res) => {
+          if (res.data.success != null) {
+            const commandId = res.data.commandId;
+
+            quantities
+              .filter((quantity) => {
+                if (quantity.quantity > 0) {
+                  return true;
+                }
+              })
+              .forEach((quantity) => {
+                eventProductCommandAPI
+                  .addProductToCommand(
+                    quantity.productId,
+                    commandId,
+                    quantity.quantity,
+                    userAccessToken
+                  )
+                  .then((res) => {
+                    if (
+                      quantity.productId ===
+                      quantities[quantities.length - 1].productId
+                    ) {
+                      setIsLoading(false);
+                      navigation.goBack();
+                      Alert.alert(
+                        "Succès !",
+                        "Votre commande a bien été enregistrée, nous allons la préparer dans les plus brefs délais."
+                      );
+                    }
+                  })
+                  .catch((err) => {
+                    setIsLoading(false);
+                    if (err.response === undefined) {
+                      setError("Impossible de communiquer avec le serveur");
+                    } else {
+                      if (err.response.status === 403) {
+                        updateAccessToken();
+                        setError(
+                          "Impossible de créer la commande, veuillez réessayer"
+                        );
+                      } else {
+                        console.log(err.response.data);
+                        setError("Une erreur est survenue");
+                      }
+                    }
+                  });
+              });
+          }
+        })
+        .catch((err) => {
+          setIsLoading(false);
+          if (err.response === undefined) {
+            setError("Impossible de communiquer avec le serveur");
+          } else {
+            if (err.response.status === 403) {
+              updateAccessToken();
+              setError("Impossible de créer la commande, veuillez réessayer");
+            } else {
+              console.log(err.response.data);
+              setError("Une erreur est survenue");
+            }
+          }
+        });
+    };
+
     return (
       <Screen style={styles.container}>
-        {!isLoading && (
+        {quantities.length > 0 && (
           <FlatList
             data={productsDisplayed}
             keyExtractor={(product) => product.events_products_id.toString()}
@@ -93,7 +170,7 @@ function NewCommandScreen(props) {
         )}
         <AppButton
           title="Valider la commande"
-          onPress={() => console.log("ok")} // Enregistrer la commande + Alert qui dit que la commande a bien été enregistrée et qu'elle sera traitée dans les plus brefs délais + rediriger vers la page de l'évènement
+          onPress={() => handleClientCommand()} // Enregistrer la commande + Alert qui dit que la commande a bien été enregistrée et qu'elle sera traitée dans les plus brefs délais + rediriger vers la page de l'évènement
           disabled={quantityError}
         />
         <ErrorMessage error={error} visible={error != null} />
