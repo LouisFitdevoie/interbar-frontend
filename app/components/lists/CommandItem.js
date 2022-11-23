@@ -17,6 +17,8 @@ function CommandItem({
   setCommandPaid,
   setCommandServed,
   role,
+  navigation,
+  eventId,
 }) {
   let productNumber = 0;
   products.forEach((product) => {
@@ -46,7 +48,11 @@ function CommandItem({
         );
       }}
     >
-      <TouchableOpacity onPress={() => console.log(commandId)}>
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate("Command", { commandId, eventId, role })
+        }
+      >
         <View style={styles.container}>
           <View style={styles.clientNameContainer}>
             <AppText

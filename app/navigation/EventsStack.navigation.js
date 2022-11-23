@@ -221,7 +221,7 @@ function EventsStack(props) {
           }}
         />
         <Stack.Screen
-          name="NewCommand"
+          name="Command"
           component={CommandScreen}
           options={{
             headerShown: true,
@@ -230,7 +230,6 @@ function EventsStack(props) {
             },
             headerBackTitleVisible: false,
             headerTintColor: colors.white,
-            headerTitle: "Nouvelle commande",
             headerTitleStyle: {
               fontWeight: "bold",
               fontSize: 20,

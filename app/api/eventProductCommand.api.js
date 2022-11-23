@@ -21,3 +21,13 @@ exports.addProductToCommand = (
     },
   });
 };
+
+exports.getAllInfosForCommand = (commandId, accessToken) => {
+  return axios({
+    method: "get",
+    url: `${BASE_URL}/infos-for-command/${commandId}`,
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};

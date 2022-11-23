@@ -21,7 +21,7 @@ function CommandScreen(props) {
     tabBarDisplayManager.hideTabBar(navigation);
   }, []);
 
-  const { eventId, role } = props.route.params;
+  const { eventId, role, commandId } = props.route.params;
   const { userAccessToken, updateAccessToken, isLoading, setIsLoading, user } =
     useContext(AuthContext);
   const [error, setError] = useState(null);
@@ -32,36 +32,102 @@ function CommandScreen(props) {
   const [quantityError, setQuantityError] = useState(false);
 
   useEffect(() => {
-    setIsLoading(true);
-    setError(null);
-    eventProductAPI
-      .getAllProductsAtEvent(eventId, userAccessToken)
-      .then((res) => {
-        setProductsSold(res.data.filter((product) => product.stock > 0));
-        setProductsDisplayed(res.data.filter((product) => product.stock > 0));
-        setQuantities(
-          res.data
-            .filter((product) => product.stock > 0)
-            .map((product) => ({
-              productId: product.events_products_id,
-              quantity: 0,
-              error: false,
-            }))
-        );
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        setIsLoading(false);
-        if (err.response.status === 403) {
-          updateAccessToken();
-          setError(
-            "Impossible de récupérer le tarif de l'évènement, veuillez réessayer"
+    if (commandId) {
+      navigation.setOptions({ title: "Modifier la commande" });
+      setIsLoading(true);
+      setError(null);
+      eventProductCommandAPI
+        .getAllInfosForCommand(commandId, userAccessToken)
+        .then((response) => {
+          const productsInCommand = response.data.products;
+          eventProductAPI
+            .getAllProductsAtEvent(eventId, userAccessToken)
+            .then((res) => {
+              setProductsSold(res.data.filter((product) => product.stock > 0));
+              setProductsDisplayed(
+                res.data.filter((product) => product.stock > 0)
+              );
+              setQuantities(
+                res.data
+                  .filter((product) => product.stock > 0)
+                  .map((product) => ({
+                    productId: product.events_products_id,
+                    quantity:
+                      productsInCommand.filter(
+                        (p) => p.productId === product.events_products_id
+                      ).length > 0
+                        ? productsInCommand.filter(
+                            (p) => p.productId === product.events_products_id
+                          )[0].number
+                        : 0,
+                    error: false,
+                  }))
+              );
+              setIsLoading(false);
+            })
+            .catch((err) => {
+              setIsLoading(false);
+              if (err.response.status === 403) {
+                updateAccessToken();
+                setError(
+                  "Impossible de récupérer le tarif de l'évènement, veuillez réessayer"
+                );
+              } else {
+                console.log(err.response.data);
+                setError("Une erreur est survenue");
+              }
+            });
+        })
+        .catch((error) => {
+          if (error.response === undefined) {
+            setError("Impossible de communiquer avec le serveur");
+          } else {
+            if (error.response.status === 403) {
+              updateAccessToken();
+              setError("Une erreur est survenue, veuillez réessayer");
+              navigation.goBack();
+            } else if (error.response.status === 404) {
+              setError(
+                "Nous n'avons pas réussi à récupérer les informations de la commande"
+              );
+            } else {
+              setError("Une erreur est survenue");
+            }
+          }
+        });
+    } else {
+      navigation.setOptions({ title: "Nouvelle commande" });
+      setIsLoading(true);
+      setError(null);
+      eventProductAPI
+        .getAllProductsAtEvent(eventId, userAccessToken)
+        .then((res) => {
+          setProductsSold(res.data.filter((product) => product.stock > 0));
+          setProductsDisplayed(res.data.filter((product) => product.stock > 0));
+          setQuantities(
+            res.data
+              .filter((product) => product.stock > 0)
+              .map((product) => ({
+                productId: product.events_products_id,
+                quantity: 0,
+                error: false,
+              }))
           );
-        } else {
-          console.log(err.response.data);
-          setError("Une erreur est survenue");
-        }
-      });
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          setIsLoading(false);
+          if (err.response.status === 403) {
+            updateAccessToken();
+            setError(
+              "Impossible de récupérer le tarif de l'évènement, veuillez réessayer"
+            );
+          } else {
+            console.log(err.response.data);
+            setError("Une erreur est survenue");
+          }
+        });
+    }
   }, []);
 
   useEffect(() => {
@@ -80,72 +146,75 @@ function CommandScreen(props) {
     const handleClientCommand = () => {
       setIsLoading(true);
       setError(null);
-      commandAPI
-        .createClientCommand(eventId, user.id, userAccessToken)
-        .then((res) => {
-          if (res.data.success != null) {
-            const commandId = res.data.commandId;
-
-            quantities
-              .filter((quantity) => {
-                if (quantity.quantity > 0) {
-                  return true;
-                }
-              })
-              .forEach((quantity) => {
-                eventProductCommandAPI
-                  .addProductToCommand(
-                    quantity.productId,
-                    commandId,
-                    quantity.quantity,
-                    userAccessToken
-                  )
-                  .then((res) => {
-                    if (
-                      quantity.productId ===
-                      quantities[quantities.length - 1].productId
-                    ) {
-                      setIsLoading(false);
-                      navigation.goBack();
-                      Alert.alert(
-                        "Succès !",
-                        "Votre commande a bien été enregistrée, nous allons la préparer dans les plus brefs délais."
-                      );
-                    }
-                  })
-                  .catch((err) => {
-                    setIsLoading(false);
-                    if (err.response === undefined) {
-                      setError("Impossible de communiquer avec le serveur");
-                    } else {
-                      if (err.response.status === 403) {
-                        updateAccessToken();
-                        setError(
-                          "Impossible de créer la commande, veuillez réessayer"
+      if (commandId) {
+        //TODO : update the quantities of events_products_commands that have changed
+      } else {
+        commandAPI
+          .createClientCommand(eventId, user.id, userAccessToken)
+          .then((res) => {
+            if (res.data.success != null) {
+              const commandId = res.data.commandId;
+              quantities
+                .filter((quantity) => {
+                  if (quantity.quantity > 0) {
+                    return true;
+                  }
+                })
+                .forEach((quantity) => {
+                  eventProductCommandAPI
+                    .addProductToCommand(
+                      quantity.productId,
+                      commandId,
+                      quantity.quantity,
+                      userAccessToken
+                    )
+                    .then((res) => {
+                      if (
+                        quantity.productId ===
+                        quantities[quantities.length - 1].productId
+                      ) {
+                        setIsLoading(false);
+                        navigation.goBack();
+                        Alert.alert(
+                          "Succès !",
+                          "Votre commande a bien été enregistrée, nous allons la préparer dans les plus brefs délais."
                         );
-                      } else {
-                        console.log(err.response.data);
-                        setError("Une erreur est survenue");
                       }
-                    }
-                  });
-              });
-          }
-        })
-        .catch((err) => {
-          setIsLoading(false);
-          if (err.response === undefined) {
-            setError("Impossible de communiquer avec le serveur");
-          } else {
-            if (err.response.status === 403) {
-              updateAccessToken();
-              setError("Impossible de créer la commande, veuillez réessayer");
-            } else {
-              console.log(err.response.data);
-              setError("Une erreur est survenue");
+                    })
+                    .catch((err) => {
+                      setIsLoading(false);
+                      if (err.response === undefined) {
+                        setError("Impossible de communiquer avec le serveur");
+                      } else {
+                        if (err.response.status === 403) {
+                          updateAccessToken();
+                          setError(
+                            "Impossible de créer la commande, veuillez réessayer"
+                          );
+                        } else {
+                          console.log(err.response.data);
+                          setError("Une erreur est survenue");
+                        }
+                      }
+                    });
+                });
             }
-          }
-        });
+          })
+          .catch((err) => {
+            setIsLoading(false);
+            if (err.response === undefined) {
+              setError("Impossible de communiquer avec le serveur");
+            } else {
+              if (err.response.status === 403) {
+                updateAccessToken();
+                setError("Impossible de créer la commande, veuillez réessayer");
+              } else {
+                console.log(err.response.data);
+                setError("Une erreur est survenue");
+              }
+            }
+          });
+      }
     };
 
     return (

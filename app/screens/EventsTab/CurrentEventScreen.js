@@ -342,6 +342,8 @@ function CurrentEventScreen({
               setCommandPaid={() => setCommandPaid(item)}
               setCommandServed={() => setCommandServed(item)}
               role={role}
+              navigation={navigation}
+              eventId={eventId}
             />
           )}
         />
@@ -350,7 +352,7 @@ function CurrentEventScreen({
         <AppButton
           title="Nouvelle commande"
           onPress={() =>
-            navigation.navigate("NewCommand", { eventId: eventId, role: role })
+            navigation.navigate("Command", { eventId: eventId, role: role })
           }
         />
         <ErrorMessage error={error} visible={error != null} />
