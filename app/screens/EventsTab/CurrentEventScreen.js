@@ -284,13 +284,16 @@ function CurrentEventScreen({
   // --- Add the ability to sort the items by highest or lowest price (line 60 & 63) -> DONE
   // --- Verify the ability to sort by newest or oldest (line 56 & 58) -> DONE
   // --- Add the ability to the user to make a new command by redirecting him to a newCommandScreen (line 101) -> DONE
+  //TODO --- Add the ability to the user to edit a command
   // - SELLER & ORGANIZER
   // --- Get the commands the seller has served for this event -> DONE
   // --- Display them in a flatlist -> DONE
   // --- Change the color of the command item if the command is not paid or served -> DONE
   // --- Verify the ability to filter by paid or unpaid (line 49 to 52) -> DONE
   // --- Add the ability to the seller/organizer to change the values of isPaid & isServed from this screen -> DONE
+  //TODO --- Add the ability to the seller/organizer to click on a command item to redirect him to a commandDetailsScreen
   //TODO --- Add the ability to the seller/organizer to make a new command by redirecting him to a newCommandScreen (line 101)
+  //TODO --- Add the ability to the seller/organizer to edit a command
 
   return (
     <Screen style={styles.container}>

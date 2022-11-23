@@ -6,7 +6,7 @@ import AppText from "../AppText";
 import AppTextInput from "../AppTextInput";
 import { ErrorMessage } from "../forms";
 
-function NewProductCommandItem({ product, role, quantities, setQuantities }) {
+function ProductCommandItem({ product, role, quantities, setQuantities }) {
   const [error, setError] = useState(null);
 
   return (
@@ -109,4 +109,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default NewProductCommandItem;
+export default ProductCommandItem;

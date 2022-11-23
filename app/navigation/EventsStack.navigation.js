@@ -14,7 +14,7 @@ import AddProductTarifScreen from "../screens/CreateEventTab/AddProductTarifScre
 import CreateProductScreen from "../screens/CreateEventTab/CreateProductScreen";
 import CreateEventProductScreen from "../screens/CreateEventTab/CreateEventProductScreen";
 import EditEventProductScreen from "../screens/CreateEventTab/EditEventProductScreen";
-import NewCommandScreen from "../screens/EventsTab/NewCommandScreen";
+import CommandScreen from "../screens/EventsTab/CommandScreen";
 
 const Stack = createStackNavigator();
 
@@ -222,7 +222,7 @@ function EventsStack(props) {
         />
         <Stack.Screen
           name="NewCommand"
-          component={NewCommandScreen}
+          component={CommandScreen}
           options={{
             headerShown: true,
             headerStyle: {

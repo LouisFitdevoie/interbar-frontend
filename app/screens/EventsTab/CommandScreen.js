@@ -12,10 +12,10 @@ import commandAPI from "../../api/command.api";
 import eventProductCommandAPI from "../../api/eventProductCommand.api";
 import AppButton from "../../components/AppButton";
 import tabBarDisplayManager from "../../config/tabBarDisplayManager";
-import NewProductCommandItem from "../../components/lists/NewProductCommandItem";
+import ProductCommandItem from "../../components/lists/ProductCommandItem";
 import colors from "../../config/colors";
 
-function NewCommandScreen(props) {
+function CommandScreen(props) {
   const { navigation } = props;
   useLayoutEffect(() => {
     tabBarDisplayManager.hideTabBar(navigation);
@@ -77,8 +77,6 @@ function NewCommandScreen(props) {
   }, [quantities]);
 
   if (role === 0) {
-    // Client -> pas besoin de choisir le nom du client
-
     const handleClientCommand = () => {
       setIsLoading(true);
       setError(null);
@@ -157,7 +155,7 @@ function NewCommandScreen(props) {
             data={productsDisplayed}
             keyExtractor={(product) => product.events_products_id.toString()}
             renderItem={({ item }) => (
-              <NewProductCommandItem
+              <ProductCommandItem
                 product={item}
                 role={role}
                 quantities={quantities}
@@ -258,4 +256,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default NewCommandScreen;
+export default CommandScreen;
