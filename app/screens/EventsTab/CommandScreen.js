@@ -285,6 +285,12 @@ function CommandScreen(props) {
         });
     };
 
+    const commandPaidServed = commandId
+      ? isPaid && isServed
+        ? true
+        : false
+      : false;
+
     return (
       <Screen style={styles.container}>
         {quantities.length > 0 && (
@@ -297,21 +303,21 @@ function CommandScreen(props) {
                 role={role}
                 quantities={quantities}
                 setQuantities={setQuantities}
-                disabled={
-                  commandId ? (isPaid && isServed ? true : false) : false
-                }
+                disabled={commandPaidServed}
               />
             )}
             ItemSeparatorComponent={() => <View style={styles.separator} />}
             style={{ width: "100%" }}
           />
         )}
-        <AppButton
-          title="Valider la commande"
-          onPress={() => handleClientCommand()}
-          disabled={quantityError}
-        />
-        {commandId != null && (
+        {!commandPaidServed && (
+          <AppButton
+            title="Valider la commande"
+            onPress={() => handleClientCommand()}
+            disabled={quantityError}
+          />
+        )}
+        {commandId != null && !isPaid && !isServed && (
           <AppButton
             title="Annuler la commande"
             onPress={() => cancelCommand()}
@@ -344,7 +350,6 @@ function CommandScreen(props) {
               if (!users.find((user) => user.clientName === clientName))
                 users.push({ clientName });
             });
-            console.log(users);
             setUsersAtEvent(users);
             setIsLoading(false);
           })
@@ -379,9 +384,38 @@ function CommandScreen(props) {
     getAllUsersAtEvent();
   }, []);
 
+  const commandPaidServed = commandId
+    ? isPaid && isServed
+      ? true
+      : false
+    : false;
+
   return (
     <Screen style={styles.container}>
-      <AppText>{eventId}</AppText>
+      {quantities.length > 0 && (
+        <FlatList
+          data={productsDisplayed}
+          keyExtractor={(product) => product.events_products_id.toString()}
+          renderItem={({ item }) => (
+            <ProductCommandItem
+              product={item}
+              role={role}
+              quantities={quantities}
+              setQuantities={setQuantities}
+              disabled={commandPaidServed}
+            />
+          )}
+          ItemSeparatorComponent={() => <View style={styles.separator} />}
+          style={{ width: "100%" }}
+        />
+      )}
+      {commandPaidServed && (
+        <View style={styles.commandPaidServed}>
+          {role === 2 && <AppText>Cette commande a été servie par </AppText>}
+          <AppText>Prix total :</AppText>
+          <AppText>Cette commande a été passée le xx/xx/xxxx à xx:xx</AppText>
+        </View>
+      )}
       <ErrorMessage error={error} visible={error != null} />
       {isLoading && <LoadingIndicator />}
     </Screen>
@@ -401,6 +435,12 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 1,
     backgroundColor: colors.light,
+  },
+  commandPaidServed: {
+    width: "100%",
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
+    flex: 1,
   },
 });
 
