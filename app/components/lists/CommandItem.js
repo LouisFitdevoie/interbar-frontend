@@ -1,11 +1,9 @@
-import React, { useRef } from "react";
+import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import Swipeable from "react-native-gesture-handler/Swipeable";
 
 import AppText from "../AppText";
 import colors from "../../config/colors";
-import CommandItemActions from "./CommandItemActions";
 
 function CommandItem({
   clientName,
@@ -14,8 +12,6 @@ function CommandItem({
   totalPrice,
   isPaid,
   isServed,
-  setCommandPaid,
-  setCommandServed,
   role,
   navigation,
   eventId,
@@ -24,60 +20,36 @@ function CommandItem({
   products.forEach((product) => {
     productNumber += product.number;
   });
-  const swipeableRef = useRef(null);
   return (
-    <Swipeable
-      ref={swipeableRef}
-      renderRightActions={() => {
-        if (role === 0) {
-          return;
-        }
-        return (
-          <CommandItemActions
-            onPaidPress={() => {
-              setCommandPaid(commandId);
-              swipeableRef.current.close();
-            }}
-            onServedPress={() => {
-              setCommandServed(commandId);
-              swipeableRef.current.close();
-            }}
-            isPaid={isPaid}
-            isServed={isServed}
-          />
-        );
-      }}
+    <TouchableOpacity
+      onPress={() =>
+        navigation.navigate("Command", { commandId, eventId, role })
+      }
     >
-      <TouchableOpacity
-        onPress={() =>
-          navigation.navigate("Command", { commandId, eventId, role })
-        }
-      >
-        <View style={styles.container}>
-          <View style={styles.clientNameContainer}>
-            <AppText
-              style={isPaid && isServed ? {} : styles.notComplete}
-              numberOfLines={1}
-              ellipsizeMode="middle"
-            >
-              {clientName
-                .split(" ")
-                .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                .join(" ")}{" "}
-              ({productNumber} produits)
-            </AppText>
-          </View>
-          <View style={styles.endView}>
-            <AppText style={styles.totalPrice}>{totalPrice} €</AppText>
-            <MaterialCommunityIcons
-              name="chevron-right"
-              size={30}
-              color={colors.buttonPrimary}
-            />
-          </View>
+      <View style={styles.container}>
+        <View style={styles.clientNameContainer}>
+          <AppText
+            style={isPaid && isServed ? {} : styles.notComplete}
+            numberOfLines={1}
+            ellipsizeMode="middle"
+          >
+            {clientName
+              .split(" ")
+              .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+              .join(" ")}{" "}
+            ({productNumber} produits)
+          </AppText>
         </View>
-      </TouchableOpacity>
-    </Swipeable>
+        <View style={styles.endView}>
+          <AppText style={styles.totalPrice}>{totalPrice} €</AppText>
+          <MaterialCommunityIcons
+            name="chevron-right"
+            size={30}
+            color={colors.buttonPrimary}
+          />
+        </View>
+      </View>
+    </TouchableOpacity>
   );
 }
 

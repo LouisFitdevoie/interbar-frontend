@@ -140,145 +140,6 @@ function CurrentEventScreen({
     setIsLoading(false);
   };
 
-  const setCommandPaid = (command) => {
-    setIsLoading(true);
-    setError(null);
-    if (role != 0 && command.servedBy_id === null) {
-      commandAPI
-        .setServedById(command.id, user.id, userAccessToken)
-        .then(() => {
-          commandAPI
-            .setCommandPaid(command.id, userAccessToken)
-            .then(() => {
-              getCommands();
-            })
-            .catch((err) => {
-              setIsLoading(false);
-              if (err.response === undefined) {
-                setError("Impossible de communiquer avec le serveur");
-              } else {
-                if (err.response.status === 404) {
-                  setError(null);
-                } else if (err.response.status === 403) {
-                  updateAccessToken();
-                  setError("Une erreur est survenue, veuillez réessayer");
-                } else {
-                  setError("Une erreur est survenue");
-                  console.log(err.response.data.error);
-                }
-              }
-            });
-        })
-        .catch((err) => {
-          setIsLoading(false);
-          if (err.response === undefined) {
-            setError("Impossible de communiquer avec le serveur");
-          } else {
-            if (err.response.status === 403) {
-              updateAccessToken();
-              setError("Une erreur est survenue, veuillez réessayer");
-            } else {
-              setError("Une erreur est survenue");
-              console.log(err.response.data.error);
-            }
-          }
-        });
-    } else {
-      commandAPI
-        .setCommandPaid(command.id, userAccessToken)
-        .then((res) => {
-          setIsLoading(false);
-          getCommands();
-        })
-        .catch((err) => {
-          setIsLoading(false);
-          if (err.response === undefined) {
-            setError("Impossible de communiquer avec le serveur");
-          } else {
-            if (err.response.status === 404) {
-              setError("Aucune commande n'a été trouvée");
-            } else if (err.response.status === 403) {
-              updateAccessToken();
-              setError("Une erreur est survenue, veuillez réessayer");
-            } else {
-              setError("Une erreur est survenue");
-              console.log(err.response.data.error);
-            }
-          }
-        });
-    }
-  };
-
-  const setCommandServed = (command) => {
-    setIsLoading(true);
-    setError(null);
-    if (role != 0 && command.servedBy_id === null) {
-      commandAPI
-        .setServedById(command.id, user.id, userAccessToken)
-        .then(() => {
-          commandAPI
-            .setCommandServed(command.id, userAccessToken)
-            .then((res) => {
-              setIsLoading(false);
-              getCommands();
-            })
-            .catch((err) => {
-              setIsLoading(false);
-              if (err.response === undefined) {
-                setError("Impossible de communiquer avec le serveur");
-              } else {
-                if (err.response.status === 404) {
-                  setError("Aucune commande n'a été trouvée");
-                } else if (err.response.status === 403) {
-                  updateAccessToken();
-                  setError("Une erreur est survenue, veuillez réessayer");
-                } else {
-                  setError("Une erreur est survenue");
-                  console.log(err.response.data.error);
-                }
-              }
-            });
-        })
-        .catch((err) => {
-          setIsLoading(false);
-          if (err.response === undefined) {
-            setError("Impossible de communiquer avec le serveur");
-          } else {
-            if (err.response.status === 403) {
-              updateAccessToken();
-              setError("Une erreur est survenue, veuillez réessayer");
-            } else {
-              setError("Une erreur est survenue");
-              console.log(err.response.data.error);
-            }
-          }
-        });
-    } else {
-      commandAPI
-        .setCommandServed(command.id, userAccessToken)
-        .then((res) => {
-          setIsLoading(false);
-          getCommands();
-        })
-        .catch((err) => {
-          setIsLoading(false);
-          if (err.response === undefined) {
-            setError("Impossible de communiquer avec le serveur");
-          } else {
-            if (err.response.status === 404) {
-              setError("Aucune commande n'a été trouvée");
-            } else if (err.response.status === 403) {
-              updateAccessToken();
-              setError("Une erreur est survenue, veuillez réessayer");
-            } else {
-              setError("Une erreur est survenue");
-              console.log(err.response.data.error);
-            }
-          }
-        });
-    }
-  };
-
   //TODO
   // - USER
   // --- Get the commands the user has made for this event -> DONE
@@ -286,10 +147,10 @@ function CurrentEventScreen({
   // --- Add the ability to sort the items by highest or lowest price (line 60 & 63) -> DONE
   // --- Verify the ability to sort by newest or oldest (line 56 & 58) -> DONE
   // --- Add the ability to the user to make a new command by redirecting him to a newCommandScreen (line 101) -> DONE
-  // --- Add the ability to the user to edit a command
+  // --- Add the ability to the user to edit a command -> DONE
   //TODO --- Empêcher le client d’edit sa commande si isPaid et isServed mais afficher les détails quand même (new screen avec les quantités et le cout total de la commande)
-  // --- Ajouter un bouton pour annuler la commande
-  //TODO --- Mettre isPaid et isServed à 0 si le client modifie sa commande
+  // --- Ajouter un bouton pour annuler la commande -> DONE
+  // --- Mettre isPaid et isServed à 0 si le client modifie sa commande -> DONE
   // - SELLER & ORGANIZER
   // --- Get the commands the seller has served for this event -> DONE
   // --- Display them in a flatlist -> DONE
@@ -344,8 +205,6 @@ function CurrentEventScreen({
               totalPrice={item.totalPrice}
               isPaid={item.isPaid}
               isServed={item.isServed}
-              setCommandPaid={() => setCommandPaid(item)}
-              setCommandServed={() => setCommandServed(item)}
               role={role}
               navigation={navigation}
               eventId={eventId}
