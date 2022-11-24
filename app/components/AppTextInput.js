@@ -1,9 +1,11 @@
 import React from "react";
 import { View, TextInput } from "react-native";
+import colors from "../config/colors";
 
 import defaultStyle from "../config/styles";
 
 function AppTextInput({
+  disabled = false,
   registration,
   width = "100%",
   style,
@@ -25,7 +27,15 @@ function AppTextInput({
   return (
     <View style={[defaultStyle.textInputDefaultContainer, { width }]}>
       <TextInput
-        style={[defaultStyle.textInputDefaultText, style]}
+        editable={!disabled}
+        style={[
+          defaultStyle.textInputDefaultText,
+          style,
+          disabled && {
+            backgroundColor: colors.buttonPrimary,
+            color: colors.white,
+          },
+        ]}
         placeholderTextColor={defaultStyle.colors.textInputDefaultPlaceholder}
         {...otherProperties}
       />

@@ -23,7 +23,13 @@ function CommandItem({
   return (
     <TouchableOpacity
       onPress={() =>
-        navigation.navigate("Command", { commandId, eventId, role })
+        navigation.navigate("Command", {
+          commandId,
+          eventId,
+          role,
+          isPaid,
+          isServed,
+        })
       }
     >
       <View style={styles.container}>

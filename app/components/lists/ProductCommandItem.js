@@ -6,7 +6,13 @@ import AppText from "../AppText";
 import AppTextInput from "../AppTextInput";
 import { ErrorMessage } from "../forms";
 
-function ProductCommandItem({ product, role, quantities, setQuantities }) {
+function ProductCommandItem({
+  product,
+  role,
+  quantities,
+  setQuantities,
+  disabled = false,
+}) {
   const [error, setError] = useState(null);
 
   return (
@@ -18,6 +24,7 @@ function ProductCommandItem({ product, role, quantities, setQuantities }) {
         </View>
         <View style={styles.addMenu}>
           <AppTextInput
+            disabled={disabled}
             onChangeText={(value) => {
               setError(
                 value > product.stock

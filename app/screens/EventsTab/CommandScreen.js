@@ -21,7 +21,7 @@ function CommandScreen(props) {
     tabBarDisplayManager.hideTabBar(navigation);
   }, []);
 
-  const { eventId, role, commandId } = props.route.params;
+  const { eventId, role, commandId, isPaid, isServed } = props.route.params;
   const { userAccessToken, updateAccessToken, isLoading, setIsLoading, user } =
     useContext(AuthContext);
   const [error, setError] = useState(null);
@@ -32,8 +32,14 @@ function CommandScreen(props) {
   const [quantityError, setQuantityError] = useState(false);
 
   useEffect(() => {
-    if (commandId) {
+    if (isPaid && isServed) {
+      navigation.setOptions({ title: "Détails de la commande" });
+    } else if (commandId) {
       navigation.setOptions({ title: "Modifier la commande" });
+    } else {
+      navigation.setOptions({ title: "Nouvelle commande" });
+    }
+    if (commandId) {
       setIsLoading(true);
       setError(null);
       eventProductCommandAPI
@@ -99,7 +105,6 @@ function CommandScreen(props) {
           }
         });
     } else {
-      navigation.setOptions({ title: "Nouvelle commande" });
       setIsLoading(true);
       setError(null);
       eventProductAPI
@@ -292,6 +297,9 @@ function CommandScreen(props) {
                 role={role}
                 quantities={quantities}
                 setQuantities={setQuantities}
+                disabled={
+                  commandId ? (isPaid && isServed ? true : false) : false
+                }
               />
             )}
             ItemSeparatorComponent={() => <View style={styles.separator} />}
