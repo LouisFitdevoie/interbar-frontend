@@ -483,7 +483,7 @@ function CommandScreen(props) {
             </AppText>
             <AppText style={styles.detailText}>{totalPriceToDisplay} €</AppText>
           </View>
-          {role === 2 && (
+          {role === 2 && commandInfos && (
             <View style={styles.detailContainer}>
               <AppText style={styles.detailTitle}>Servie par </AppText>
               <AppText style={styles.detailText}>
@@ -493,26 +493,28 @@ function CommandScreen(props) {
               </AppText>
             </View>
           )}
-          <View style={styles.createdAtContainer}>
-            <AppText style={styles.detailTitle}>
-              Cette commande a été passée le{" "}
-            </AppText>
-            <AppText
-              style={[
-                styles.detailText,
-                { textAlign: "center", width: "100%" },
-              ]}
-              numberOfLines={2}
-            >
-              {new Date(commandInfos.createdAt).toLocaleDateString("fr-FR", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-                hour: "numeric",
-                minute: "numeric",
-              })}
-            </AppText>
-          </View>
+          {commandInfos && (
+            <View style={styles.createdAtContainer}>
+              <AppText style={styles.detailTitle}>
+                Cette commande a été passée le{" "}
+              </AppText>
+              <AppText
+                style={[
+                  styles.detailText,
+                  { textAlign: "center", width: "100%" },
+                ]}
+                numberOfLines={2}
+              >
+                {new Date(commandInfos.createdAt).toLocaleDateString("fr-FR", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                  hour: "numeric",
+                  minute: "numeric",
+                })}
+              </AppText>
+            </View>
+          )}
         </View>
       )}
       <ErrorMessage error={error} visible={error != null} />
@@ -538,7 +540,8 @@ const styles = StyleSheet.create({
   commandPaidServed: {
     width: "100%",
     alignItems: "flex-start",
-    justifyContent: "flex-start",
+    justifyContent: "flex-end",
+    paddingBottom: 30,
     flex: 1,
   },
   createdAtContainer: {
