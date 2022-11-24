@@ -15,6 +15,7 @@ import commandAPI from "../../api/command.api";
 import { FlatList } from "react-native";
 import CommandItem from "../../components/lists/CommandItem";
 import ErrorMessage from "../../components/forms/ErrorMessage";
+import eventProductAPI from "../../api/eventProduct.api";
 
 function CurrentEventScreen({
   navigation,

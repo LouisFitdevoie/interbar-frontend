@@ -31,3 +31,16 @@ exports.getAllInfosForCommand = (commandId, accessToken) => {
     },
   });
 };
+
+exports.updateProductNumber = (eventProductCommandId, number, accessToken) => {
+  return axios({
+    method: "put",
+    url: `${BASE_URL}/edit-event-product-command-number/${eventProductCommandId}`,
+    data: {
+      number,
+    },
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};

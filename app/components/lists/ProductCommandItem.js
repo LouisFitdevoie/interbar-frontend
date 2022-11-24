@@ -28,6 +28,9 @@ function ProductCommandItem({ product, role, quantities, setQuantities }) {
                 quantities.map((q) => {
                   if (q.productId === product.events_products_id) {
                     return {
+                      eventProductCommandId: q.eventProductCommandId
+                        ? q.eventProductCommandId
+                        : null,
                       productId: q.productId,
                       quantity: value,
                       error: value > product.stock,
@@ -44,6 +47,9 @@ function ProductCommandItem({ product, role, quantities, setQuantities }) {
                     return {
                       productId: q.productId,
                       quantity: parseInt(q.quantity) ? parseInt(q.quantity) : 0,
+                      eventProductCommandId: q.eventProductCommandId
+                        ? q.eventProductCommandId
+                        : null,
                     };
                   }
                   return q;

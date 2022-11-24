@@ -51,6 +51,9 @@ function CommandScreen(props) {
                 res.data
                   .filter((product) => product.stock > 0)
                   .map((product) => ({
+                    eventProductCommandId: productsInCommand.filter(
+                      (p) => p.productId === product.events_products_id
+                    )[0].eventProductCommandId,
                     productId: product.events_products_id,
                     quantity:
                       productsInCommand.filter(
@@ -147,7 +150,40 @@ function CommandScreen(props) {
       setIsLoading(true);
       setError(null);
       if (commandId) {
-        //TODO : update the quantities of events_products_commands that have changed
+        quantities.forEach((quantity) => {
+          eventProductCommandAPI
+            .updateProductNumber(
+              quantity.eventProductCommandId,
+              quantity.quantity,
+              userAccessToken
+            )
+            .then((res) => {
+              if (
+                quantity.productId ===
+                quantities[quantities.length - 1].productId
+              ) {
+                setIsLoading(false);
+                navigation.goBack();
+                Alert.alert("Succès !", "Votre commande a bien été modifiée !");
+              }
+            })
+            .catch((err) => {
+              setIsLoading(false);
+              if (err.response === undefined) {
+                setError("Impossible de communiquer avec le serveur");
+              } else {
+                if (err.response.status === 403) {
+                  updateAccessToken();
+                  setError(
+                    "Impossible de modifier la commande, veuillez réessayer"
+                  );
+                } else {
+                  console.log(err.response.data);
+                  setError("Une erreur est survenue");
+                }
+              }
+            });
+        });
       } else {
         commandAPI
           .createClientCommand(eventId, user.id, userAccessToken)
@@ -237,7 +273,7 @@ function CommandScreen(props) {
         )}
         <AppButton
           title="Valider la commande"
-          onPress={() => handleClientCommand()} // Enregistrer la commande + Alert qui dit que la commande a bien été enregistrée et qu'elle sera traitée dans les plus brefs délais + rediriger vers la page de l'évènement
+          onPress={() => handleClientCommand()}
           disabled={quantityError}
         />
         <ErrorMessage error={error} visible={error != null} />
