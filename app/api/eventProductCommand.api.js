@@ -32,12 +32,18 @@ exports.getAllInfosForCommand = (commandId, accessToken) => {
   });
 };
 
-exports.updateProductNumber = (eventProductCommandId, number, accessToken) => {
+exports.updateProductNumber = (
+  eventProductCommandId,
+  number,
+  commandId,
+  accessToken
+) => {
   return axios({
     method: "put",
     url: `${BASE_URL}/edit-event-product-command-number/${eventProductCommandId}`,
     data: {
       number,
+      commandId,
     },
     headers: {
       Authorization: `Bearer ${accessToken}`,

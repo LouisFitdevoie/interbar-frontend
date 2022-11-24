@@ -55,10 +55,11 @@ function CurrentEventScreen({
   const getCommands = () => {
     setIsLoading(true);
     setError(null);
+    setCommandItems([]);
+    setDisplayedItems([]);
     commandAPI
       .getCommandsByEventId(eventId, userAccessToken)
       .then((res) => {
-        console.log(`Found ${res.data.length} command(s) for this event`);
         setCommandItems(res.data);
         setSortOptionSelected("newest");
         setPaidOptionSelected("all");
@@ -285,7 +286,10 @@ function CurrentEventScreen({
   // --- Add the ability to sort the items by highest or lowest price (line 60 & 63) -> DONE
   // --- Verify the ability to sort by newest or oldest (line 56 & 58) -> DONE
   // --- Add the ability to the user to make a new command by redirecting him to a newCommandScreen (line 101) -> DONE
-  //TODO --- Add the ability to the user to edit a command
+  // --- Add the ability to the user to edit a command
+  //TODO --- Empêcher le client d’edit sa commande si isPaid et isServed mais afficher les détails quand même (new screen avec les quantités et le cout total de la commande)
+  // --- Ajouter un bouton pour annuler la commande
+  //TODO --- Mettre isPaid et isServed à 0 si le client modifie sa commande
   // - SELLER & ORGANIZER
   // --- Get the commands the seller has served for this event -> DONE
   // --- Display them in a flatlist -> DONE

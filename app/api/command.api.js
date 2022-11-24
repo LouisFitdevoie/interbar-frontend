@@ -74,3 +74,13 @@ exports.setServedById = (commandId, sellerId, accessToken) => {
     },
   });
 };
+
+exports.cancelCommand = (commandId, accessToken) => {
+  return axios({
+    method: "put",
+    url: `${BASE_URL}/delete-command/${commandId}`,
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};

@@ -155,6 +155,7 @@ function CommandScreen(props) {
             .updateProductNumber(
               quantity.eventProductCommandId,
               quantity.quantity,
+              commandId,
               userAccessToken
             )
             .then((res) => {
@@ -253,6 +254,32 @@ function CommandScreen(props) {
       }
     };
 
+    const cancelCommand = () => {
+      setIsLoading(true);
+      setError(null);
+      commandAPI
+        .cancelCommand(commandId, userAccessToken)
+        .then((res) => {
+          setIsLoading(false);
+          navigation.goBack();
+          Alert.alert("Succès !", "Votre commande a bien été annulée !");
+        })
+        .catch((err) => {
+          setIsLoading(false);
+          if (err.response === undefined) {
+            setError("Impossible de communiquer avec le serveur");
+          } else {
+            if (err.response.status === 403) {
+              updateAccessToken();
+              setError("Impossible d'annuler la commande, veuillez réessayer");
+            } else {
+              console.log(err.response.data);
+              setError("Une erreur est survenue");
+            }
+          }
+        });
+    };
+
     return (
       <Screen style={styles.container}>
         {quantities.length > 0 && (
@@ -276,6 +303,14 @@ function CommandScreen(props) {
           onPress={() => handleClientCommand()}
           disabled={quantityError}
         />
+        {commandId != null && (
+          <AppButton
+            title="Annuler la commande"
+            onPress={() => cancelCommand()}
+            disabled={commandId === null}
+            style={{ marginTop: 0 }}
+          />
+        )}
         <ErrorMessage error={error} visible={error != null} />
         {isLoading && <LoadingIndicator />}
       </Screen>
