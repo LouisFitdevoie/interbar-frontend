@@ -291,6 +291,19 @@ function CommandScreen(props) {
         : false
       : false;
 
+    const totalPrice = () => {
+      let total = 0;
+      quantities.forEach((quantity) => {
+        productsSold.forEach((product) => {
+          if (quantity.productId === product.events_products_id) {
+            total += quantity.quantity * product.sellingPrice;
+          }
+        });
+      });
+      return total;
+    };
+    const totalPriceToDisplay = totalPrice();
+
     return (
       <Screen style={styles.container}>
         {quantities.length > 0 && (
@@ -324,6 +337,18 @@ function CommandScreen(props) {
             disabled={commandId === null}
             style={{ marginTop: 0 }}
           />
+        )}
+        {commandPaidServed && (
+          <View style={styles.commandPaidServed}>
+            <View style={styles.detailContainer}>
+              <AppText style={styles.detailTitle}>
+                Prix total de la commande :
+              </AppText>
+              <AppText style={styles.detailText}>
+                {totalPriceToDisplay} €
+              </AppText>
+            </View>
+          </View>
         )}
         <ErrorMessage error={error} visible={error != null} />
         {isLoading && <LoadingIndicator />}
@@ -380,8 +405,36 @@ function CommandScreen(props) {
       });
   };
 
+  const [commandInfos, setCommandInfos] = useState();
+
   useEffect(() => {
     getAllUsersAtEvent();
+    if (commandId != null) {
+      setIsLoading(true);
+      setError(null);
+      commandAPI
+        .getCommandInfos(commandId, userAccessToken)
+        .then((res) => {
+          setCommandInfos(res.data);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          setIsLoading(false);
+          if (err.response === undefined) {
+            setError("Impossible de communiquer avec le serveur");
+          } else {
+            if (err.response.status === 403) {
+              updateAccessToken();
+              setError(
+                "Impossible de récupérer les informations de la commande, veuillez réessayer"
+              );
+            } else {
+              console.log(err.response.data);
+              setError("Une erreur est survenue");
+            }
+          }
+        });
+    }
   }, []);
 
   const commandPaidServed = commandId
@@ -389,6 +442,19 @@ function CommandScreen(props) {
       ? true
       : false
     : false;
+
+  const totalPrice = () => {
+    let total = 0;
+    quantities.forEach((quantity) => {
+      productsSold.forEach((product) => {
+        if (quantity.productId === product.events_products_id) {
+          total += quantity.quantity * product.sellingPrice;
+        }
+      });
+    });
+    return total;
+  };
+  const totalPriceToDisplay = totalPrice();
 
   return (
     <Screen style={styles.container}>
@@ -411,9 +477,42 @@ function CommandScreen(props) {
       )}
       {commandPaidServed && (
         <View style={styles.commandPaidServed}>
-          {role === 2 && <AppText>Cette commande a été servie par </AppText>}
-          <AppText>Prix total :</AppText>
-          <AppText>Cette commande a été passée le xx/xx/xxxx à xx:xx</AppText>
+          <View style={styles.detailContainer}>
+            <AppText style={styles.detailTitle}>
+              Prix total de la commande :
+            </AppText>
+            <AppText style={styles.detailText}>{totalPriceToDisplay} €</AppText>
+          </View>
+          {role === 2 && (
+            <View style={styles.detailContainer}>
+              <AppText style={styles.detailTitle}>Servie par </AppText>
+              <AppText style={styles.detailText}>
+                {commandInfos.seller.firstname +
+                  " " +
+                  commandInfos.seller.lastname}
+              </AppText>
+            </View>
+          )}
+          <View style={styles.createdAtContainer}>
+            <AppText style={styles.detailTitle}>
+              Cette commande a été passée le{" "}
+            </AppText>
+            <AppText
+              style={[
+                styles.detailText,
+                { textAlign: "center", width: "100%" },
+              ]}
+              numberOfLines={2}
+            >
+              {new Date(commandInfos.createdAt).toLocaleDateString("fr-FR", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+                hour: "numeric",
+                minute: "numeric",
+              })}
+            </AppText>
+          </View>
         </View>
       )}
       <ErrorMessage error={error} visible={error != null} />
@@ -441,6 +540,29 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     justifyContent: "flex-start",
     flex: 1,
+  },
+  createdAtContainer: {
+    width: "100%",
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
+    paddingHorizontal: 10,
+    paddingTop: 10,
+  },
+  detailText: {
+    fontSize: 20,
+  },
+  detailContainer: {
+    paddingTop: 5,
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 10,
+  },
+  detailTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: colors.buttonPrimary,
   },
 });
 

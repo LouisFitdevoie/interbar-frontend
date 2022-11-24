@@ -84,3 +84,13 @@ exports.cancelCommand = (commandId, accessToken) => {
     },
   });
 };
+
+exports.getCommandInfos = (commandId, accessToken) => {
+  return axios({
+    method: "get",
+    url: `${BASE_URL}/command-infos/${commandId}`,
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};
