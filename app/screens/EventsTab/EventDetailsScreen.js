@@ -59,7 +59,7 @@ function EventDetailsScreen(props) {
 
   //TODO:
   // - ORGANIZER
-  // --- Redirect to stats screen (line 110)
+  //TODO --- Redirect to stats screen (line 110)
 
   const endEvent = () => {
     setError(null);

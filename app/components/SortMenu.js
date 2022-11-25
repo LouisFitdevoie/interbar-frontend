@@ -12,7 +12,6 @@ function SortMenu({
   scrollOptionSelected,
   setScrollOptionSelected,
   sortOptions,
-  role,
   scrollOptions,
   displayedItems,
   handleSort,
@@ -90,20 +89,18 @@ function SortMenu({
           )}
         </View>
       </View>
-      {role != 0 && (
-        <ScrollView horizontal>
-          {scrollOptions.map((scrollOption) => (
-            <RadioButton
-              key={scrollOption.value}
-              value={scrollOption.value}
-              onPress={() => handleScrollOptionChanged(scrollOption.value)}
-              label={scrollOption.name}
-              stateValue={scrollOptionSelected}
-              style={{ paddingRight: 20 }}
-            />
-          ))}
-        </ScrollView>
-      )}
+      <ScrollView horizontal>
+        {scrollOptions.map((scrollOption) => (
+          <RadioButton
+            key={scrollOption.value}
+            value={scrollOption.value}
+            onPress={() => handleScrollOptionChanged(scrollOption.value)}
+            label={scrollOption.name}
+            stateValue={scrollOptionSelected}
+            style={{ paddingRight: 20 }}
+          />
+        ))}
+      </ScrollView>
     </View>
   );
 }

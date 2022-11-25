@@ -180,7 +180,6 @@ function CurrentEventScreen({
         scrollOptionSelected={paidOptionSelected}
         setScrollOptionSelected={(value) => setPaidOptionSelected(value)}
         sortOptions={sortOptions}
-        role={role}
         scrollOptions={paidOptions}
         displayedItems={displayedItems}
         handleSort={() => handleSort()}

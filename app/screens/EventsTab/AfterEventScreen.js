@@ -23,7 +23,7 @@ function AfterEventScreen({
 }) {
   //TODO
   // - ORGANIZER
-  // --- Display a button to redirect to the statistics screen
+  //TODO --- Display a button to redirect to the statistics screen
   // DONE --- Display a button to delete the event -> Alert to confirm and say that data won't be accessible for the user anymore
 
   const { isLoading, setIsLoading, userAccessToken, updateAccessToken } =
@@ -191,7 +191,6 @@ function AfterEventScreen({
           scrollOptionSelected={paidOptionSelected}
           setScrollOptionSelected={setPaidOptionSelected}
           sortOptions={sortOptions}
-          role={role}
           scrollOptions={paidOptions}
           displayedItems={displayedItems}
           handleSort={() => handleSort()}
