@@ -53,13 +53,14 @@ function CommandScreen(props) {
               setProductsDisplayed(
                 res.data.filter((product) => product.stock > 0)
               );
+              console.log(res.data);
               setQuantities(
                 res.data
                   .filter((product) => product.stock > 0)
                   .map((product) => ({
                     eventProductCommandId: productsInCommand.filter(
                       (p) => p.productId === product.events_products_id
-                    )[0].eventProductCommandId,
+                    ).eventProductCommandId,
                     productId: product.events_products_id,
                     quantity:
                       productsInCommand.filter(
