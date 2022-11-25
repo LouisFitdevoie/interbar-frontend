@@ -131,7 +131,9 @@ function CurrentEventScreen({
           if (role === 0) {
             return command.client_id === user.id;
           } else if (role === 1) {
-            return command.servedBy_id === user.id;
+            return (
+              command.servedBy_id === user.id || command.servedBy_id === null
+            );
           } else {
             return true;
           }
@@ -148,7 +150,7 @@ function CurrentEventScreen({
   // --- Verify the ability to sort by newest or oldest (line 56 & 58) -> DONE
   // --- Add the ability to the user to make a new command by redirecting him to a newCommandScreen (line 101) -> DONE
   // --- Add the ability to the user to edit a command -> DONE
-  //TODO --- Empêcher le client d’edit sa commande si isPaid et isServed mais afficher les détails quand même (new screen avec les quantités et le cout total de la commande)
+  // --- Empêcher le client d’edit sa commande si isPaid et isServed mais afficher les détails quand même (new screen avec les quantités et le cout total de la commande) -> DONE
   // --- Ajouter un bouton pour annuler la commande -> DONE
   // --- Mettre isPaid et isServed à 0 si le client modifie sa commande -> DONE
   // - SELLER & ORGANIZER
@@ -157,7 +159,7 @@ function CurrentEventScreen({
   // --- Change the color of the command item if the command is not paid or served -> DONE
   // --- Verify the ability to filter by paid or unpaid (line 49 to 52) -> DONE
   // --- Add the ability to the seller/organizer to change the values of isPaid & isServed from this screen -> DONE
-  //TODO --- Add the ability to the seller/organizer to click on a command item to redirect him to a commandDetailsScreen
+  // --- Add the ability to the seller/organizer to click on a command item to redirect him to a commandDetailsScreen -> DONE
   //TODO --- Add the ability to the seller/organizer to make a new command by redirecting him to a newCommandScreen (line 101)
   //TODO --- Add the ability to the seller/organizer to edit a command
 
