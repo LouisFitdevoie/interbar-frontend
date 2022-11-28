@@ -53,7 +53,6 @@ function CommandScreen(props) {
               setProductsDisplayed(
                 res.data.filter((product) => product.stock > 0)
               );
-              console.log(res.data);
               setQuantities(
                 res.data
                   .filter((product) => product.stock > 0)
@@ -321,6 +320,19 @@ function CommandScreen(props) {
               />
             )}
             ItemSeparatorComponent={() => <View style={styles.separator} />}
+            ListEmptyComponent={() => (
+              <View
+                style={{
+                  flex: 1,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <AppText>
+                  Aucun produit n'est disponible pour cette commande
+                </AppText>
+              </View>
+            )}
             style={{ width: "100%" }}
           />
         )}
@@ -372,9 +384,9 @@ function CommandScreen(props) {
         commandAPI
           .getClientNamesForEvent(eventId, userAccessToken)
           .then((res) => {
-            res.data.forEach((clientName) => {
-              if (!users.find((user) => user.clientName === clientName))
-                users.push({ clientName });
+            res.data.forEach((client) => {
+              if (!users.find((user) => user.clientName === client.client_name))
+                users.push({ clientName: client.client_name, id: null });
             });
             setUsersAtEvent(users);
             setIsLoading(false);
@@ -473,6 +485,19 @@ function CommandScreen(props) {
             />
           )}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
+          ListEmptyComponent={() => (
+            <View
+              style={{
+                flex: 1,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <AppText>
+                Aucun produit n'est disponible pour cette commande
+              </AppText>
+            </View>
+          )}
           style={{ width: "100%" }}
         />
       )}
