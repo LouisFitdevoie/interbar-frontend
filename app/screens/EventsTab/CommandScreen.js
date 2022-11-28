@@ -585,7 +585,7 @@ function CommandScreen(props) {
           <View>
             <FlatList
               data={usersAtEvent}
-              keyExtractor={(user) => user.id.toString()}
+              keyExtractor={(user) => user.clientName.toString()}
               renderItem={({ item }) => (
                 <TouchableOpacity
                   onPress={() =>
