@@ -1,12 +1,24 @@
 import React, { useState, useContext, useEffect, useLayoutEffect } from "react";
-import { View, StyleSheet, FlatList, Alert } from "react-native";
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  Alert,
+  TouchableOpacity,
+} from "react-native";
+import * as Yup from "yup";
 
 import Screen from "../../components/Screen";
 import AppText from "../../components/AppText";
 import { AuthContext } from "../../auth/AuthContext";
 import eventProductAPI from "../../api/eventProduct.api";
 import LoadingIndicator from "../../components/LoadingIndicator";
-import { ErrorMessage } from "../../components/forms";
+import {
+  AppForm,
+  AppFormField,
+  ErrorMessage,
+  SubmitButton,
+} from "../../components/forms";
 import userEventAPI from "../../api/userEvent.api";
 import commandAPI from "../../api/command.api";
 import eventProductCommandAPI from "../../api/eventProductCommand.api";
@@ -21,7 +33,8 @@ function CommandScreen(props) {
     tabBarDisplayManager.hideTabBar(navigation);
   }, []);
 
-  const { eventId, role, commandId, isPaid, isServed } = props.route.params;
+  const { eventId, role, commandId, isPaid, isServed, clientSelected } =
+    props.route.params;
   const { userAccessToken, updateAccessToken, isLoading, setIsLoading, user } =
     useContext(AuthContext);
   const [error, setError] = useState(null);
@@ -148,6 +161,7 @@ function CommandScreen(props) {
     } else {
       setQuantityError(true);
     }
+    console.log(quantities);
   }, [quantities]);
 
   if (role === 0) {
@@ -213,13 +227,16 @@ function CommandScreen(props) {
                     .then((res) => {
                       if (
                         quantity.productId ===
-                        quantities[quantities.length - 1].productId
+                        quantities.filter((quantity) => quantity.quantity > 0)[
+                          quantities.filter((quantity) => quantity.quantity > 0)
+                            .length - 1
+                        ].productId
                       ) {
                         setIsLoading(false);
                         navigation.goBack();
                         Alert.alert(
                           "Succès !",
-                          "Votre commande a bien été enregistrée, nous allons la préparer dans les plus brefs délais."
+                          "Votre commande a bien été créée !"
                         );
                       }
                     })
@@ -307,38 +324,40 @@ function CommandScreen(props) {
     return (
       <Screen style={styles.container}>
         {quantities.length > 0 && (
-          <FlatList
-            data={productsDisplayed}
-            keyExtractor={(product) => product.events_products_id.toString()}
-            renderItem={({ item }) => (
-              <ProductCommandItem
-                product={item}
-                role={role}
-                quantities={quantities}
-                setQuantities={setQuantities}
-                disabled={commandPaidServed}
-              />
-            )}
-            ItemSeparatorComponent={() => <View style={styles.separator} />}
-            ListEmptyComponent={() => (
-              <View
-                style={{
-                  flex: 1,
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <AppText>
-                  Aucun produit n'est disponible pour cette commande
-                </AppText>
-              </View>
-            )}
-            style={{ width: "100%" }}
-          />
+          <View style={{ width: "100%" }}>
+            <FlatList
+              data={productsDisplayed}
+              keyExtractor={(product) => product.events_products_id.toString()}
+              renderItem={({ item }) => (
+                <ProductCommandItem
+                  product={item}
+                  role={role}
+                  quantities={quantities}
+                  setQuantities={setQuantities}
+                  disabled={commandPaidServed}
+                />
+              )}
+              ItemSeparatorComponent={() => <View style={styles.separator} />}
+              ListEmptyComponent={() => (
+                <View
+                  style={{
+                    flex: 1,
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <AppText>
+                    Aucun produit n'est disponible pour cette commande
+                  </AppText>
+                </View>
+              )}
+              style={{ width: "100%" }}
+            />
+          </View>
         )}
         {!commandPaidServed && (
           <AppButton
-            title="Valider la commande"
+            title="Valider les modifications"
             onPress={() => handleClientCommand()}
             disabled={quantityError}
           />
@@ -456,6 +475,10 @@ function CommandScreen(props) {
       : false
     : false;
 
+  const [selectedUser, setSelectedUser] = useState(
+    clientSelected ? clientSelected : null
+  );
+
   const totalPrice = () => {
     let total = 0;
     quantities.forEach((quantity) => {
@@ -471,35 +494,124 @@ function CommandScreen(props) {
 
   return (
     <Screen style={styles.container}>
-      {quantities.length > 0 && (
-        <FlatList
-          data={productsDisplayed}
-          keyExtractor={(product) => product.events_products_id.toString()}
-          renderItem={({ item }) => (
-            <ProductCommandItem
-              product={item}
-              role={role}
-              quantities={quantities}
-              setQuantities={setQuantities}
-              disabled={commandPaidServed}
+      {selectedUser === null && (
+        <View style={{ flex: 1, width: "100%" }}>
+          <AppText
+            style={{
+              fontSize: 20,
+              fontWeight: "bold",
+              color: colors.buttonPrimary,
+              textAlign: "center",
+            }}
+          >
+            Qui est le client ?
+          </AppText>
+          <View>
+            <FlatList
+              data={usersAtEvent}
+              keyExtractor={(user) => user.id.toString()}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  onPress={() =>
+                    setSelectedUser({
+                      clientId: item.id,
+                      clientName: item.clientName,
+                    })
+                  }
+                  style={{ paddingHorizontal: 5, paddingVertical: 10 }}
+                >
+                  <AppText>{item.clientName}</AppText>
+                </TouchableOpacity>
+              )}
+              ItemSeparatorComponent={() => <View style={styles.separator} />}
+              ListEmptyComponent={() => (
+                <View
+                  style={{
+                    flex: 1,
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <AppText>
+                    Aucun utilisateur n'est disponible pour cette commande
+                  </AppText>
+                </View>
+              )}
+              style={{ width: "100%" }}
             />
-          )}
-          ItemSeparatorComponent={() => <View style={styles.separator} />}
-          ListEmptyComponent={() => (
-            <View
-              style={{
-                flex: 1,
-                alignItems: "center",
-                justifyContent: "center",
+          </View>
+          <View style={{ padding: 5, paddingTop: 20 }}>
+            <AppText>Le client n'est pas encore dans la liste ? </AppText>
+            <AppForm
+              initialValues={{ clientName: "" }}
+              onSubmit={(values) => {
+                setSelectedUser({
+                  clientId: null,
+                  clientName: values.clientName,
+                });
               }}
+              validationSchema={Yup.object().shape({
+                clientName: Yup.string()
+                  .required("Le nom est requis")
+                  .label("Nom du client"),
+              })}
             >
-              <AppText>
-                Aucun produit n'est disponible pour cette commande
-              </AppText>
-            </View>
-          )}
-          style={{ width: "100%" }}
-        />
+              <AppFormField
+                name="clientName"
+                placeholder="Nom du client"
+                autoCapitalize="words"
+                autoCorrect={false}
+              />
+              <SubmitButton title="Valider" />
+            </AppForm>
+          </View>
+        </View>
+      )}
+      {selectedUser !== null && (
+        <View style={{ width: "100%" }}>
+          <AppText
+            style={{
+              fontSize: 20,
+              fontWeight: "bold",
+              color: colors.buttonPrimary,
+              textAlign: "center",
+            }}
+          >
+            Pour {selectedUser.clientName}
+          </AppText>
+        </View>
+      )}
+      {quantities.length > 0 && selectedUser != null && (
+        <View style={{ width: "100%" }}>
+          <FlatList
+            data={productsDisplayed}
+            keyExtractor={(product) => product.events_products_id.toString()}
+            renderItem={({ item }) => (
+              <ProductCommandItem
+                product={item}
+                role={role}
+                quantities={quantities}
+                setQuantities={setQuantities}
+                disabled={commandPaidServed}
+              />
+            )}
+            ItemSeparatorComponent={() => <View style={styles.separator} />}
+            ListEmptyComponent={() => (
+              <View
+                style={{
+                  flex: 1,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <AppText>
+                  Aucun produit n'est disponible pour cette commande
+                </AppText>
+              </View>
+            )}
+            style={{ width: "100%" }}
+          />
+        </View>
       )}
       {commandPaidServed && (
         <View style={styles.commandPaidServed}>
@@ -566,9 +678,6 @@ const styles = StyleSheet.create({
   commandPaidServed: {
     width: "100%",
     alignItems: "flex-start",
-    justifyContent: "flex-end",
-    paddingBottom: 30,
-    flex: 1,
   },
   createdAtContainer: {
     width: "100%",
