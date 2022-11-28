@@ -161,7 +161,6 @@ function CommandScreen(props) {
     } else {
       setQuantityError(true);
     }
-    console.log(quantities);
   }, [quantities]);
 
   if (role === 0) {
@@ -492,6 +491,83 @@ function CommandScreen(props) {
   };
   const totalPriceToDisplay = totalPrice();
 
+  const handleSellerCommand = () => {
+    commandAPI
+      .createSellerCommand(
+        eventId,
+        selectedUser.clientId,
+        selectedUser.clientName,
+        user.id,
+        userAccessToken
+      )
+      .then((res) => {
+        if (res.data.success != null) {
+          const commandId = res.data.commandId;
+          quantities
+            .filter((quantity) => {
+              if (quantity.quantity > 0) {
+                return true;
+              }
+            })
+            .forEach((quantity) => {
+              eventProductCommandAPI
+                .addProductToCommand(
+                  quantity.productId,
+                  commandId,
+                  quantity.quantity,
+                  userAccessToken
+                )
+                .then((res) => {
+                  if (
+                    quantity.productId ===
+                    quantities.filter((quantity) => quantity.quantity > 0)[
+                      quantities.filter((quantity) => quantity.quantity > 0)
+                        .length - 1
+                    ].productId
+                  ) {
+                    setIsLoading(false);
+                    navigation.goBack();
+                    Alert.alert(
+                      "Succès !",
+                      "Votre commande a bien été créée !"
+                    );
+                  }
+                })
+                .catch((err) => {
+                  setIsLoading(false);
+                  if (err.response === undefined) {
+                    setError("Impossible de communiquer avec le serveur");
+                  } else {
+                    if (err.response.status === 403) {
+                      updateAccessToken();
+                      setError(
+                        "Impossible de créer la commande, veuillez réessayer"
+                      );
+                    } else {
+                      console.log(err.response.data);
+                      setError("Une erreur est survenue");
+                    }
+                  }
+                });
+            });
+        }
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        if (err.response === undefined) {
+          setError("Impossible de communiquer avec le serveur");
+        } else {
+          if (err.response.status === 403) {
+            updateAccessToken();
+            setError("Impossible de créer la commande, veuillez réessayer");
+          } else {
+            console.log(err.response.data);
+            setError("Une erreur est survenue");
+          }
+        }
+      });
+  };
+
   return (
     <Screen style={styles.container}>
       {selectedUser === null && (
@@ -567,6 +643,7 @@ function CommandScreen(props) {
           </View>
         </View>
       )}
+
       {selectedUser !== null && (
         <View style={{ width: "100%" }}>
           <AppText
@@ -610,6 +687,11 @@ function CommandScreen(props) {
               </View>
             )}
             style={{ width: "100%" }}
+          />
+          <AppButton
+            title="Valider la commande"
+            onPress={() => handleSellerCommand()}
+            disabled={quantityError}
           />
         </View>
       )}

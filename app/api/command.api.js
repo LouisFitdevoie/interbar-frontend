@@ -62,6 +62,28 @@ exports.createClientCommand = (eventId, clientId, accessToken) => {
   });
 };
 
+exports.createSellerCommand = (
+  eventId,
+  clientId,
+  clientName,
+  sellerId,
+  accessToken
+) => {
+  return axios({
+    method: "post",
+    url: `${BASE_URL}/create-command`,
+    data: {
+      eventId,
+      clientId,
+      clientName,
+      sellerId,
+    },
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};
+
 exports.setServedById = (commandId, sellerId, accessToken) => {
   return axios({
     method: "put",
