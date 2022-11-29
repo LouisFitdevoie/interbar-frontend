@@ -50,3 +50,13 @@ exports.updateProductNumber = (
     },
   });
 };
+
+exports.deleteProductFromCommand = (eventProductCommandId, accessToken) => {
+  return axios({
+    method: "put",
+    url: `${BASE_URL}/delete-event-product-command/${eventProductCommandId}`,
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};

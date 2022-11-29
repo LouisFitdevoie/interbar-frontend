@@ -66,32 +66,38 @@ function CommandScreen(props) {
               response.data.client.lastName,
           });
           const productsInCommand = response.data.products;
+          //TODO correct the bug that dont put the eventProductCommandId in the quantity and so prevents the user to edit the quantity of product wanted
           eventProductAPI
             .getAllProductsAtEvent(eventId, userAccessToken)
             .then((res) => {
               setProductsSold(res.data.filter((product) => product.stock > 0));
+              let quantitiesArray = [];
+              res.data.forEach((product) => {
+                const eventProductCommandId = null;
+                const productId = product.events_products_id;
+                const quantity = 0;
+                const error = false;
+                quantitiesArray.push({
+                  eventProductCommandId,
+                  productId,
+                  quantity,
+                  error,
+                });
+              });
+              productsInCommand.forEach((product) => {
+                const eventProductCommandId = product.eventProductCommandId;
+                const quantity = product.number;
+                quantitiesArray.forEach((p) => {
+                  if (p.productId === product.productId) {
+                    p.eventProductCommandId = eventProductCommandId;
+                    p.quantity = quantity;
+                  }
+                });
+              });
               setProductsDisplayed(
                 res.data.filter((product) => product.stock > 0)
               );
-              setQuantities(
-                res.data
-                  .filter((product) => product.stock > 0)
-                  .map((product) => ({
-                    eventProductCommandId: productsInCommand.filter(
-                      (p) => p.productId === product.events_products_id
-                    ).eventProductCommandId,
-                    productId: product.events_products_id,
-                    quantity:
-                      productsInCommand.filter(
-                        (p) => p.productId === product.events_products_id
-                      ).length > 0
-                        ? productsInCommand.filter(
-                            (p) => p.productId === product.events_products_id
-                          )[0].number
-                        : 0,
-                    error: false,
-                  }))
-              );
+              setQuantities(quantitiesArray);
               setIsLoading(false);
             })
             .catch((err) => {
@@ -175,41 +181,65 @@ function CommandScreen(props) {
       setIsLoading(true);
       setError(null);
       if (commandId) {
+        const promises = [];
+        console.log("\n\n\n\n\n\n\n");
         quantities.forEach((quantity) => {
-          eventProductCommandAPI
-            .updateProductNumber(
-              quantity.eventProductCommandId,
-              quantity.quantity,
-              commandId,
-              userAccessToken
-            )
-            .then((res) => {
-              if (
-                quantity.productId ===
-                quantities[quantities.length - 1].productId
-              ) {
-                setIsLoading(false);
-                navigation.goBack();
-                Alert.alert("Succès !", "Votre commande a bien été modifiée !");
-              }
-            })
-            .catch((err) => {
-              setIsLoading(false);
-              if (err.response === undefined) {
-                setError("Impossible de communiquer avec le serveur");
-              } else {
-                if (err.response.status === 403) {
-                  updateAccessToken();
-                  setError(
-                    "Impossible de modifier la commande, veuillez réessayer"
-                  );
-                } else {
-                  console.log(err.response.data);
-                  setError("Une erreur est survenue");
-                }
-              }
-            });
+          console.log(quantity);
+          if (quantity.quantity > 0 && quantity.eventProductCommandId != null) {
+            promises.push(
+              eventProductCommandAPI.updateProductNumber(
+                quantity.eventProductCommandId,
+                quantity.quantity,
+                commandId,
+                userAccessToken
+              )
+            );
+          } else if (
+            quantity.quantity > 0 &&
+            quantity.eventProductCommandId === null
+          ) {
+            promises.push(
+              eventProductCommandAPI.addProductToCommand(
+                quantity.productId,
+                commandId,
+                quantity.quantity,
+                userAccessToken
+              )
+            );
+          } else if (
+            quantity.quantity === 0 &&
+            quantity.eventProductCommandId != null
+          ) {
+            promises.push(
+              eventProductCommandAPI.deleteProductFromCommand(
+                quantity.eventProductCommandId,
+                userAccessToken
+              )
+            );
+          }
         });
+        Promise.all(promises)
+          .then((res) => {
+            setIsLoading(false);
+            navigation.goBack();
+            Alert.alert("Succès !", "Votre commande a bien été modifiée !");
+          })
+          .catch((err) => {
+            setIsLoading(false);
+            if (err.response === undefined) {
+              setError("Impossible de communiquer avec le serveur");
+            } else {
+              if (err.response.status === 403) {
+                updateAccessToken();
+                setError(
+                  "Impossible de modifier la commande, veuillez réessayer"
+                );
+              } else {
+                console.log(err.response.data);
+                setError("Une erreur est survenue");
+              }
+            }
+          });
       } else {
         commandAPI
           .createClientCommand(eventId, user.id, userAccessToken)
@@ -361,9 +391,21 @@ function CommandScreen(props) {
             />
           </View>
         )}
+        <View style={styles.commandPaidServed}>
+          <View style={styles.detailContainer}>
+            <AppText style={styles.detailTitle}>
+              Prix total de la commande :
+            </AppText>
+            <AppText style={styles.detailText}>
+              {totalPriceToDisplay.toString().replace(".", ",")} €
+            </AppText>
+          </View>
+        </View>
         {!commandPaidServed && (
           <AppButton
-            title="Valider les modifications"
+            title={
+              !commandId ? "Valider la commande" : "Valider les modifications"
+            }
             onPress={() => handleClientCommand()}
             disabled={quantityError}
           />
@@ -375,18 +417,6 @@ function CommandScreen(props) {
             disabled={commandId === null}
             style={{ marginTop: 0 }}
           />
-        )}
-        {commandPaidServed && (
-          <View style={styles.commandPaidServed}>
-            <View style={styles.detailContainer}>
-              <AppText style={styles.detailTitle}>
-                Prix total de la commande :
-              </AppText>
-              <AppText style={styles.detailText}>
-                {totalPriceToDisplay} €
-              </AppText>
-            </View>
-          </View>
         )}
         <ErrorMessage error={error} visible={error != null} />
         {isLoading && <LoadingIndicator />}
@@ -481,6 +511,10 @@ function CommandScreen(props) {
       : false
     : false;
 
+  const [isEditCommand, setIsEditCommand] = useState(false);
+  const [isCommandServed, setIsCommandServed] = useState(false);
+  const [isCommandPaid, setIsCommandPaid] = useState(false);
+
   const totalPrice = () => {
     let total = 0;
     quantities.forEach((quantity) => {
@@ -495,80 +529,84 @@ function CommandScreen(props) {
   const totalPriceToDisplay = totalPrice();
 
   const handleSellerCommand = () => {
-    commandAPI
-      .createSellerCommand(
-        eventId,
-        clientSelected.clientId,
-        clientSelected.clientName,
-        user.id,
-        userAccessToken
-      )
-      .then((res) => {
-        if (res.data.success != null) {
-          const commandId = res.data.commandId;
-          quantities
-            .filter((quantity) => {
-              if (quantity.quantity > 0) {
-                return true;
-              }
-            })
-            .forEach((quantity) => {
-              eventProductCommandAPI
-                .addProductToCommand(
-                  quantity.productId,
-                  commandId,
-                  quantity.quantity,
-                  userAccessToken
-                )
-                .then((res) => {
-                  if (
-                    quantity.productId ===
-                    quantities.filter((quantity) => quantity.quantity > 0)[
-                      quantities.filter((quantity) => quantity.quantity > 0)
-                        .length - 1
-                    ].productId
-                  ) {
-                    setIsLoading(false);
-                    navigation.goBack();
-                    Alert.alert(
-                      "Succès !",
-                      "Votre commande a bien été créée !"
-                    );
-                  }
-                })
-                .catch((err) => {
-                  setIsLoading(false);
-                  if (err.response === undefined) {
-                    setError("Impossible de communiquer avec le serveur");
-                  } else {
-                    if (err.response.status === 403) {
-                      updateAccessToken();
-                      setError(
-                        "Impossible de créer la commande, veuillez réessayer"
+    if (!commandId) {
+      commandAPI
+        .createSellerCommand(
+          eventId,
+          clientSelected.clientId,
+          clientSelected.clientName,
+          user.id,
+          userAccessToken
+        )
+        .then((res) => {
+          if (res.data.success != null) {
+            const commandId = res.data.commandId;
+            quantities
+              .filter((quantity) => {
+                if (quantity.quantity > 0) {
+                  return true;
+                }
+              })
+              .forEach((quantity) => {
+                eventProductCommandAPI
+                  .addProductToCommand(
+                    quantity.productId,
+                    commandId,
+                    quantity.quantity,
+                    userAccessToken
+                  )
+                  .then((res) => {
+                    if (
+                      quantity.productId ===
+                      quantities.filter((quantity) => quantity.quantity > 0)[
+                        quantities.filter((quantity) => quantity.quantity > 0)
+                          .length - 1
+                      ].productId
+                    ) {
+                      setIsLoading(false);
+                      navigation.goBack();
+                      Alert.alert(
+                        "Succès !",
+                        "Votre commande a bien été créée !"
                       );
-                    } else {
-                      console.log(err.response.data);
-                      setError("Une erreur est survenue");
                     }
-                  }
-                });
-            });
-        }
-      })
-      .catch((err) => {
-        setIsLoading(false);
-        if (err.response === undefined) {
-          setError("Impossible de communiquer avec le serveur");
-        } else {
-          if (err.response.status === 403) {
-            updateAccessToken();
-            setError("Impossible de créer la commande, veuillez réessayer");
-          } else {
-            console.log(err.response.data);
-            setError("Une erreur est survenue");
+                  })
+                  .catch((err) => {
+                    setIsLoading(false);
+                    if (err.response === undefined) {
+                      setError("Impossible de communiquer avec le serveur");
+                    } else {
+                      if (err.response.status === 403) {
+                        updateAccessToken();
+                        setError(
+                          "Impossible de créer la commande, veuillez réessayer"
+                        );
+                      } else {
+                        console.log(err.response.data);
+                        setError("Une erreur est survenue");
+                      }
+                    }
+                  });
+              });
           }
-        }
-      });
+        })
+        .catch((err) => {
+          setIsLoading(false);
+          if (err.response === undefined) {
+            setError("Impossible de communiquer avec le serveur");
+          } else {
+            if (err.response.status === 403) {
+              updateAccessToken();
+              setError("Impossible de créer la commande, veuillez réessayer");
+            } else {
+              console.log(err.response.data);
+              setError("Une erreur est survenue");
+            }
+          }
+        });
+    } else {
+      console.log("edit command");
+    }
   };
 
   return (
@@ -672,7 +710,7 @@ function CommandScreen(props) {
                 role={role}
                 quantities={quantities}
                 setQuantities={setQuantities}
-                disabled={commandPaidServed}
+                disabled={commandId && !isEditCommand}
               />
             )}
             ItemSeparatorComponent={() => <View style={styles.separator} />}
@@ -691,11 +729,59 @@ function CommandScreen(props) {
             )}
             style={{ width: "100%" }}
           />
-          <AppButton
-            title="Valider la commande"
-            onPress={() => handleSellerCommand()}
-            disabled={quantityError}
-          />
+          {!isEditCommand && !commandPaidServed && (
+            <View style={styles.detailContainer}>
+              <AppText style={styles.detailTitle}>
+                Prix total de la commande :
+              </AppText>
+              <AppText style={styles.detailText}>
+                {totalPriceToDisplay.toString().replace(".", ",")} €
+              </AppText>
+            </View>
+          )}
+          {!commandId && (
+            <AppButton
+              title="Valider la commande"
+              onPress={() => handleSellerCommand()}
+              disabled={quantityError}
+            />
+          )}
+          {commandId && !isEditCommand && !commandPaidServed && (
+            <View>
+              <AppButton
+                title="Modifier la commande"
+                onPress={() => setIsEditCommand(true)}
+                style={{ marginBottom: 0 }}
+              />
+              {!isCommandServed && (
+                <AppButton
+                  title="Commande servie"
+                  onPress={() => handleCommandServed()}
+                  style={{ marginBottom: 0 }}
+                />
+              )}
+              {!isCommandPaid && (
+                <AppButton
+                  title="Commande payée"
+                  onPress={() => handleCommandPaid()}
+                />
+              )}
+            </View>
+          )}
+          {commandId && isEditCommand && (
+            <View>
+              <AppButton
+                title="Valider les modifications"
+                onPress={() => handleSellerCommand()}
+                disabled={quantityError}
+                style={{ marginBottom: 0 }}
+              />
+              <AppButton
+                title="Annuler les modifications"
+                onPress={() => setIsEditCommand(false)}
+              />
+            </View>
+          )}
         </View>
       )}
       {commandPaidServed && (
@@ -704,7 +790,9 @@ function CommandScreen(props) {
             <AppText style={styles.detailTitle}>
               Prix total de la commande :
             </AppText>
-            <AppText style={styles.detailText}>{totalPriceToDisplay} €</AppText>
+            <AppText style={styles.detailText}>
+              {totalPriceToDisplay.toString().replace(".", ",")} €
+            </AppText>
           </View>
           {role === 2 && commandInfos && (
             <View style={styles.detailContainer}>

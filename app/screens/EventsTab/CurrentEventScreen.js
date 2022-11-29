@@ -68,7 +68,15 @@ function CurrentEventScreen({
             .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
             .filter((command) => {
               if (role === 0) {
-                return command.client_id === user.id;
+                return (
+                  command.client_id === user.id ||
+                  command.client_name ===
+                    user.firstName.charAt(0).toUpperCase() +
+                      user.firstName.slice(1) +
+                      " " +
+                      user.lastName.charAt(0).toUpperCase() +
+                      user.lastName.slice(1)
+                );
               } else if (role === 1) {
                 return (
                   command.servedBy_id === user.id ||
