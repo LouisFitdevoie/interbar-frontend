@@ -33,8 +33,7 @@ function CommandScreen(props) {
     tabBarDisplayManager.hideTabBar(navigation);
   }, []);
 
-  const { eventId, role, commandId, isPaid, isServed, clientSelected } =
-    props.route.params;
+  const { eventId, role, commandId, isPaid, isServed } = props.route.params;
   const { userAccessToken, updateAccessToken, isLoading, setIsLoading, user } =
     useContext(AuthContext);
   const [error, setError] = useState(null);
@@ -43,6 +42,7 @@ function CommandScreen(props) {
   const [productsDisplayed, setProductsDisplayed] = useState(productsSold);
   const [quantities, setQuantities] = useState([]);
   const [quantityError, setQuantityError] = useState(false);
+  const [clientSelected, setClientSelected] = useState(null);
 
   useEffect(() => {
     if (isPaid && isServed) {
@@ -58,6 +58,13 @@ function CommandScreen(props) {
       eventProductCommandAPI
         .getAllInfosForCommand(commandId, userAccessToken)
         .then((response) => {
+          setClientSelected({
+            clientId: response.data.client.id,
+            clientName:
+              response.data.client.firstName +
+              " " +
+              response.data.client.lastName,
+          });
           const productsInCommand = response.data.products;
           eventProductAPI
             .getAllProductsAtEvent(eventId, userAccessToken)
@@ -474,10 +481,6 @@ function CommandScreen(props) {
       : false
     : false;
 
-  const [selectedUser, setSelectedUser] = useState(
-    clientSelected ? clientSelected : null
-  );
-
   const totalPrice = () => {
     let total = 0;
     quantities.forEach((quantity) => {
@@ -495,8 +498,8 @@ function CommandScreen(props) {
     commandAPI
       .createSellerCommand(
         eventId,
-        selectedUser.clientId,
-        selectedUser.clientName,
+        clientSelected.clientId,
+        clientSelected.clientName,
         user.id,
         userAccessToken
       )
@@ -570,7 +573,7 @@ function CommandScreen(props) {
 
   return (
     <Screen style={styles.container}>
-      {selectedUser === null && (
+      {clientSelected === null && (
         <View style={{ flex: 1, width: "100%" }}>
           <AppText
             style={{
@@ -589,7 +592,7 @@ function CommandScreen(props) {
               renderItem={({ item }) => (
                 <TouchableOpacity
                   onPress={() =>
-                    setSelectedUser({
+                    setClientSelected({
                       clientId: item.id,
                       clientName: item.clientName,
                     })
@@ -621,7 +624,7 @@ function CommandScreen(props) {
             <AppForm
               initialValues={{ clientName: "" }}
               onSubmit={(values) => {
-                setSelectedUser({
+                setClientSelected({
                   clientId: null,
                   clientName: values.clientName,
                 });
@@ -644,7 +647,7 @@ function CommandScreen(props) {
         </View>
       )}
 
-      {selectedUser !== null && (
+      {clientSelected !== null && (
         <View style={{ width: "100%" }}>
           <AppText
             style={{
@@ -654,11 +657,11 @@ function CommandScreen(props) {
               textAlign: "center",
             }}
           >
-            Pour {selectedUser.clientName}
+            Pour {clientSelected.clientName}
           </AppText>
         </View>
       )}
-      {quantities.length > 0 && selectedUser != null && (
+      {quantities.length > 0 && clientSelected != null && (
         <View style={{ width: "100%" }}>
           <FlatList
             data={productsDisplayed}
