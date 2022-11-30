@@ -34,7 +34,8 @@ function CommandScreen(props) {
     tabBarDisplayManager.hideTabBar(navigation);
   }, []);
 
-  const { eventId, role, commandId, isPaid, isServed } = props.route.params;
+  const { eventId, role, commandId, isPaid, isServed, eventFinished } =
+    props.route.params;
   const { userAccessToken, updateAccessToken, isLoading, setIsLoading, user } =
     useContext(AuthContext);
   const [error, setError] = useState(null);
@@ -408,20 +409,24 @@ function CommandScreen(props) {
             </AppText>
           </View>
         </View>
-        {!commandId && (
+        {!commandId && !eventFinished && (
           <AppButton
             title="Valider la commande"
             onPress={() => handleClientCommand()}
             disabled={quantityError}
           />
         )}
-        {commandId != null && !isEditCommand && !isPaid && !isServed && (
-          <AppButton
-            title="Modifier la commande"
-            onPress={() => setIsEditCommand(true)}
-          />
-        )}
-        {commandId != null && isEditCommand && (
+        {commandId != null &&
+          !eventFinished &&
+          !isEditCommand &&
+          !isPaid &&
+          !isServed && (
+            <AppButton
+              title="Modifier la commande"
+              onPress={() => setIsEditCommand(true)}
+            />
+          )}
+        {commandId != null && !eventFinished && isEditCommand && (
           <View style={{ width: "100%" }}>
             <AppButton
               title="Valider les modifications"
@@ -438,14 +443,18 @@ function CommandScreen(props) {
             />
           </View>
         )}
-        {commandId != null && !isPaid && !isServed && !isEditCommand && (
-          <AppButton
-            title="Annuler la commande"
-            onPress={() => cancelCommand()}
-            disabled={commandId === null}
-            style={{ marginTop: 0 }}
-          />
-        )}
+        {commandId != null &&
+          !eventFinished &&
+          !isPaid &&
+          !isServed &&
+          !isEditCommand && (
+            <AppButton
+              title="Annuler la commande"
+              onPress={() => cancelCommand()}
+              disabled={commandId === null}
+              style={{ marginTop: 0 }}
+            />
+          )}
         <ErrorMessage error={error} visible={error != null} />
         {isLoading && <LoadingIndicator />}
       </Screen>
@@ -936,18 +945,18 @@ function CommandScreen(props) {
                 {totalPriceToDisplay.toString().replace(".", ",")} €
               </AppText>
             </View>
-            {!isCommandPaid && (
+            {!isCommandPaid && !eventFinished && (
               <MoneyBackInput totalPrice={totalPriceToDisplay} />
             )}
           </View>
-          {!commandId && (
+          {!commandId && !eventFinished && (
             <AppButton
               title="Valider la commande"
               onPress={() => handleSellerCommand()}
               disabled={quantityError}
             />
           )}
-          {commandId && !isEditCommand && (
+          {commandId && !eventFinished && !isEditCommand && (
             <View>
               {!isCommandPaid && !isCommandServed && (
                 <AppButton
@@ -989,7 +998,7 @@ function CommandScreen(props) {
               )}
             </View>
           )}
-          {commandId && isEditCommand && (
+          {commandId && !eventFinished && isEditCommand && (
             <View>
               <AppButton
                 title="Valider les modifications"
@@ -1008,7 +1017,7 @@ function CommandScreen(props) {
           )}
         </View>
       )}
-      {commandId != null && isCommandPaid && isCommandServed && (
+      {commandId && !eventFinished != null && isCommandPaid && isCommandServed && (
         <View style={styles.commandPaidServed}>
           {role === 2 && commandInfos && (
             <View style={styles.detailContainer}>
@@ -1041,6 +1050,19 @@ function CommandScreen(props) {
                 })}
               </AppText>
             </View>
+          )}
+        </View>
+      )}
+      {commandId && eventFinished && (!isCommandPaid || !isCommandServed) && (
+        <View style={{ paddingTop: 10 }}>
+          {!isCommandPaid && !isCommandServed && (
+            <AppText>La commande n'a ni été payée, ni servie</AppText>
+          )}
+          {isCommandServed && !isCommandPaid && (
+            <AppText>La commande n'a pas été payée</AppText>
+          )}
+          {!isCommandServed && isCommandPaid && (
+            <AppText>La commande n'a pas été servie</AppText>
           )}
         </View>
       )}

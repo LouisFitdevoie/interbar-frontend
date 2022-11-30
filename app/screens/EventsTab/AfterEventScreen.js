@@ -288,6 +288,7 @@ function AfterEventScreen({
                 role={role}
                 navigation={navigation}
                 eventId={eventId}
+                eventFinished={true}
               />
             )}
           />
