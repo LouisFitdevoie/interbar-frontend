@@ -190,7 +190,9 @@ function EventDetailsScreen(props) {
         <View style={styles.buttonsContainer}>
           <AppButton
             title="Statistiques"
-            onPress={() => console.log("Stats")}
+            onPress={() =>
+              navigation.navigate("Statistics", { eventId: eventId })
+            }
             style={{ marginVertical: 5, marginTop: 10 }}
           />
           {today < eventEndDate && (
