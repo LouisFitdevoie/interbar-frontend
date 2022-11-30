@@ -549,6 +549,60 @@ function CommandScreen(props) {
   };
   const totalPriceToDisplay = totalPrice();
 
+  const handleCommandPaid = () => {
+    setIsLoading(true);
+    setError(null);
+    commandAPI
+      .setCommandPaid(commandId, userAccessToken)
+      .then((res) => {
+        setIsCommandPaid(true);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        if (err.response === undefined) {
+          setError("Impossible de communiquer avec le serveur");
+        } else {
+          if (err.response.status === 403) {
+            updateAccessToken();
+            setError(
+              "Impossible de modifier le statut de la commande, veuillez réessayer"
+            );
+          } else {
+            console.log(err.response.data);
+            setError("Une erreur est survenue");
+          }
+        }
+      });
+  };
+
+  const handleCommandServed = () => {
+    setIsLoading(true);
+    setError(null);
+    commandAPI
+      .setCommandServed(commandId, userAccessToken)
+      .then((res) => {
+        setIsCommandServed(true);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        if (err.response === undefined) {
+          setError("Impossible de communiquer avec le serveur");
+        } else {
+          if (err.response.status === 403) {
+            updateAccessToken();
+            setError(
+              "Impossible de modifier le statut de la commande, veuillez réessayer"
+            );
+          } else {
+            console.log(err.response.data);
+            setError("Une erreur est survenue");
+          }
+        }
+      });
+  };
+
   const handleSellerCommand = () => {
     if (!commandId) {
       commandAPI
@@ -853,7 +907,9 @@ function CommandScreen(props) {
                 {totalPriceToDisplay.toString().replace(".", ",")} €
               </AppText>
             </View>
-            {!isPaid && <MoneyBackInput totalPrice={totalPriceToDisplay} />}
+            {!isCommandPaid && (
+              <MoneyBackInput totalPrice={totalPriceToDisplay} />
+            )}
           </View>
           {!commandId && (
             <AppButton
@@ -923,7 +979,7 @@ function CommandScreen(props) {
           )}
         </View>
       )}
-      {commandId != null && isPaid && isServed && (
+      {commandId != null && isCommandPaid && isCommandServed && (
         <View style={styles.commandPaidServed}>
           {role === 2 && commandInfos && (
             <View style={styles.detailContainer}>
