@@ -27,7 +27,7 @@ function AfterEventScreen({
   //TODO
   // - ORGANIZER
   //TODO --- Display a button to redirect to the statistics screen
-  //TODO --- Display all the commands of the event
+  // DONE --- Display all the commands of the event
   // DONE --- Display a button to delete the event -> Alert to confirm and say that data won't be accessible for the user anymore
 
   const { isLoading, setIsLoading, userAccessToken, user, updateAccessToken } =
@@ -153,97 +153,8 @@ function AfterEventScreen({
     setIsLoading(false);
   };
 
-  const handleDeleteEvent = () => {
-    Alert.alert(
-      "Supprimer l'évènement",
-      "Êtes-vous sûr de vouloir supprimer l'évènement ?\n Vous n'aurez plus accès aux données de l'évènement après sa suppression",
-      [
-        {
-          text: "Annuler",
-          style: "cancel",
-        },
-        {
-          text: "Confirmer",
-          onPress: () => {
-            setError(null);
-            setIsLoading(true);
-            eventAPI
-              .deleteEvent(eventId, userAccessToken)
-              .then((res) => {
-                setIsLoading(false);
-                if (res.data.success != null) {
-                  Alert.alert("Succés", "L'événement a été supprimé");
-                  navigation.navigate("Home");
-                } else {
-                  setError(res.data.error);
-                }
-              })
-              .catch((err) => {
-                setIsLoading(false);
-                if (err.response.status === 403) {
-                  updateAccessToken();
-                  setError("Une erreur est survenue, veuillez réessayer");
-                } else {
-                  setError("Une erreur est survenue");
-                }
-              });
-          },
-          style: "destructive",
-        },
-      ]
-    );
-  };
-
   return (
     <Screen style={styles.container}>
-      <View style={styles.detailContainer}>
-        {role != 2 && (
-          <View style={styles.detailView}>
-            <AppText style={styles.detailTitle}>Organisé par :</AppText>
-            <AppText>{organizer}</AppText>
-          </View>
-        )}
-        <View style={styles.detailView}>
-          <AppText style={styles.detailTitle}>Date de début :</AppText>
-          <AppText>
-            {startDate.toLocaleDateString("fr-BE", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-          </AppText>
-        </View>
-        <View style={styles.detailView}>
-          <AppText style={styles.detailTitle}>Date de fin :</AppText>
-          <AppText>
-            {endDate.toLocaleDateString("fr-BE", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-          </AppText>
-        </View>
-        <View style={styles.detailView}>
-          <AppText style={styles.detailTitle}>Lieu :</AppText>
-          <AppText>{location}</AppText>
-        </View>
-        {description != null && (
-          <View style={styles.detailView}>
-            <AppText style={styles.detailTitle}>Description :</AppText>
-            <AppText>{description}</AppText>
-          </View>
-        )}
-        <View style={styles.detailView}>
-          <AppText style={styles.detailTitle}>Rôle :</AppText>
-          <AppText>
-            {role === 0 ? "Client" : role === 1 ? "Vendeur" : "Organisateur"}
-          </AppText>
-        </View>
-      </View>
       <View style={styles.commandsContainer}>
         <AppText style={styles.commandsTitle}>
           {role === 0
@@ -262,7 +173,7 @@ function AfterEventScreen({
           displayedItems={displayedItems}
           handleSort={() => handleSort()}
         />
-        <View style={{ width: "100%", flex: 1 }}>
+        <View style={[{ width: "100%" }, error === null ? { flex: 1 } : {}]}>
           <FlatList
             data={displayedItems}
             keyExtractor={(item) => item.id.toString()}
@@ -293,21 +204,8 @@ function AfterEventScreen({
             )}
           />
         </View>
+        <ErrorMessage error={error} visible={error != null} />
       </View>
-      {role === 2 && (
-        <View
-          style={{
-            width: "100%",
-            paddingHorizontal: 10,
-          }}
-        >
-          <AppButton
-            title="Supprimer l'évènement"
-            onPress={() => handleDeleteEvent()}
-          />
-          <ErrorMessage error={error} visible={error != null} />
-        </View>
-      )}
       {isLoading && <LoadingIndicator />}
     </Screen>
   );
