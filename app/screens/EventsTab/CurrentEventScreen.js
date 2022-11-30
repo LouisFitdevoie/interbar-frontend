@@ -192,20 +192,21 @@ function CurrentEventScreen({
         displayedItems={displayedItems}
         handleSort={() => handleSort()}
       />
-      {displayedItems.length === 0 && (
-        <View style={styles.noCommandContainer}>
-          <AppText style={{ textAlign: "center" }}>
-            Aucune commande ne correspond aux critères sélectionnés
-          </AppText>
-        </View>
-      )}
-      {displayedItems.length > 0 && (
+      <View style={[{ width: "100%" }, error === null ? { flex: 1 } : {}]}>
         <FlatList
           data={displayedItems}
           keyExtractor={(item) => item.id.toString()}
           style={{ marginTop: 10 }}
           refreshing={refreshing}
           onRefresh={() => getCommands()}
+          ListEmptyComponent={
+            <View style={styles.noCommandContainer}>
+              <AppText style={{ textAlign: "center" }}>
+                Aucune commande ne correspond aux critères sélectionnés
+              </AppText>
+              <AppButton title="Actualiser" onPress={() => getCommands()} />
+            </View>
+          }
           renderItem={({ item }) => (
             <CommandItem
               clientName={item.client_name}
@@ -220,14 +221,16 @@ function CurrentEventScreen({
             />
           )}
         />
-      )}
+      </View>
       <View style={styles.buttonContainer}>
-        <AppButton
-          title="Nouvelle commande"
-          onPress={() =>
-            navigation.navigate("Command", { eventId: eventId, role: role })
-          }
-        />
+        {error === null && (
+          <AppButton
+            title="Nouvelle commande"
+            onPress={() =>
+              navigation.navigate("Command", { eventId: eventId, role: role })
+            }
+          />
+        )}
         <ErrorMessage error={error} visible={error != null} />
       </View>
       {isLoading && <LoadingIndicator />}
