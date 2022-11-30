@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useLayoutEffect } from "react";
 import { View, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
@@ -16,12 +16,17 @@ import sellerPasswordValidator from "../../validators/sellerPassword.validator";
 import LoadingIndicator from "../../components/LoadingIndicator";
 import { AuthContext } from "../../auth/AuthContext";
 import userEventAPI from "../../api/userEvent.api";
+import tabBarDisplayManager from "../../config/tabBarDisplayManager";
 
 function JoinEventDetailsScreen(props) {
   const { navigation } = props;
   const { event } = props.route.params;
-  const { isLoading, setIsLoading, userAccessToken, user } =
+  const { isLoading, setIsLoading, userAccessToken, user, updateAccessToken } =
     useContext(AuthContext);
+
+  useLayoutEffect(() => {
+    tabBarDisplayManager.hideTabBar(navigation);
+  }, []);
 
   const eventDetails = {
     name: event.name,
@@ -49,6 +54,7 @@ function JoinEventDetailsScreen(props) {
 
   const handleJoinEvent = (sellerPassword) => {
     setIsLoading(true);
+    setJoinEventError(null);
     if (sellerPassword != "" && isSellerVisible) {
       userEventAPI
         .sellerJoinEvent(event.id, user.id, sellerPassword, userAccessToken)
@@ -56,7 +62,7 @@ function JoinEventDetailsScreen(props) {
           setIsLoading(false);
           if (res.data.success != null) {
             navigation.goBack();
-            navigation.navigate("Events");
+            navigation.navigate("Home");
             Alert.alert(
               "Succès",
               "Vous avez rejoint l'évènement en tant que vendeur"
@@ -73,9 +79,21 @@ function JoinEventDetailsScreen(props) {
               setJoinEventError("Vous participez déjà à cet événement");
             } else if (
               err.response.status === 400 &&
+              errMessage.includes("ended")
+            ) {
+              setJoinEventError(
+                "L'évènement est terminé, vous ne pouvez plus le rejoindre"
+              );
+            } else if (
+              err.response.status === 400 &&
               errMessage.includes("password")
             ) {
               setJoinEventError("Le mot de passe vendeur fourni est incorrect");
+            } else if (err.response.status === 403) {
+              updateAccessToken();
+              setJoinEventError(
+                "Erreur lors de la création de l'évènement, veuillez réessayer"
+              );
             } else {
               console.log(err.response.data.error);
               setJoinEventError("Une erreur est survenue");
@@ -90,7 +108,7 @@ function JoinEventDetailsScreen(props) {
           setIsLoading(false);
           if (res.data.success != null) {
             navigation.goBack();
-            navigation.navigate("Events");
+            navigation.navigate("Home");
             Alert.alert("Succès", "Vous avez rejoint l'évènement");
           }
         })
@@ -102,6 +120,11 @@ function JoinEventDetailsScreen(props) {
             const errMessage = err.response.data.error;
             if (err.response.status === 400 && errMessage.includes("already")) {
               setJoinEventError("Vous participez déjà à cet événement");
+            } else if (err.response.status === 403) {
+              updateAccessToken();
+              setJoinEventError(
+                "Erreur lors de la création de l'évènement, veuillez réessayer"
+              );
             } else {
               console.log(err.response.data.error);
               setJoinEventError("Une erreur est survenue");
@@ -119,11 +142,15 @@ function JoinEventDetailsScreen(props) {
       <View style={styles.detailsContainer}>
         <View style={styles.textDetailContainer}>
           <AppText style={styles.title}>Nom de l'évènement :</AppText>
-          <AppText style={styles.detail}>{eventDetails.name}</AppText>
+          <AppText style={styles.detail} numberOfLines={1} ellipsizeMode="tail">
+            {eventDetails.name}
+          </AppText>
         </View>
         <View style={styles.textDetailContainer}>
           <AppText style={styles.title}>Organisé par :</AppText>
-          <AppText style={styles.detail}>{eventDetails.organizer}</AppText>
+          <AppText style={styles.detail} numberOfLines={1} ellipsizeMode="tail">
+            {eventDetails.organizer}
+          </AppText>
         </View>
         <View style={styles.textDetailContainer}>
           <AppText style={styles.title}>Du</AppText>
@@ -137,7 +164,7 @@ function JoinEventDetailsScreen(props) {
             {eventDetails.location}
           </AppText>
         </View>
-        {eventDetails.description !== "" && (
+        {eventDetails.description !== null && (
           <View style={styles.detailsMultilineContainer}>
             <AppText style={styles.title}>Description :</AppText>
             <AppText style={styles.detailsMultiline}>
@@ -220,7 +247,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     marginBottom: 10,
   },
-  detail: { paddingHorizontal: 5 },
+  detail: { paddingHorizontal: 5, flex: 1 },
   detailsContainer: {
     marginVertical: 20,
     width: "100%",

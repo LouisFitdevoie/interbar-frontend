@@ -35,7 +35,6 @@ function AppDateTimePicker({
               const dateSelected = new Date(selectedDate);
               setFieldValue(name, dateSelected);
             }}
-            {...otherProperties}
             minimumDate={
               name === "endDate"
                 ? values["startDate"]
@@ -44,6 +43,7 @@ function AppDateTimePicker({
                 : new Date()
             }
             accentColor={colors.buttonPrimary}
+            {...otherProperties}
           />
         </View>
         <ErrorMessage

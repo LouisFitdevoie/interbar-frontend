@@ -37,3 +37,82 @@ exports.getEventById = (eventId, accessToken) => {
     },
   });
 };
+
+exports.cancelEvent = (eventId, accessToken) => {
+  return axios({
+    method: "put",
+    url: `${BASE_URL}/delete-event/${eventId}`,
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};
+
+exports.endEvent = (eventId, accessToken) => {
+  return axios({
+    method: "put",
+    url: `${BASE_URL}/update-event/${eventId}`,
+    data: {
+      endDate: new Date(),
+      startDate: null,
+      name: null,
+      location: null,
+      description: null,
+    },
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};
+
+exports.editEventEndDate = (eventId, endDate, accessToken) => {
+  return axios({
+    method: "put",
+    url: `${BASE_URL}/update-event/${eventId}`,
+    data: {
+      endDate,
+      startDate: null,
+      name: null,
+      location: null,
+      description: null,
+    },
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};
+
+exports.deleteEvent = (eventId, accessToken) => {
+  return axios({
+    method: "put",
+    url: `${BASE_URL}/delete-event/${eventId}`,
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};
+
+exports.editEvent = (
+  eventId,
+  name,
+  startDate,
+  endDate,
+  location,
+  description,
+  accessToken
+) => {
+  return axios({
+    method: "put",
+    url: `${BASE_URL}/update-event/${eventId}`,
+    data: {
+      name,
+      startDate,
+      endDate,
+      location,
+      description,
+    },
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};

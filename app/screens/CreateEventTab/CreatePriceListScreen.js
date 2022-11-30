@@ -1,9 +1,9 @@
-import React, { useEffect, useContext, useState } from "react";
+import React, { useEffect, useContext, useState, useLayoutEffect } from "react";
 import { View, StyleSheet, FlatList, Alert } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 
 import Screen from "../../components/Screen";
-import TarifItem from "../../components/lists/TarifItem";
+import TarifCreationItem from "../../components/lists/TarifCreationItem";
 import ListSeparator from "../../components/lists/ListSeparator";
 import colors from "../../config/colors";
 import AppButton from "../../components/AppButton";
@@ -13,19 +13,29 @@ import AppText from "../../components/AppText";
 import LoadingIndicator from "../../components/LoadingIndicator";
 import TarifItemDeleteAction from "../../components/lists/TarifItemDeleteAction";
 import ErrorMessage from "../../components/forms/ErrorMessage";
+import tabBarDisplayManager from "../../config/tabBarDisplayManager";
 
 function CreatePriceListScreen(props) {
   const isFocused = useIsFocused();
-  const { isLoading, setIsLoading, userAccessToken } = useContext(AuthContext);
+  const { isLoading, setIsLoading, userAccessToken, updateAccessToken } =
+    useContext(AuthContext);
 
   const eventId = props.route.params.eventId;
+  const isEditing = props.route.params.isEditing != null;
   const [eventProducts, setEventProducts] = useState([]);
   const { navigation } = props;
   const [deleteError, setDeleteError] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [errorGettingEventProducts, setErrorGettingEventProducts] =
+    useState(null);
+
+  useLayoutEffect(() => {
+    tabBarDisplayManager.hideTabBar(navigation);
+  }, []);
 
   const getAllEventProducts = (eventId) => {
     setIsLoading(true);
+    setErrorGettingEventProducts(null);
     eventProductAPI
       .getAllProductsAtEvent(eventId, userAccessToken)
       .then((res) => {
@@ -33,6 +43,31 @@ function CreatePriceListScreen(props) {
         setIsLoading(false);
       })
       .catch((err) => {
+        setIsLoading(false);
+        if (err.response.status === 403) {
+          updateAccessToken();
+          setErrorGettingEventProducts(
+            "Impossible de récupérer les produits ajoutés à l'évènement, veuillez réessayer"
+          );
+        }
+      });
+  };
+
+  const deleteEventProduct = (eventProductId) => {
+    setDeleteError(null);
+    setIsLoading(true);
+    eventProductAPI
+      .deleteEventProduct(eventProductId, userAccessToken)
+      .then((res) => {
+        getAllEventProducts(eventId);
+      })
+      .catch((err) => {
+        setDeleteError(
+          "Une erreur est survenue lors de la suppression du produit du tarif de cet évènement. Veuillez réessayer."
+        );
+        if (err.response.status === 403) {
+          updateAccessToken();
+        }
         console.log(err);
         setIsLoading(false);
       });
@@ -44,7 +79,7 @@ function CreatePriceListScreen(props) {
 
   return (
     <Screen style={styles.container}>
-      {eventProducts.length > 0 && (
+      {eventProducts.length > 0 && errorGettingEventProducts === null && (
         <FlatList
           data={eventProducts}
           keyExtractor={(item) => item.events_products_id.toString()}
@@ -52,7 +87,7 @@ function CreatePriceListScreen(props) {
           refreshing={refreshing}
           onRefresh={() => getAllEventProducts(eventId)}
           renderItem={({ item }) => (
-            <TarifItem
+            <TarifCreationItem
               name={item.name}
               category={item.category}
               description={item.description}
@@ -68,92 +103,76 @@ function CreatePriceListScreen(props) {
                   buyingPrice: item.buyingPrice,
                   sellingPrice: item.sellingPrice,
                   stock: item.stock,
+                  isEditing,
                 })
               }
-              renderRightActions={() => (
-                <TarifItemDeleteAction
-                  onPress={() => {
-                    Alert.alert(
-                      "Suppression",
-                      "Voulez-vous vraiment supprimer ce produit du tarif de cet évènement ?",
-                      [
-                        {
-                          text: "Annuler",
-                          style: "cancel",
-                        },
-                        {
-                          text: "Supprimer",
-                          onPress: () => {
-                            setDeleteError(null);
-                            setIsLoading(true);
-                            eventProductAPI
-                              .deleteEventProduct(
-                                item.events_products_id,
-                                userAccessToken
-                              )
-                              .then((res) => {
-                                getAllEventProducts(eventId);
-                              })
-                              .catch((err) => {
-                                setDeleteError(
-                                  "Une erreur est survenue lors de la suppression du produit du tarif de cet évènement. Veuillez réessayer."
-                                );
-                                console.log(err);
-                                setIsLoading(false);
-                              });
-                          },
-                        },
-                      ]
-                    );
-                  }}
-                />
-              )}
+              onPressDelete={() => deleteEventProduct(item.events_products_id)}
             />
           )}
           style={styles.list}
         />
       )}
-      {eventProducts.length === 0 && (
+      {eventProducts.length === 0 && errorGettingEventProducts === null && (
         <View style={styles.noEventProducts}>
           <AppText style={{ textAlign: "center" }}>
             Aucun produit n'a encore été ajouté au tarif de l'évènement
           </AppText>
         </View>
       )}
-      <View style={styles.buttonContainer}>
-        <AppButton
-          title="Ajouter un produit"
-          onPress={() => navigation.navigate("AddProductTarif", { eventId })}
-          style={{ marginBottom: 5 }}
-        />
-        <AppButton
-          title="Valider le tarif"
-          onPress={() =>
-            Alert.alert(
-              "Voulez-vous vraiment valider le tarif ?",
-              "Vous pourrez toujours le modifier avant le début de l'évènement",
-              [
-                {
-                  text: "Annuler",
-                  style: "cancel",
-                },
-                {
-                  text: "Valider",
-                  onPress: () => {
-                    navigation.reset({
-                      index: 0,
-                      routes: [{ name: "Events" }],
-                    });
+      {errorGettingEventProducts === null && (
+        <View style={styles.buttonContainer}>
+          <AppButton
+            title="Ajouter un produit"
+            onPress={() =>
+              navigation.navigate("AddProductTarif", { eventId, isEditing })
+            }
+            style={{ marginBottom: 5 }}
+          />
+          <AppButton
+            title="Valider le tarif"
+            onPress={() =>
+              Alert.alert(
+                "Voulez-vous vraiment valider le tarif ?",
+                "Vous pourrez toujours le modifier avant le début de l'évènement",
+                [
+                  {
+                    text: "Annuler",
+                    style: "cancel",
                   },
-                },
-              ]
-            )
-          }
-          style={{ marginTop: 5 }}
-        />
-        <ErrorMessage error={deleteError} visible={deleteError != null} />
-      </View>
-
+                  {
+                    text: "Valider",
+                    onPress: () => {
+                      if (!isEditing) {
+                        navigation.reset({
+                          index: 0,
+                          routes: [{ name: "EventsNavigator" }],
+                        });
+                      } else {
+                        navigation.goBack();
+                      }
+                    },
+                  },
+                ]
+              )
+            }
+            style={{ marginTop: 5 }}
+          />
+          <ErrorMessage
+            error={deleteError}
+            visible={deleteError != null}
+            style={{ paddingHorizontal: 10, marginBottom: 20 }}
+          />
+        </View>
+      )}
+      {errorGettingEventProducts !== null && (
+        <View style={styles.errorGettingEventProducts}>
+          <AppText>{errorGettingEventProducts}</AppText>
+          <AppButton
+            title="Réessayer"
+            onPress={() => getAllEventProducts(eventId)}
+          />
+        </View>
+      )}
       {isLoading && <LoadingIndicator />}
     </Screen>
   );
@@ -169,6 +188,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     flex: 1,
     justifyContent: "flex-start",
+    width: "100%",
+  },
+  errorGettingEventProducts: {
+    alignItems: "center",
+    padding: 10,
     width: "100%",
   },
   list: {

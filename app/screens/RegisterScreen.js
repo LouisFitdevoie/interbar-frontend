@@ -71,6 +71,12 @@ function RegisterScreen({ navigation }) {
             console.log(err.response.data.error);
             setRegisterError("L'adresse mail est déjà utilisée");
           } else if (
+            errMessage.includes("already") &&
+            errMessage.includes("name")
+          ) {
+            console.log(err.response.data.error);
+            setRegisterError("Un compte utilisateur existe déjà pour ce nom");
+          } else if (
             err.response.status === 400 &&
             errMessage.includes("birthday")
           ) {

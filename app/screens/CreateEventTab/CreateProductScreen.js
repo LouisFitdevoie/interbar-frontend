@@ -17,11 +17,13 @@ import LoadingIndicator from "../../components/LoadingIndicator";
 import productsAPI from "../../api/products.api";
 
 function CreateProductScreen(props) {
-  const { isLoading, setIsLoading, userAccessToken } = useContext(AuthContext);
+  const { isLoading, setIsLoading, userAccessToken, updateAccessToken } =
+    useContext(AuthContext);
   const [createProductError, setCreateProductError] = useState(null);
   const { navigation } = props;
   const eventId =
     props.route.params.eventId != null ? props.route.params.eventId : null;
+  const isEditing = props.route.params.isEditing;
 
   const handleSubmit = ({ name, category, description }) => {
     setIsLoading(true);
@@ -31,7 +33,7 @@ function CreateProductScreen(props) {
       .then((res) => {
         setIsLoading(false);
         if (res.data.success != null) {
-          navigation.navigate("AddProductTarif", { eventId });
+          navigation.navigate("AddProductTarif", { eventId, isEditing });
         }
       })
       .catch((err) => {
@@ -47,6 +49,11 @@ function CreateProductScreen(props) {
               "Un produit portant le même nom existe déjà dans la base de données"
             );
             console.log(errMessage);
+          } else if (err.response.status === 403) {
+            updateAccessToken();
+            setCreateProductError(
+              "Erreur lors de la création du produit, veuillez réessayer"
+            );
           } else {
             setCreateProductError("Une erreur est survenue");
             console.log(errMessage);

@@ -52,3 +52,66 @@ exports.sellerJoinEvent = (
     },
   });
 };
+
+exports.getAllEventsForUser = (userId, accessToken) => {
+  return axios({
+    methode: "get",
+    url: `${BASE_URL}/users-events/${userId}`,
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};
+
+exports.leaveEvent = (eventId, userId, accessToken) => {
+  return axios({
+    method: "put",
+    url: `${BASE_URL}/quit-event`,
+    data: {
+      eventId,
+      userId,
+    },
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};
+
+exports.fromSellerToUser = (eventId, userId, accessToken) => {
+  return axios({
+    method: "put",
+    url: `${BASE_URL}/seller-to-user`,
+    data: {
+      eventId,
+      userId,
+    },
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};
+
+exports.fromUserToSeller = (eventId, userId, sellerPassword, accessToken) => {
+  return axios({
+    method: "put",
+    url: `${BASE_URL}/user-to-seller`,
+    data: {
+      eventId,
+      userId,
+      sellerPassword,
+    },
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};
+
+exports.getAllUsersFromEvent = (eventId, accessToken) => {
+  return axios({
+    method: "get",
+    url: `${BASE_URL}/users-for-event/${eventId}`,
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};

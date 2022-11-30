@@ -15,8 +15,10 @@ import ListSeparator from "../../components/lists/ListSeparator";
 
 function AddProductTarifScreen(props) {
   const isFocused = useIsFocused();
-  const { isLoading, setIsLoading, userAccessToken } = useContext(AuthContext);
+  const { isLoading, setIsLoading, userAccessToken, updateAccessToken } =
+    useContext(AuthContext);
   const eventId = props.route.params.eventId;
+  const isEditing = props.route.params.isEditing;
   const { navigation } = props;
 
   const [existingProducts, setExistingProducts] = useState([]);
@@ -27,15 +29,28 @@ function AddProductTarifScreen(props) {
     useState("Tous les produits");
   const [isSortOptionsVisible, setIsSortOptionsVisible] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [errorMessage, setErrorMesssage] = useState(null);
 
   const getExistingProducts = () => {
     setIsLoading(true);
-    productsAPI.getAllProducts(userAccessToken).then((res) => {
-      setExistingProducts(res.data);
-      setDisplayedProducts(res.data);
-      setSortOptionSelected("Tous les produits");
-      setIsLoading(false);
-    });
+    setErrorMesssage(null);
+    productsAPI
+      .getAllProducts(userAccessToken)
+      .then((res) => {
+        setExistingProducts(res.data);
+        setDisplayedProducts(res.data);
+        setSortOptionSelected("Tous les produits");
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        if (err.response.status === 403) {
+          updateAccessToken();
+          setErrorMesssage(
+            "Impossible de récupérer les produits, veuillez réessayer"
+          );
+        }
+      });
   };
 
   const handleTextChanged = (value) => {
@@ -101,7 +116,7 @@ function AddProductTarifScreen(props) {
           >
             <MaterialCommunityIcons
               name="filter-variant"
-              size={24}
+              size={30}
               color={isSortOptionsVisible ? colors.white : colors.buttonPrimary}
             />
           </TouchableOpacity>
@@ -111,78 +126,127 @@ function AddProductTarifScreen(props) {
             <TouchableOpacity
               onPress={() => handleSortOptionChanged("Tous les produits")}
             >
-              <AppText style={styles.option}>Tous les produits</AppText>
+              <AppText
+                style={
+                  sortOptionSelected === "Tous les produits"
+                    ? styles.optionSelected
+                    : styles.option
+                }
+              >
+                Tous les produits
+              </AppText>
             </TouchableOpacity>
             <View style={styles.separator} />
             <TouchableOpacity
               onPress={() => handleSortOptionChanged("Nourriture", 0)}
             >
-              <AppText style={styles.option}>Nourriture</AppText>
+              <AppText
+                style={
+                  sortOptionSelected === "Nourriture"
+                    ? styles.optionSelected
+                    : styles.option
+                }
+              >
+                Nourriture
+              </AppText>
             </TouchableOpacity>
             <View style={styles.separator} />
             <TouchableOpacity
               onPress={() => handleSortOptionChanged("Boisson alcoolisée", 1)}
             >
-              <AppText style={styles.option}>Boisson alcoolisée</AppText>
+              <AppText
+                style={
+                  sortOptionSelected === "Boisson alcoolisée"
+                    ? styles.optionSelected
+                    : styles.option
+                }
+              >
+                Boisson alcoolisée
+              </AppText>
             </TouchableOpacity>
             <View style={styles.separator} />
             <TouchableOpacity
               onPress={() => handleSortOptionChanged("Soft", 2)}
             >
-              <AppText style={styles.option}>Soft</AppText>
+              <AppText
+                style={
+                  sortOptionSelected === "Soft"
+                    ? styles.optionSelected
+                    : styles.option
+                }
+              >
+                Soft
+              </AppText>
             </TouchableOpacity>
           </View>
         )}
       </View>
-      <FlatList
-        data={displayedProducts}
-        keyExtractor={(item) => item.id.toString()}
-        refreshing={refreshing}
-        onRefresh={() => getExistingProducts()}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate("CreateEventProduct", {
-                eventId: eventId,
-                productId: item.id,
-                productName: item.name,
-                productCategory: item.category,
-                productDescription: item.description,
-              })
-            }
-          >
-            <View style={styles.productView}>
-              <AppText style={styles.product}>
-                {item.name.charAt(0).toUpperCase() + item.name.slice(1)}
-              </AppText>
-              <View style={styles.addButton}>
-                <AppText style={{ color: colors.buttonPrimary }}>
-                  Ajouter
+      {errorMessage === null && (
+        <FlatList
+          data={displayedProducts}
+          keyExtractor={(item) => item.id.toString()}
+          refreshing={refreshing}
+          onRefresh={() => getExistingProducts()}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("CreateEventProduct", {
+                  eventId: eventId,
+                  productId: item.id,
+                  productName: item.name,
+                  productCategory: item.category,
+                  productDescription: item.description,
+                  isEditing,
+                })
+              }
+            >
+              <View style={styles.productView}>
+                <AppText style={styles.product}>
+                  {item.name.charAt(0).toUpperCase() + item.name.slice(1)}
                 </AppText>
-                <MaterialCommunityIcons
-                  name="plus"
-                  size={24}
-                  color={colors.buttonPrimary}
-                />
+                <View style={styles.addButton}>
+                  <AppText style={{ color: colors.buttonPrimary }}>
+                    Ajouter
+                  </AppText>
+                  <MaterialCommunityIcons
+                    name="plus"
+                    size={24}
+                    color={colors.buttonPrimary}
+                  />
+                </View>
               </View>
-            </View>
-          </TouchableOpacity>
-        )}
-        ItemSeparatorComponent={() => <ListSeparator />}
-        style={styles.list}
-      />
-      {displayedProducts.length === 0 && (
-        <View style={styles.noProductView}>
-          <AppText style={styles.noProductText}>
-            Aucun produit ne correspond à votre recherche
-          </AppText>
+            </TouchableOpacity>
+          )}
+          ItemSeparatorComponent={() => <ListSeparator />}
+          style={styles.list}
+        />
+      )}
+      {errorMessage ===
+        "Impossible de récupérer les produits, veuillez réessayer" && (
+        <View style={styles.errorView}>
+          <AppText>{errorMessage}</AppText>
+          <AppButton title="Réessayer" onPress={() => getExistingProducts()} />
         </View>
       )}
-      <AppButton
-        title="Ajouter un produit"
-        onPress={() => navigation.navigate("CreateProduct", { eventId })}
-        style={{ marginBottom: 20 }}
-      />
+      {displayedProducts.length === 0 &&
+        errorMessage !=
+          "Impossible de récupérer les produits, veuillez réessayer" && (
+          <View style={styles.noProductView}>
+            <AppText style={styles.noProductText}>
+              Aucun produit ne correspond à votre recherche
+            </AppText>
+          </View>
+        )}
+      {errorMessage !=
+        "Impossible de récupérer les produits, veuillez réessayer" && (
+        <AppButton
+          title="Ajouter un produit"
+          onPress={() =>
+            navigation.navigate("CreateProduct", { eventId, isEditing })
+          }
+          style={{ marginBottom: 20 }}
+        />
+      )}
       {isLoading && <LoadingIndicator />}
     </Screen>
   );
@@ -201,6 +265,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     width: "100%",
   },
+  errorView: {
+    alignItems: "center",
+    width: "100%",
+  },
   list: {
     paddingHorizontal: 10,
     width: "100%",
@@ -217,9 +285,18 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   option: {
-    marginBottom: 5,
+    padding: 5,
     width: "100%",
     textAlign: "center",
+    color: colors.light,
+  },
+  optionSelected: {
+    padding: 5,
+    fontSize: 20,
+    width: "100%",
+    textAlign: "center",
+    color: colors.white,
+    fontWeight: "bold",
   },
   product: {
     fontSize: 16,
@@ -232,14 +309,15 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   separator: {
-    height: 3,
-    width: "75%",
+    height: 1,
+    width: "100%",
     backgroundColor: colors.light,
     alignSelf: "center",
   },
   sortButton: {
     padding: 5,
-    borderRadius: 20,
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
   },
   sortTitle: {
     alignItems: "center",
@@ -253,10 +331,14 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     width: "100%",
     flexDirection: "column",
+    alignItems: "flex-end",
   },
   sortOptions: {
-    marginTop: 10,
-    width: "100%",
+    backgroundColor: colors.buttonPrimary,
+    borderRadius: 20,
+    borderTopRightRadius: 0,
+    width: 250,
+    padding: 5,
   },
 });
 

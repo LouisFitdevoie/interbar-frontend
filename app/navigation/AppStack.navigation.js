@@ -1,9 +1,8 @@
-import React, { useContext, useEffect } from "react";
+import React from "react";
+import { createStackNavigator } from "@react-navigation/stack";
 
 import colors from "../config/colors";
-import { AuthContext } from "../auth/AuthContext";
 import DataUsageScreen from "../screens/DataUsageScreen";
-import { createStackNavigator } from "@react-navigation/stack";
 import AppTabNavigator from "./AppTabNavigator.navigation";
 import EditPersonalDataScreen from "../screens/SettingsTab/EditPersonalDataScreen";
 import EditPasswordScreen from "../screens/SettingsTab/EditPasswordScreen";
@@ -12,17 +11,6 @@ import ColorModeScreen from "../screens/SettingsTab/ColorModeScreen";
 const Stack = createStackNavigator();
 
 function AppStack(props) {
-  const { updateAccessToken } = useContext(AuthContext);
-
-  const timeToUpdateAccessToken = 10 * 60 * 1000; // 10 minutes
-  useEffect(() => {
-    const interval = setInterval(() => {
-      updateAccessToken();
-    }, timeToUpdateAccessToken);
-
-    return () => clearInterval(interval);
-  });
-
   return (
     <Stack.Navigator>
       <Stack.Screen

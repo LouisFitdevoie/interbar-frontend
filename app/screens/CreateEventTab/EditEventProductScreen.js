@@ -14,7 +14,8 @@ import AppFormFieldNumber from "../../components/forms/AppFormFieldNumber";
 import eventProductAPI from "../../api/eventProduct.api";
 
 function EditEventProductScreen(props) {
-  const { isLoading, setIsLoading, userAccessToken } = useContext(AuthContext);
+  const { isLoading, setIsLoading, userAccessToken, updateAccessToken } =
+    useContext(AuthContext);
   const { navigation } = props;
 
   const [editEventProductError, setEditEventProductError] = useState(null);
@@ -27,6 +28,7 @@ function EditEventProductScreen(props) {
     buyingPrice,
     sellingPrice,
     stock,
+    isEditing,
   } = props.route.params;
 
   const handleSubmit = ({ newBuyingPrice, newSellingPrice, newStock }) => {
@@ -47,7 +49,11 @@ function EditEventProductScreen(props) {
       .then((res) => {
         setIsLoading(false);
         if (res.data.success != null) {
-          navigation.navigate("CreatePriceList", { eventId });
+          if (!isEditing) {
+            navigation.navigate("CreatePriceList", { eventId });
+          } else {
+            navigation.navigate("EditPriceList", { eventId, isEditing });
+          }
         }
       })
       .catch((err) => {
@@ -57,7 +63,7 @@ function EditEventProductScreen(props) {
           console.log(err);
         } else {
           const errMessage = err.response.data.error;
-          if (err.response.status === 400) {
+          if (err.response.status === 400 && errMessage.includes("edit")) {
             setEditEventProductError(
               "Aucune modification n'a été détectée pour ce produit"
             );
@@ -65,9 +71,17 @@ function EditEventProductScreen(props) {
             setEditEventProductError(
               "Le produit n'a pas encore été ajouté à l'évènement"
             );
-          } else if (err.response.status === 403) {
+          } else if (
+            err.response.status === 400 &&
+            errMessage.includes("currently")
+          ) {
             setEditEventProductError(
               "Vous ne pouvez pas modifier ce produit car l'évènement est en cours ou est terminé"
+            );
+          } else if (err.response.status === 403) {
+            updateAccessToken();
+            setEditEventProductError(
+              "Erreur lors de la modification, veuillez réessayer"
             );
           } else {
             setEditEventProductError(errMessage);

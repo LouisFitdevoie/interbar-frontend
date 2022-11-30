@@ -14,12 +14,14 @@ import AppFormFieldNumber from "../../components/forms/AppFormFieldNumber";
 import eventProductAPI from "../../api/eventProduct.api";
 
 function CreateEventProductScreen(props) {
-  const { isLoading, setIsLoading, userAccessToken } = useContext(AuthContext);
+  const { isLoading, setIsLoading, userAccessToken, updateAccessToken } =
+    useContext(AuthContext);
   const { navigation } = props;
 
   const [addProductToEventError, setAddProductToEventError] = useState(null);
   const eventId = props.route.params.eventId;
   const productId = props.route.params.productId;
+  const isEditing = props.route.params.isEditing;
 
   const handleSubmit = ({
     eventId,
@@ -42,7 +44,11 @@ function CreateEventProductScreen(props) {
       .then((res) => {
         setIsLoading(false);
         if (res.data.success != null) {
-          navigation.navigate("CreatePriceList", { eventId });
+          if (!isEditing) {
+            navigation.navigate("CreatePriceList", { eventId });
+          } else {
+            navigation.navigate("EditPriceList", { eventId, isEditing });
+          }
         }
       })
       .catch((err) => {
@@ -59,6 +65,11 @@ function CreateEventProductScreen(props) {
               "Le produit a déjà été ajouté au tarif de l'évènement"
             );
             console.log(errMessage);
+          } else if (err.response.status === 403) {
+            updateAccessToken();
+            setAddProductToEventError(
+              "Erreur lors de l'ajout du produit à l'évènement, veuillez réessayer"
+            );
           } else {
             setAddProductToEventError("Une erreur inconnue est survenue");
             console.log(errMessage);

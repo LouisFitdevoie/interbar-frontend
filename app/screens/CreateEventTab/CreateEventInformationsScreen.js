@@ -1,11 +1,17 @@
-import React from "react";
+import React, { useLayoutEffect } from "react";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { StyleSheet } from "react-native";
 import AppButton from "../../components/AppButton";
 import AppText from "../../components/AppText";
 import Screen from "../../components/Screen";
+import tabBarDisplayManager from "../../config/tabBarDisplayManager";
 
 function CreateEventInformationsScreen({ navigation }) {
+  const insets = useSafeAreaInsets();
+  useLayoutEffect(() => {
+    tabBarDisplayManager.displayTabBar(navigation, insets);
+  }, []);
   return (
     <Screen style={styles.container}>
       <AppText style={styles.text}>
