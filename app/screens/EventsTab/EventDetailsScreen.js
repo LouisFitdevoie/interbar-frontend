@@ -61,6 +61,47 @@ function EventDetailsScreen(props) {
   // - ORGANIZER
   //TODO --- Redirect to stats screen (line 110)
 
+  const handleDeleteEvent = () => {
+    Alert.alert(
+      "Supprimer l'évènement",
+      "Êtes-vous sûr de vouloir supprimer l'évènement ?\n Vous n'aurez plus accès aux données de l'évènement après sa suppression",
+      [
+        {
+          text: "Annuler",
+          style: "cancel",
+        },
+        {
+          text: "Confirmer",
+          onPress: () => {
+            setError(null);
+            setIsLoading(true);
+            eventAPI
+              .deleteEvent(eventId, userAccessToken)
+              .then((res) => {
+                setIsLoading(false);
+                if (res.data.success != null) {
+                  Alert.alert("Succés", "L'événement a été supprimé");
+                  navigation.navigate("Home");
+                } else {
+                  setError(res.data.error);
+                }
+              })
+              .catch((err) => {
+                setIsLoading(false);
+                if (err.response.status === 403) {
+                  updateAccessToken();
+                  setError("Une erreur est survenue, veuillez réessayer");
+                } else {
+                  setError("Une erreur est survenue");
+                }
+              });
+          },
+          style: "destructive",
+        },
+      ]
+    );
+  };
+
   const endEvent = () => {
     setError(null);
     setIsLoading(true);
@@ -140,37 +181,37 @@ function EventDetailsScreen(props) {
           {role === 0 ? "Client" : role === 1 ? "Vendeur" : "Organisateur"}
         </AppText>
       </View>
-      <View style={styles.qrCodeContainer}>
-        <QRCode value={eventId} size={150} />
-      </View>
+      {today < eventEndDate && (
+        <View style={styles.qrCodeContainer}>
+          <QRCode value={eventId} size={150} />
+        </View>
+      )}
       {role === 2 && (
         <View style={styles.buttonsContainer}>
           <AppButton
             title="Statistiques"
             onPress={() => console.log("Stats")}
-            style={{ marginVertical: 5 }}
+            style={{ marginVertical: 5, marginTop: 10 }}
           />
-          <AppButton
-            title="Changer l'heure de fin"
-            onPress={() =>
-              navigation.navigate("EditEventEndDate", props.route.params)
-            }
-            style={{ marginVertical: 5 }}
-          />
+          {today < eventEndDate && (
+            <AppButton
+              title="Changer l'heure de fin"
+              onPress={() =>
+                navigation.navigate("EditEventEndDate", props.route.params)
+              }
+              style={{ marginVertical: 5 }}
+            />
+          )}
           <AppButton
             title={
-              today < eventStartDate
-                ? "Annuler l'évènement"
-                : eventEndDate <= today
+              eventEndDate <= today
                 ? "Supprimer l'évènement"
                 : "Terminer l'évènement"
             }
             onPress={() => {
-              if (today < eventStartDate) {
-                console.log("Cancel");
-              } else if (eventEndDate <= today) {
-                console.log("Delete");
-              } else {
+              if (eventEndDate <= today) {
+                handleDeleteEvent();
+              } else if (today >= eventStartDate && eventEndDate > today) {
                 endEvent();
               }
             }}

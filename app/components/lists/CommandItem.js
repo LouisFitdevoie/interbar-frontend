@@ -15,6 +15,7 @@ function CommandItem({
   role,
   navigation,
   eventId,
+  eventFinished = false,
 }) {
   let productNumber = 0;
   products.forEach((product) => {
@@ -29,6 +30,7 @@ function CommandItem({
           role,
           isPaid,
           isServed,
+          eventFinished,
         })
       }
     >
