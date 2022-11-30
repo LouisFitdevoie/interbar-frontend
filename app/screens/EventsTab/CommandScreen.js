@@ -421,7 +421,7 @@ function CommandScreen(props) {
             disabled={quantityError}
           />
         )}
-        {commandId != null && !isEditCommand && (
+        {commandId != null && !isEditCommand && !commandPaidServed && (
           <AppButton
             title="Modifier la commande"
             onPress={() => setIsEditCommand(true)}
