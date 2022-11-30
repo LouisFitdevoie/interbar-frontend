@@ -57,9 +57,8 @@ function EventDetailsScreen(props) {
     });
   }, []);
 
-  //TODO:
   // - ORGANIZER
-  //TODO --- Redirect to stats screen (line 110)
+  // DONE --- Redirect to stats screen (line 110)
 
   const handleDeleteEvent = () => {
     Alert.alert(

@@ -25,6 +25,7 @@ function StatisticsScreen(props) {
   }, []);
 
   //TODO -> add ability to generate a PDF with the data
+  //TODO -> add the mean command price and the mean quantity of products per command
 
   const getAllCommands = () => {
     setIsLoading(true);
@@ -144,7 +145,6 @@ function StatisticsScreen(props) {
   };
 
   const calculatePercentageSold = (numberSold, initialStock) => {
-    //Return a percentage of the number of products sold compared to the initial stock with 2 decimals if needed
     return Math.round((numberSold / initialStock) * 10000) / 100;
   };
 

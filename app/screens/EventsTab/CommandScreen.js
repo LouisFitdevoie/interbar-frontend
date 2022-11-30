@@ -48,6 +48,8 @@ function CommandScreen(props) {
   const [clientSelected, setClientSelected] = useState(null);
   const [isEditCommand, setIsEditCommand] = useState(false);
 
+  //TODO -> remove the products of category alcohol from the list if the user is not 18 for client commands
+
   useEffect(() => {
     if (isPaid && isServed) {
       navigation.setOptions({ title: "Détails de la commande" });
