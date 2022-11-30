@@ -863,19 +863,35 @@ function CommandScreen(props) {
                 onPress={() => setIsEditCommand(true)}
                 style={{ marginBottom: 0 }}
               />
-              {!isCommandServed && (
-                <AppButton
-                  title="Commande servie"
-                  onPress={() => handleCommandServed()}
-                  style={{ marginBottom: 0 }}
-                />
-              )}
-              {!isCommandPaid && (
-                <AppButton
-                  title="Commande payée"
-                  onPress={() => handleCommandPaid()}
-                />
-              )}
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                {!isCommandServed && (
+                  <AppButton
+                    title="Servie"
+                    onPress={() => handleCommandServed()}
+                    style={isCommandPaid ? { width: "100%" } : { width: "49%" }}
+                  />
+                )}
+                {!isCommandPaid && (
+                  <AppButton
+                    title="Payée"
+                    onPress={() => handleCommandPaid()}
+                    style={
+                      isCommandServed ? { width: "100%" } : { width: "49%" }
+                    }
+                  />
+                )}
+              </View>
+              <AppButton
+                title="Annuler la commande"
+                onPress={() => handleCommandCancel()}
+                style={{ marginTop: 0 }}
+              />
             </View>
           )}
           {commandId && isEditCommand && (
