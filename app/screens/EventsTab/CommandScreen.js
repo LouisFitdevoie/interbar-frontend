@@ -42,8 +42,10 @@ function CommandScreen(props) {
   const [productsSold, setProductsSold] = useState([]);
   const [productsDisplayed, setProductsDisplayed] = useState(productsSold);
   const [quantities, setQuantities] = useState([]);
+  const [initialQuantities, setInitialQuantities] = useState([]);
   const [quantityError, setQuantityError] = useState(false);
   const [clientSelected, setClientSelected] = useState(null);
+  const [isEditCommand, setIsEditCommand] = useState(false);
 
   useEffect(() => {
     if (isPaid && isServed) {
@@ -67,7 +69,6 @@ function CommandScreen(props) {
               response.data.client.lastName,
           });
           const productsInCommand = response.data.products;
-          //TODO correct the bug that dont put the eventProductCommandId in the quantity and so prevents the user to edit the quantity of product wanted
           eventProductAPI
             .getAllProductsAtEvent(eventId, userAccessToken)
             .then((res) => {
@@ -99,6 +100,7 @@ function CommandScreen(props) {
                 res.data.filter((product) => product.stock > 0)
               );
               setQuantities(quantitiesArray);
+              setInitialQuantities(quantitiesArray);
               setIsLoading(false);
             })
             .catch((err) => {
@@ -140,6 +142,15 @@ function CommandScreen(props) {
           setProductsSold(res.data.filter((product) => product.stock > 0));
           setProductsDisplayed(res.data.filter((product) => product.stock > 0));
           setQuantities(
+            res.data
+              .filter((product) => product.stock > 0)
+              .map((product) => ({
+                productId: product.events_products_id,
+                quantity: 0,
+                error: false,
+              }))
+          );
+          setInitialQuantities(
             res.data
               .filter((product) => product.stock > 0)
               .map((product) => ({
@@ -220,6 +231,7 @@ function CommandScreen(props) {
         Promise.all(promises)
           .then((res) => {
             setIsLoading(false);
+            setIsEditCommand(false);
             navigation.goBack();
             Alert.alert("Succès !", "Votre commande a bien été modifiée !");
           })
@@ -338,7 +350,7 @@ function CommandScreen(props) {
     };
 
     const commandPaidServed = commandId
-      ? isPaid && isServed
+      ? isPaid || isServed
         ? true
         : false
       : false;
@@ -369,7 +381,9 @@ function CommandScreen(props) {
                   role={role}
                   quantities={quantities}
                   setQuantities={setQuantities}
-                  disabled={commandPaidServed}
+                  disabled={
+                    commandPaidServed || (commandId != null && !isEditCommand)
+                  }
                 />
               )}
               ItemSeparatorComponent={() => <View style={styles.separator} />}
@@ -400,16 +414,37 @@ function CommandScreen(props) {
             </AppText>
           </View>
         </View>
-        {!commandPaidServed && (
+        {!commandId && (
           <AppButton
-            title={
-              !commandId ? "Valider la commande" : "Valider les modifications"
-            }
+            title="Valider la commande"
             onPress={() => handleClientCommand()}
             disabled={quantityError}
           />
         )}
-        {commandId != null && !isPaid && !isServed && (
+        {commandId != null && !isEditCommand && (
+          <AppButton
+            title="Modifier la commande"
+            onPress={() => setIsEditCommand(true)}
+          />
+        )}
+        {commandId != null && isEditCommand && (
+          <View style={{ width: "100%" }}>
+            <AppButton
+              title="Valider les modifications"
+              onPress={() => handleClientCommand()}
+              disabled={quantityError}
+            />
+            <AppButton
+              title="Annuler les modifications"
+              onPress={() => {
+                setIsEditCommand(false);
+                setQuantities(initialQuantities);
+              }}
+              style={{ marginTop: 0 }}
+            />
+          </View>
+        )}
+        {commandId != null && !isPaid && !isServed && !isEditCommand && (
           <AppButton
             title="Annuler la commande"
             onPress={() => cancelCommand()}
@@ -505,12 +540,11 @@ function CommandScreen(props) {
   }, []);
 
   const commandPaidServed = commandId
-    ? isPaid && isServed
+    ? isPaid || isServed
       ? true
       : false
     : false;
 
-  const [isEditCommand, setIsEditCommand] = useState(false);
   const [isCommandServed, setIsCommandServed] = useState(false);
   const [isCommandPaid, setIsCommandPaid] = useState(false);
 
@@ -604,7 +638,83 @@ function CommandScreen(props) {
           }
         });
     } else {
-      console.log("edit command");
+      console.log(commandInfos.seller === null);
+      // setIsLoading(true);
+      // setError(null);
+      // eventProductCommandAPI
+      //   .getAllInfosForCommand(commandId, userAccessToken)
+      //   .then((response) => {
+      //     setClientSelected({
+      //       clientId: response.data.client.id,
+      //       clientName:
+      //         response.data.client.firstName +
+      //         " " +
+      //         response.data.client.lastName,
+      //     });
+      //     const productsInCommand = response.data.products;
+      //     eventProductAPI
+      //       .getAllProductsAtEvent(eventId, userAccessToken)
+      //       .then((res) => {
+      //         setProductsSold(res.data.filter((product) => product.stock > 0));
+      //         let quantitiesArray = [];
+      //         res.data.forEach((product) => {
+      //           const eventProductCommandId = null;
+      //           const productId = product.events_products_id;
+      //           const quantity = 0;
+      //           const error = false;
+      //           quantitiesArray.push({
+      //             eventProductCommandId,
+      //             productId,
+      //             quantity,
+      //             error,
+      //           });
+      //         });
+      //         productsInCommand.forEach((product) => {
+      //           const eventProductCommandId = product.eventProductCommandId;
+      //           const quantity = product.number;
+      //           quantitiesArray.forEach((p) => {
+      //             if (p.productId === product.productId) {
+      //               p.eventProductCommandId = eventProductCommandId;
+      //               p.quantity = quantity;
+      //             }
+      //           });
+      //         });
+      //         setProductsDisplayed(
+      //           res.data.filter((product) => product.stock > 0)
+      //         );
+      //         setQuantities(quantitiesArray);
+      //         setIsLoading(false);
+      //       })
+      //       .catch((err) => {
+      //         setIsLoading(false);
+      //         if (err.response.status === 403) {
+      //           updateAccessToken();
+      //           setError(
+      //             "Impossible de récupérer le tarif de l'évènement, veuillez réessayer"
+      //           );
+      //         } else {
+      //           console.log(err.response.data);
+      //           setError("Une erreur est survenue");
+      //         }
+      //       });
+      //   })
+      //   .catch((error) => {
+      //     if (error.response === undefined) {
+      //       setError("Impossible de communiquer avec le serveur");
+      //     } else {
+      //       if (error.response.status === 403) {
+      //         updateAccessToken();
+      //         setError("Une erreur est survenue, veuillez réessayer");
+      //         navigation.goBack();
+      //       } else if (error.response.status === 404) {
+      //         setError(
+      //           "Nous n'avons pas réussi à récupérer les informations de la commande"
+      //         );
+      //       } else {
+      //         setError("Une erreur est survenue");
+      //       }
+      //     }
+      //   });
     }
   };
 
@@ -728,19 +838,17 @@ function CommandScreen(props) {
             )}
             style={{ width: "100%" }}
           />
-          {!isEditCommand && !commandPaidServed && (
-            <View>
-              <View style={styles.detailContainer}>
-                <AppText style={styles.detailTitle}>
-                  Prix total de la commande :
-                </AppText>
-                <AppText style={styles.detailText}>
-                  {totalPriceToDisplay.toString().replace(".", ",")} €
-                </AppText>
-              </View>
-              <MoneyBackInput totalPrice={totalPriceToDisplay} />
+          <View>
+            <View style={styles.detailContainer}>
+              <AppText style={styles.detailTitle}>
+                Prix total de la commande :
+              </AppText>
+              <AppText style={styles.detailText}>
+                {totalPriceToDisplay.toString().replace(".", ",")} €
+              </AppText>
             </View>
-          )}
+            {!isPaid && <MoneyBackInput totalPrice={totalPriceToDisplay} />}
+          </View>
           {!commandId && (
             <AppButton
               title="Valider la commande"
@@ -788,14 +896,6 @@ function CommandScreen(props) {
       )}
       {commandPaidServed && (
         <View style={styles.commandPaidServed}>
-          <View style={styles.detailContainer}>
-            <AppText style={styles.detailTitle}>
-              Prix total de la commande :
-            </AppText>
-            <AppText style={styles.detailText}>
-              {totalPriceToDisplay.toString().replace(".", ",")} €
-            </AppText>
-          </View>
           {role === 2 && commandInfos && (
             <View style={styles.detailContainer}>
               <AppText style={styles.detailTitle}>Servie par </AppText>
