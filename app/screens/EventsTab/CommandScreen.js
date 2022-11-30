@@ -26,6 +26,7 @@ import AppButton from "../../components/AppButton";
 import tabBarDisplayManager from "../../config/tabBarDisplayManager";
 import ProductCommandItem from "../../components/lists/ProductCommandItem";
 import colors from "../../config/colors";
+import MoneyBackInput from "../../components/MoneyBackInput";
 
 function CommandScreen(props) {
   const { navigation } = props;
@@ -182,9 +183,7 @@ function CommandScreen(props) {
       setError(null);
       if (commandId) {
         const promises = [];
-        console.log("\n\n\n\n\n\n\n");
         quantities.forEach((quantity) => {
-          console.log(quantity);
           if (quantity.quantity > 0 && quantity.eventProductCommandId != null) {
             promises.push(
               eventProductCommandAPI.updateProductNumber(
@@ -730,13 +729,16 @@ function CommandScreen(props) {
             style={{ width: "100%" }}
           />
           {!isEditCommand && !commandPaidServed && (
-            <View style={styles.detailContainer}>
-              <AppText style={styles.detailTitle}>
-                Prix total de la commande :
-              </AppText>
-              <AppText style={styles.detailText}>
-                {totalPriceToDisplay.toString().replace(".", ",")} €
-              </AppText>
+            <View>
+              <View style={styles.detailContainer}>
+                <AppText style={styles.detailTitle}>
+                  Prix total de la commande :
+                </AppText>
+                <AppText style={styles.detailText}>
+                  {totalPriceToDisplay.toString().replace(".", ",")} €
+                </AppText>
+              </View>
+              <MoneyBackInput totalPrice={totalPriceToDisplay} />
             </View>
           )}
           {!commandId && (

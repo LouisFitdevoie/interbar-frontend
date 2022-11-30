@@ -47,7 +47,9 @@ function CommandItem({
           </AppText>
         </View>
         <View style={styles.endView}>
-          <AppText style={styles.totalPrice}>{totalPrice} €</AppText>
+          <AppText style={styles.totalPrice}>
+            {totalPrice.toString().replace(".", ",")} €
+          </AppText>
           <MaterialCommunityIcons
             name="chevron-right"
             size={30}
