@@ -642,7 +642,7 @@ function CommandScreen(props) {
                       navigation.goBack();
                       Alert.alert(
                         "Succès !",
-                        "Votre commande a bien été créée !"
+                        `La commande de ${clientSelected.clientName} a bien été créée !`
                       );
                     }
                   })
@@ -776,6 +776,35 @@ function CommandScreen(props) {
           });
       }
     }
+  };
+
+  const handleCommandCancel = () => {
+    setIsLoading(true);
+    setError(null);
+    commandAPI
+      .cancelCommand(commandId, userAccessToken)
+      .then((res) => {
+        setIsLoading(false);
+        navigation.goBack();
+        Alert.alert(
+          "Succès !",
+          `La commande de ${clientSelected.clientName} a bien été annulée !`
+        );
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        if (err.response === undefined) {
+          setError("Impossible de communiquer avec le serveur");
+        } else {
+          if (err.response.status === 403) {
+            updateAccessToken();
+            setError("Impossible d'annuler la commande, veuillez réessayer");
+          } else {
+            console.log(err.response.data);
+            setError("Une erreur est survenue");
+          }
+        }
+      });
   };
 
   return (
