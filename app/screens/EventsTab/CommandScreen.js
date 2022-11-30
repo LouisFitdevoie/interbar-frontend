@@ -349,12 +349,6 @@ function CommandScreen(props) {
         });
     };
 
-    const commandPaidServed = commandId
-      ? isPaid || isServed
-        ? true
-        : false
-      : false;
-
     const totalPrice = () => {
       let total = 0;
       quantities.forEach((quantity) => {
@@ -382,7 +376,7 @@ function CommandScreen(props) {
                   quantities={quantities}
                   setQuantities={setQuantities}
                   disabled={
-                    commandPaidServed || (commandId != null && !isEditCommand)
+                    isPaid || isServed || (commandId != null && !isEditCommand)
                   }
                 />
               )}
@@ -421,7 +415,7 @@ function CommandScreen(props) {
             disabled={quantityError}
           />
         )}
-        {commandId != null && !isEditCommand && !commandPaidServed && (
+        {commandId != null && !isEditCommand && !isPaid && !isServed && (
           <AppButton
             title="Modifier la commande"
             onPress={() => setIsEditCommand(true)}
@@ -539,12 +533,6 @@ function CommandScreen(props) {
     }
   }, []);
 
-  const commandPaidServed = commandId
-    ? isPaid || isServed
-      ? true
-      : false
-    : false;
-
   const [isCommandServed, setIsCommandServed] = useState(isServed);
   const [isCommandPaid, setIsCommandPaid] = useState(isPaid);
 
@@ -639,82 +627,100 @@ function CommandScreen(props) {
         });
     } else {
       console.log(commandInfos.seller === null);
-      // setIsLoading(true);
-      // setError(null);
-      // eventProductCommandAPI
-      //   .getAllInfosForCommand(commandId, userAccessToken)
-      //   .then((response) => {
-      //     setClientSelected({
-      //       clientId: response.data.client.id,
-      //       clientName:
-      //         response.data.client.firstName +
-      //         " " +
-      //         response.data.client.lastName,
-      //     });
-      //     const productsInCommand = response.data.products;
-      //     eventProductAPI
-      //       .getAllProductsAtEvent(eventId, userAccessToken)
-      //       .then((res) => {
-      //         setProductsSold(res.data.filter((product) => product.stock > 0));
-      //         let quantitiesArray = [];
-      //         res.data.forEach((product) => {
-      //           const eventProductCommandId = null;
-      //           const productId = product.events_products_id;
-      //           const quantity = 0;
-      //           const error = false;
-      //           quantitiesArray.push({
-      //             eventProductCommandId,
-      //             productId,
-      //             quantity,
-      //             error,
-      //           });
-      //         });
-      //         productsInCommand.forEach((product) => {
-      //           const eventProductCommandId = product.eventProductCommandId;
-      //           const quantity = product.number;
-      //           quantitiesArray.forEach((p) => {
-      //             if (p.productId === product.productId) {
-      //               p.eventProductCommandId = eventProductCommandId;
-      //               p.quantity = quantity;
-      //             }
-      //           });
-      //         });
-      //         setProductsDisplayed(
-      //           res.data.filter((product) => product.stock > 0)
-      //         );
-      //         setQuantities(quantitiesArray);
-      //         setIsLoading(false);
-      //       })
-      //       .catch((err) => {
-      //         setIsLoading(false);
-      //         if (err.response.status === 403) {
-      //           updateAccessToken();
-      //           setError(
-      //             "Impossible de récupérer le tarif de l'évènement, veuillez réessayer"
-      //           );
-      //         } else {
-      //           console.log(err.response.data);
-      //           setError("Une erreur est survenue");
-      //         }
-      //       });
-      //   })
-      //   .catch((error) => {
-      //     if (error.response === undefined) {
-      //       setError("Impossible de communiquer avec le serveur");
-      //     } else {
-      //       if (error.response.status === 403) {
-      //         updateAccessToken();
-      //         setError("Une erreur est survenue, veuillez réessayer");
-      //         navigation.goBack();
-      //       } else if (error.response.status === 404) {
-      //         setError(
-      //           "Nous n'avons pas réussi à récupérer les informations de la commande"
-      //         );
-      //       } else {
-      //         setError("Une erreur est survenue");
-      //       }
-      //     }
-      //   });
+      const promises = [];
+      quantities.forEach((quantity) => {
+        if (quantity.quantity > 0 && quantity.eventProductCommandId != null) {
+          promises.push(
+            eventProductCommandAPI.updateProductNumber(
+              quantity.eventProductCommandId,
+              quantity.quantity,
+              commandId,
+              userAccessToken
+            )
+          );
+        } else if (
+          quantity.quantity > 0 &&
+          quantity.eventProductCommandId === null
+        ) {
+          promises.push(
+            eventProductCommandAPI.addProductToCommand(
+              quantity.productId,
+              commandId,
+              quantity.quantity,
+              userAccessToken
+            )
+          );
+        } else if (
+          quantity.quantity === 0 &&
+          quantity.eventProductCommandId != null
+        ) {
+          promises.push(
+            eventProductCommandAPI.deleteProductFromCommand(
+              quantity.eventProductCommandId,
+              userAccessToken
+            )
+          );
+        }
+      });
+      if (commandInfos.seller === null) {
+        commandAPI
+          .setServedById(commandId, user.id, userAccessToken)
+          .then((res) => {
+            Promise.all(promises)
+              .then((res) => {
+                setIsLoading(false);
+                setIsEditCommand(false);
+                navigation.goBack();
+                Alert.alert(
+                  "Succès !",
+                  `La commande de ${clientSelected.clientName} a bien été modifiée !`
+                );
+              })
+              .catch((err) => {
+                setIsLoading(false);
+                if (err.response === undefined) {
+                  setError("Impossible de communiquer avec le serveur");
+                } else {
+                  if (err.response.status === 403) {
+                    updateAccessToken();
+                    setError(
+                      "Impossible de modifier la commande, veuillez réessayer"
+                    );
+                  } else {
+                    console.log(err.response.data);
+                    setError("Une erreur est survenue");
+                  }
+                }
+              });
+          });
+      } else {
+        Promise.all(promises)
+          .then((res) => {
+            setIsLoading(false);
+            setIsEditCommand(false);
+            navigation.goBack();
+            Alert.alert(
+              "Succès !",
+              `La commande de ${clientSelected.clientName} a bien été modifiée !`
+            );
+          })
+          .catch((err) => {
+            setIsLoading(false);
+            if (err.response === undefined) {
+              setError("Impossible de communiquer avec le serveur");
+            } else {
+              if (err.response.status === 403) {
+                updateAccessToken();
+                setError(
+                  "Impossible de modifier la commande, veuillez réessayer"
+                );
+              } else {
+                console.log(err.response.data);
+                setError("Une erreur est survenue");
+              }
+            }
+          });
+      }
     }
   };
 
