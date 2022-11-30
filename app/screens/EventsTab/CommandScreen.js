@@ -545,8 +545,8 @@ function CommandScreen(props) {
       : false
     : false;
 
-  const [isCommandServed, setIsCommandServed] = useState(false);
-  const [isCommandPaid, setIsCommandPaid] = useState(false);
+  const [isCommandServed, setIsCommandServed] = useState(isServed);
+  const [isCommandPaid, setIsCommandPaid] = useState(isPaid);
 
   const totalPrice = () => {
     let total = 0;
@@ -856,13 +856,15 @@ function CommandScreen(props) {
               disabled={quantityError}
             />
           )}
-          {commandId && !isEditCommand && !commandPaidServed && (
+          {commandId && !isEditCommand && (
             <View>
-              <AppButton
-                title="Modifier la commande"
-                onPress={() => setIsEditCommand(true)}
-                style={{ marginBottom: 0 }}
-              />
+              {!isCommandPaid && !isCommandServed && (
+                <AppButton
+                  title="Modifier la commande"
+                  onPress={() => setIsEditCommand(true)}
+                  style={{ marginBottom: 0 }}
+                />
+              )}
               <View
                 style={{
                   flexDirection: "row",
@@ -887,11 +889,13 @@ function CommandScreen(props) {
                   />
                 )}
               </View>
-              <AppButton
-                title="Annuler la commande"
-                onPress={() => handleCommandCancel()}
-                style={{ marginTop: 0 }}
-              />
+              {!isCommandPaid && !isCommandServed && (
+                <AppButton
+                  title="Annuler la commande"
+                  onPress={() => handleCommandCancel()}
+                  style={{ marginTop: 0 }}
+                />
+              )}
             </View>
           )}
           {commandId && isEditCommand && (
@@ -904,13 +908,16 @@ function CommandScreen(props) {
               />
               <AppButton
                 title="Annuler les modifications"
-                onPress={() => setIsEditCommand(false)}
+                onPress={() => {
+                  setIsEditCommand(false);
+                  setQuantities(initialQuantities);
+                }}
               />
             </View>
           )}
         </View>
       )}
-      {commandPaidServed && (
+      {commandId != null && isPaid && isServed && (
         <View style={styles.commandPaidServed}>
           {role === 2 && commandInfos && (
             <View style={styles.detailContainer}>
