@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext, useLayoutEffect } from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
+import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import Screen from "../../components/Screen";
 import AppText from "../../components/AppText";
@@ -27,8 +28,6 @@ function StatisticsScreen(props) {
   useLayoutEffect(() => {
     tabBarDisplayManager.hideTabBar(navigation);
   }, []);
-
-  //TODO -> add ability to generate a PDF with the data
 
   const getAllCommands = () => {
     setIsLoading(true);
@@ -307,7 +306,21 @@ function StatisticsScreen(props) {
   const meanCommand = getMeanCommand();
   const debts = calculateDebts();
 
+  //TODO -> add ability to generate a PDF with the data
+
   useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity onPress={() => console.log("test")}>
+          <MaterialCommunityIcons
+            name="file-download-outline"
+            size={30}
+            color="white"
+            style={{ marginRight: 10 }}
+          />
+        </TouchableOpacity>
+      ),
+    });
     getAllCommands();
     getEventInfos();
     getNumberOfParticipants();
