@@ -29,7 +29,6 @@ function StatisticsScreen(props) {
   }, []);
 
   //TODO -> add ability to generate a PDF with the data
-  //TODO -> add the mean command price and the mean quantity of products per command
 
   const getAllCommands = () => {
     setIsLoading(true);
