@@ -188,11 +188,12 @@ function StatisticsScreen(props) {
       });
     });
 
-    meanCommandPrice = meanCommandPrice / commands.length;
-    meanQuantityOfProductsPerCommand =
-      meanQuantityOfProductsPerCommand / commands.length;
+    meanCommandPrice = Math.round(meanCommandPrice / commands.length);
+    meanQuantityOfProductsPerCommand = Math.round(
+      meanQuantityOfProductsPerCommand / commands.length
+    );
     meanQuantityOfProductsPerCommandByProduct.forEach((product) => {
-      product.quantity = product.quantity / commands.length;
+      product.quantity = Math.round(product.quantity / commands.length);
     });
 
     return {
@@ -279,6 +280,24 @@ function StatisticsScreen(props) {
     return Math.round((number / initial) * 10000) / 100;
   };
 
+  const calculateDebts = () => {
+    let debt = {};
+    commands.forEach((command) => {
+      if (!command.isPaid && command.isServed) {
+        if (debt[command.client_name] === undefined) {
+          debt[command.client_name] = command.totalPrice;
+        } else {
+          debt[command.client_name] += command.totalPrice;
+        }
+      }
+    });
+    let debtArray = [];
+    for (const [key, value] of Object.entries(debt)) {
+      debtArray.push({ name: key, totalDue: value });
+    }
+    return debtArray;
+  };
+
   const totalSales = calculateTotalSales();
   const totalBuyings = calculateTotalBuyings();
   const buyingAllStock = calculateBuyingAllStock();
@@ -287,6 +306,7 @@ function StatisticsScreen(props) {
   const productsSold = numberProductsSold();
   const numberOfCommands = getNumberOfCommands();
   const meanCommand = getMeanCommand();
+  const debts = calculateDebts();
 
   useEffect(() => {
     getAllCommands();
@@ -296,209 +316,261 @@ function StatisticsScreen(props) {
 
   return (
     <Screen style={styles.container} version="scroll">
-      {!isLoading && eventInfos != null && (
-        <ScrollView
-          style={styles.scroll}
-          contentContainerStyle={styles.scrollContent}
-        >
-          <AppText style={styles.eventName}>{eventInfos.name}</AppText>
-          <View style={styles.detailContainer}>
-            <AppText style={styles.title}>
-              1) Informations sur l'évènement
-            </AppText>
-            <AppText style={styles.detailText}>
-              L'évènement a eu lieu du{" "}
-              {new Date(eventInfos.startdate).toLocaleDateString({
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-                hours: "numeric",
-                minutes: "numeric",
-              })}{" "}
-              au{" "}
-              {new Date(eventInfos.enddate).toLocaleDateString({
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-                hours: "numeric",
-                minutes: "numeric",
-              })}{" "}
-              à l'endroit suivant : {eventInfos.location}.{"\n"}
-              La description que vous avez fournie est la suivante :{" "}
-              {eventInfos.description}.{"\n"}
-              Le nombre de participants à cet évènement a été de{" "}
-              {usersAtEvent.length}, avec{" "}
-              {usersAtEvent.filter((user) => user.role === 0).length} clients,{" "}
-              {usersAtEvent.filter((user) => user.role === 1).length} vendeurs
-              et vous en tant qu'organisateur de l'évènement.
-            </AppText>
-          </View>
-          <View style={styles.detailContainer}>
-            <AppText style={styles.title}>2) Commandes</AppText>
-            <AppText style={styles.detailText}>
-              Vous avez reçu {numberOfCommands.numberOfCommands} commandes.
-              {"\n"}
-              {numberOfCommands.numberOfNotPaidCommands === 0 &&
-              numberOfCommands.numberOfNotServedCommands === 0
-                ? "Toutes les commandes ont été payées et servies.\n"
-                : ""}
-              {numberOfCommands.numberOfNotPaidCommands > 0 &&
-              numberOfCommands.numberOfNotServedCommands === 0
-                ? "Toutes les commandes ont été servies, mais " +
-                  numberOfCommands.numberOfNotPaidCommands +
-                  (numberOfCommands.numberOfNotPaidCommands > 1
-                    ? " n'ont"
-                    : " n'a") +
-                  " pas été payée" +
-                  (numberOfCommands.numberOfNotPaidCommands > 1
-                    ? "s ("
-                    : " (") +
-                  calculatePercentage(
-                    numberOfCommands.numberOfNotPaidCommands,
-                    numberOfCommands.numberOfCommands
-                  ) +
-                  "%).\n"
-                : ""}
-              {numberOfCommands.numberOfNotPaidCommands === 0 &&
-              numberOfCommands.numberOfNotServedCommands > 0
-                ? "Toutes les commandes ont été payées, mais " +
-                  numberOfCommands.numberOfNotServedCommands +
-                  (numberOfCommands.numberOfNotServedCommands > 1
-                    ? " n'ont"
-                    : " n'a") +
-                  " pas été servie" +
-                  (numberOfCommands.numberOfNotServedCommands > 1
-                    ? "s ("
-                    : " (") +
-                  calculatePercentage(
-                    numberOfCommands.numberOfNotServedCommands,
-                    numberOfCommands.numberOfCommands
-                  ) +
-                  "%).\n"
-                : ""}
-              {numberOfCommands.numberOfNotPaidCommands > 0 &&
-              numberOfCommands.numberOfNotServedCommands > 0
-                ? "Parmi toutes ces commandes, " +
-                  numberOfCommands.numberOfNotPaidCommands +
-                  (numberOfCommands.numberOfNotPaidCommands > 1
-                    ? " n'ont"
-                    : " n'a") +
-                  " pas été payée" +
-                  (numberOfCommands.numberOfNotPaidCommands > 1
-                    ? "s ("
-                    : " (") +
-                  calculatePercentage(
-                    numberOfCommands.numberOfNotPaidCommands,
-                    numberOfCommands.numberOfCommands
-                  ) +
-                  "%) et " +
-                  numberOfCommands.numberOfNotServedCommands +
-                  (numberOfCommands.numberOfNotServedCommands > 1
-                    ? " n'ont"
-                    : " n'a") +
-                  " pas été servie" +
-                  (numberOfCommands.numberOfNotServedCommands > 1
-                    ? "s ("
-                    : " (") +
-                  calculatePercentage(
-                    numberOfCommands.numberOfNotServedCommands,
-                    numberOfCommands.numberOfCommands
-                  ) +
-                  "%).\n"
-                : ""}
-              Le prix moyen d'une commande est de{" "}
-              {meanCommand.meanCommandPrice.toString().replace(".", ",")}€ et
-              contenait{" "}
-              {meanCommand.meanQuantityOfProductsPerCommand
-                .toString()
-                .replace(".", ",")}{" "}
-              produits.
-              {"\n"}
-              La commande moyenne contenait{" "}
-              {
-                //Display the product name and the mean number of these by command
-              }
-            </AppText>
-          </View>
-          <View style={styles.detailContainer}>
-            <AppText style={styles.title}>3) Achat des produits</AppText>
-            <AppText style={styles.detailText}>
-              En prenant en compte le prix d'achat indiqué à la création de
-              l'évènement et uniquement le nombre de produits vendus, le coût
-              d'achat estimé des produits est de{" "}
-              {totalBuyings.toString().replace(".", ",")}€. {"\n"}
-              Cependant, si vous souhaitez prendre en compte que vous avez
-              acheté l'ensemble du stock initial de chaque produit, le coût
-              d'achat réel est de {buyingAllStock.toString().replace(".", ",")}
-              €.{`\n`}
-              Attention, nous ne prennons pas en compte les produits qui ont été
-              endommagés ou perdus pendant l'évènement.
-            </AppText>
-          </View>
-          <View style={styles.detailContainer}>
-            <AppText style={styles.title}>4) Vente des produits</AppText>
-            <AppText style={styles.detailText}>
-              En prenant en compte le prix de vente indiqué à la création de
-              l'évènement et le nombre de produits vendus, la somme que vous
-              avez reçue suite à la vente de ceux-ci est de{" "}
-              {totalSales.toString().replace(".", ",")}€.
-            </AppText>
-          </View>
-          <View style={styles.detailContainer}>
-            <AppText style={styles.title}>5) Chiffre d'affaire</AppText>
-            <AppText style={styles.detailText}>
-              Grâce aux données que nous avons enregistrées, nous pouvons vous
-              indiquer que vous{" "}
-              {totalProfit === 0
-                ? "n'avez ni perdu, ni gagné d'argent parce que vous avez vendu le même nombre de produits que vous n'en avez acheté"
-                : totalProfit > 0
-                ? "avez réalisé un bénéfice de " +
-                  totalProfit.toString().replace(".", ",") +
-                  "€ "
-                : "avez réalisé un déficit de " +
-                  (-totalProfit).toString().replace(".", ",") +
-                  "€ "}
-              sur les produits que vous avez vendu. {"\n"}
-              Cependant, si vous souhaitez prendre en compte que vous avez
-              acheté l'ensemble du stock initial de chaque produit,
-              {profitBuyingAllStock === 0
-                ? " vous n'avez ni perdu, ni gagné d'argent parce que vous avez vendu le même nombre de produits que vous n'en avez acheté"
-                : profitBuyingAllStock > 0
-                ? " vous avez réalisé un bénéfice de " +
-                  profitBuyingAllStock.toString().replace(".", ",") +
-                  "€"
-                : " vous avez réalisé un déficit de " +
-                  (-profitBuyingAllStock).toString().replace(".", ",") +
-                  "€"}{" "}
-              sur les produits que vous avez vendu.
-            </AppText>
-          </View>
-          <View style={styles.detailContainer}>
-            <AppText style={styles.title}>
-              6) Détail des produits vendus
-            </AppText>
-            {productsSold.map((product) => {
-              return (
-                <View key={product.productId}>
-                  <AppText style={{ paddingHorizontal: 10 }}>
-                    - {product.name} :
-                  </AppText>
-                  <AppText
-                    style={{
-                      paddingLeft: 22,
-                      marginBottom: 5,
-                    }}
-                  >
-                    {product.sold} produits vendus sur {product.initialStock} (
-                    {calculatePercentage(product.sold, product.initialStock)}
-                    %)
-                  </AppText>
-                </View>
-              );
-            })}
-          </View>
-        </ScrollView>
-      )}
+      {!isLoading &&
+        eventInfos != null &&
+        commands != null &&
+        productsAtEvent != null &&
+        usersAtEvent != null && (
+          <ScrollView
+            style={styles.scroll}
+            contentContainerStyle={styles.scrollContent}
+          >
+            <AppText style={styles.eventName}>{eventInfos.name}</AppText>
+            <View style={styles.detailContainer}>
+              <AppText style={styles.title}>
+                1) Informations sur l'évènement
+              </AppText>
+              <AppText style={styles.detailText}>
+                L'évènement a eu lieu du{" "}
+                {new Date(eventInfos.startdate).toLocaleDateString("fr-BE", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}{" "}
+                jusqu'au{" "}
+                {new Date(eventInfos.enddate).toLocaleDateString("fr-BE", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}{" "}
+                à l'endroit suivant : {eventInfos.location}.{"\n"}
+                {eventInfos.description
+                  ? "La description que vous avez fournie est la suivante : " +
+                    eventInfos.description +
+                    ".\n"
+                  : ""}
+                Il y a eu {usersAtEvent.length} participant(s) lors de cet
+                évènement, avec{" "}
+                {usersAtEvent.filter((user) => user.role === 0).length} clients,{" "}
+                {usersAtEvent.filter((user) => user.role === 1).length} vendeurs
+                et vous en tant qu'organisateur de l'évènement.{" "}
+                {usersAtEvent.filter((user) => user.id != null).length}{" "}
+                d'entre-eux (
+                {calculatePercentage(
+                  usersAtEvent.filter((user) => user.id != null).length,
+                  usersAtEvent.length
+                )}
+                %) sont inscrits sur l'application.
+              </AppText>
+            </View>
+            <View style={styles.detailContainer}>
+              <AppText style={styles.title}>2) Commandes</AppText>
+              <AppText style={styles.detailText}>
+                Vous avez reçu {numberOfCommands.numberOfCommands} commandes.
+                {"\n"}
+                {numberOfCommands.numberOfNotPaidCommands === 0 &&
+                numberOfCommands.numberOfNotServedCommands === 0
+                  ? "Toutes les commandes ont été payées et servies.\n"
+                  : ""}
+                {numberOfCommands.numberOfNotPaidCommands > 0 &&
+                numberOfCommands.numberOfNotServedCommands === 0
+                  ? "Toutes les commandes ont été servies, mais " +
+                    numberOfCommands.numberOfNotPaidCommands +
+                    (numberOfCommands.numberOfNotPaidCommands > 1
+                      ? " n'ont"
+                      : " n'a") +
+                    " pas été payée" +
+                    (numberOfCommands.numberOfNotPaidCommands > 1
+                      ? "s ("
+                      : " (") +
+                    calculatePercentage(
+                      numberOfCommands.numberOfNotPaidCommands,
+                      numberOfCommands.numberOfCommands
+                    ) +
+                    "%).\n"
+                  : ""}
+                {numberOfCommands.numberOfNotPaidCommands === 0 &&
+                numberOfCommands.numberOfNotServedCommands > 0
+                  ? "Toutes les commandes ont été payées, mais " +
+                    numberOfCommands.numberOfNotServedCommands +
+                    (numberOfCommands.numberOfNotServedCommands > 1
+                      ? " n'ont"
+                      : " n'a") +
+                    " pas été servie" +
+                    (numberOfCommands.numberOfNotServedCommands > 1
+                      ? "s ("
+                      : " (") +
+                    calculatePercentage(
+                      numberOfCommands.numberOfNotServedCommands,
+                      numberOfCommands.numberOfCommands
+                    ) +
+                    "%).\n"
+                  : ""}
+                {numberOfCommands.numberOfNotPaidCommands > 0 &&
+                numberOfCommands.numberOfNotServedCommands > 0
+                  ? "Parmi toutes ces commandes, " +
+                    numberOfCommands.numberOfNotPaidCommands +
+                    (numberOfCommands.numberOfNotPaidCommands > 1
+                      ? " n'ont"
+                      : " n'a") +
+                    " pas été payée" +
+                    (numberOfCommands.numberOfNotPaidCommands > 1
+                      ? "s ("
+                      : " (") +
+                    calculatePercentage(
+                      numberOfCommands.numberOfNotPaidCommands,
+                      numberOfCommands.numberOfCommands
+                    ) +
+                    "%) et " +
+                    numberOfCommands.numberOfNotServedCommands +
+                    (numberOfCommands.numberOfNotServedCommands > 1
+                      ? " n'ont"
+                      : " n'a") +
+                    " pas été servie" +
+                    (numberOfCommands.numberOfNotServedCommands > 1
+                      ? "s ("
+                      : " (") +
+                    calculatePercentage(
+                      numberOfCommands.numberOfNotServedCommands,
+                      numberOfCommands.numberOfCommands
+                    ) +
+                    "%).\n"
+                  : ""}
+                Le prix moyen d'une commande est de{" "}
+                {meanCommand.meanCommandPrice.toString().replace(".", ",")}€ et
+                contenait{" "}
+                {meanCommand.meanQuantityOfProductsPerCommand
+                  .toString()
+                  .replace(".", ",")}{" "}
+                produits.
+                {"\n"}
+                La commande moyenne de cet évènement contient{" "}
+                {meanCommand.meanQuantityOfProductsPerCommandByProduct.map(
+                  (product) => {
+                    return (
+                      product.quantity.toString().replace(".", ",") +
+                      " " +
+                      (productsAtEvent.length > 0
+                        ? productsAtEvent.find(
+                            (productAtEvent) =>
+                              productAtEvent.events_products_id === product.id
+                          ).name
+                        : "") +
+                      (product ===
+                      meanCommand.meanQuantityOfProductsPerCommandByProduct[
+                        meanCommand.meanQuantityOfProductsPerCommandByProduct
+                          .length - 1
+                      ]
+                        ? "."
+                        : product ===
+                          meanCommand.meanQuantityOfProductsPerCommandByProduct[
+                            meanCommand
+                              .meanQuantityOfProductsPerCommandByProduct
+                              .length - 2
+                          ]
+                        ? " et "
+                        : ", ")
+                    );
+                  }
+                )}
+              </AppText>
+            </View>
+            <View style={styles.detailContainer}>
+              <AppText style={styles.title}>3) Achat des produits</AppText>
+              <AppText style={styles.detailText}>
+                En prenant en compte le prix d'achat indiqué à la création de
+                l'évènement et uniquement le nombre de produits vendus, le coût
+                d'achat estimé des produits est de{" "}
+                {totalBuyings.toString().replace(".", ",")}€. {"\n"}
+                Cependant, si vous souhaitez prendre en compte que vous avez
+                acheté l'ensemble du stock initial de chaque produit, le coût
+                d'achat réel est de{" "}
+                {buyingAllStock.toString().replace(".", ",")}
+                €.{`\n`}
+                Attention, nous ne prennons pas en compte les produits qui ont
+                été endommagés ou perdus pendant l'évènement.
+              </AppText>
+            </View>
+            <View style={styles.detailContainer}>
+              <AppText style={styles.title}>4) Vente des produits</AppText>
+              <AppText style={styles.detailText}>
+                En prenant en compte le prix de vente indiqué à la création de
+                l'évènement et le nombre de produits vendus, la somme que vous
+                avez reçue suite à la vente de ceux-ci est de{" "}
+                {totalSales.toString().replace(".", ",")}€.
+              </AppText>
+            </View>
+            <View style={styles.detailContainer}>
+              <AppText style={styles.title}>5) Chiffre d'affaire</AppText>
+              <AppText style={styles.detailText}>
+                Grâce aux données que nous avons enregistrées, nous pouvons vous
+                indiquer que vous{" "}
+                {totalProfit === 0
+                  ? "n'avez ni perdu, ni gagné d'argent parce que vous avez vendu le même nombre de produits que vous n'en avez acheté"
+                  : totalProfit > 0
+                  ? "avez réalisé un bénéfice de " +
+                    totalProfit.toString().replace(".", ",") +
+                    "€ "
+                  : "avez réalisé un déficit de " +
+                    (-totalProfit).toString().replace(".", ",") +
+                    "€ "}
+                sur les produits que vous avez vendu. {"\n"}
+                Cependant, si vous souhaitez prendre en compte que vous avez
+                acheté l'ensemble du stock initial de chaque produit,
+                {profitBuyingAllStock === 0
+                  ? " vous n'avez ni perdu, ni gagné d'argent parce que vous avez vendu le même nombre de produits que vous n'en avez acheté"
+                  : profitBuyingAllStock > 0
+                  ? " vous avez réalisé un bénéfice de " +
+                    profitBuyingAllStock.toString().replace(".", ",") +
+                    "€"
+                  : " vous avez réalisé un déficit de " +
+                    (-profitBuyingAllStock).toString().replace(".", ",") +
+                    "€"}{" "}
+                sur les produits que vous avez vendu.
+              </AppText>
+            </View>
+            <View style={styles.detailContainer}>
+              <AppText style={styles.title}>
+                6) Détail des produits vendus
+              </AppText>
+              {productsSold.map((product) => {
+                return (
+                  <View key={product.productId}>
+                    <AppText style={{ paddingHorizontal: 10 }}>
+                      - {product.name} :
+                    </AppText>
+                    <AppText
+                      style={{
+                        paddingLeft: 22,
+                        marginBottom: 5,
+                      }}
+                    >
+                      {product.sold} produits vendus sur {product.initialStock}{" "}
+                      ({calculatePercentage(product.sold, product.initialStock)}
+                      %)
+                    </AppText>
+                  </View>
+                );
+              })}
+            </View>
+            {debts.length > 0 && (
+              <View style={styles.detailContainer}>
+                <AppText style={styles.title}>7) Dettes des clients</AppText>
+                {debts.map((debt) => {
+                  return (
+                    <AppText key={debt.name} style={{ paddingHorizontal: 10 }}>
+                      - {debt.name} : {debt.totalDue}€
+                    </AppText>
+                  );
+                })}
+              </View>
+            )}
+          </ScrollView>
+        )}
       {isLoading && <LoadingIndicator />}
     </Screen>
   );
