@@ -48,7 +48,10 @@ function CommandScreen(props) {
   const [clientSelected, setClientSelected] = useState(null);
   const [isEditCommand, setIsEditCommand] = useState(false);
 
-  //TODO -> remove the products of category alcohol from the list if the user is not 18 for client commands
+  const today = new Date();
+  const birthDate = new Date(user.birthday);
+  const age = today.getFullYear() - birthDate.getFullYear();
+  const alcoholAllowed = role === 0 ? (age >= 18 ? true : false) : true;
 
   useEffect(() => {
     if (isPaid && isServed) {
@@ -75,19 +78,37 @@ function CommandScreen(props) {
           eventProductAPI
             .getAllProductsAtEvent(eventId, userAccessToken)
             .then((res) => {
-              setProductsSold(res.data.filter((product) => product.stock > 0));
+              setProductsSold(
+                res.data.filter((product) => {
+                  if (product.stock > 0) {
+                    if (product.category === 1 && !alcoholAllowed) {
+                      return false;
+                    } else {
+                      return true;
+                    }
+                  } else {
+                    return false;
+                  }
+                })
+              );
               let quantitiesArray = [];
               res.data.forEach((product) => {
-                const eventProductCommandId = null;
-                const productId = product.events_products_id;
-                const quantity = 0;
-                const error = false;
-                quantitiesArray.push({
-                  eventProductCommandId,
-                  productId,
-                  quantity,
-                  error,
-                });
+                if (
+                  ((alcoholAllowed && product.category === 1) ||
+                    product.category !== 1) &&
+                  product.stock > 0
+                ) {
+                  const eventProductCommandId = null;
+                  const productId = product.events_products_id;
+                  const quantity = 0;
+                  const error = false;
+                  quantitiesArray.push({
+                    eventProductCommandId,
+                    productId,
+                    quantity,
+                    error,
+                  });
+                }
               });
               productsInCommand.forEach((product) => {
                 const eventProductCommandId = product.eventProductCommandId;
@@ -100,7 +121,17 @@ function CommandScreen(props) {
                 });
               });
               setProductsDisplayed(
-                res.data.filter((product) => product.stock > 0)
+                res.data.filter((product) => {
+                  if (product.stock > 0) {
+                    if (product.category === 1 && !alcoholAllowed) {
+                      return false;
+                    } else {
+                      return true;
+                    }
+                  } else {
+                    return false;
+                  }
+                })
               );
               setQuantities(quantitiesArray);
               setInitialQuantities(quantitiesArray);
@@ -142,11 +173,45 @@ function CommandScreen(props) {
       eventProductAPI
         .getAllProductsAtEvent(eventId, userAccessToken)
         .then((res) => {
-          setProductsSold(res.data.filter((product) => product.stock > 0));
-          setProductsDisplayed(res.data.filter((product) => product.stock > 0));
+          setProductsSold(
+            res.data.filter((product) => {
+              if (product.stock > 0) {
+                if (product.category === 1 && !alcoholAllowed) {
+                  return false;
+                } else {
+                  return true;
+                }
+              } else {
+                return false;
+              }
+            })
+          );
+          setProductsDisplayed(
+            res.data.filter((product) => {
+              if (product.stock > 0) {
+                if (product.category === 1 && !alcoholAllowed) {
+                  return false;
+                } else {
+                  return true;
+                }
+              } else {
+                return false;
+              }
+            })
+          );
           setQuantities(
             res.data
-              .filter((product) => product.stock > 0)
+              .filter((product) => {
+                if (product.stock > 0) {
+                  if (product.category === 1 && !alcoholAllowed) {
+                    return false;
+                  } else {
+                    return true;
+                  }
+                } else {
+                  return false;
+                }
+              })
               .map((product) => ({
                 productId: product.events_products_id,
                 quantity: 0,
@@ -155,7 +220,17 @@ function CommandScreen(props) {
           );
           setInitialQuantities(
             res.data
-              .filter((product) => product.stock > 0)
+              .filter((product) => {
+                if (product.stock > 0) {
+                  if (product.category === 1 && !alcoholAllowed) {
+                    return false;
+                  } else {
+                    return true;
+                  }
+                } else {
+                  return false;
+                }
+              })
               .map((product) => ({
                 productId: product.events_products_id,
                 quantity: 0,
@@ -1018,42 +1093,48 @@ function CommandScreen(props) {
           )}
         </View>
       )}
-      {commandId && !eventFinished != null && isCommandPaid && isCommandServed && (
-        <View style={styles.commandPaidServed}>
-          {role === 2 && commandInfos && (
-            <View style={styles.detailContainer}>
-              <AppText style={styles.detailTitle}>Servie par </AppText>
-              <AppText style={styles.detailText}>
-                {commandInfos.seller.firstname +
-                  " " +
-                  commandInfos.seller.lastname}
-              </AppText>
-            </View>
-          )}
-          {commandInfos && (
-            <View style={styles.createdAtContainer}>
-              <AppText style={styles.detailTitle}>
-                Cette commande a été passée le{" "}
-              </AppText>
-              <AppText
-                style={[
-                  styles.detailText,
-                  { textAlign: "center", width: "100%" },
-                ]}
-                numberOfLines={2}
-              >
-                {new Date(commandInfos.createdAt).toLocaleDateString("fr-FR", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                  hour: "numeric",
-                  minute: "numeric",
-                })}
-              </AppText>
-            </View>
-          )}
-        </View>
-      )}
+      {commandId &&
+        !eventFinished != null &&
+        isCommandPaid &&
+        isCommandServed && (
+          <View style={styles.commandPaidServed}>
+            {role === 2 && commandInfos && (
+              <View style={styles.detailContainer}>
+                <AppText style={styles.detailTitle}>Servie par </AppText>
+                <AppText style={styles.detailText}>
+                  {commandInfos.seller.firstname +
+                    " " +
+                    commandInfos.seller.lastname}
+                </AppText>
+              </View>
+            )}
+            {commandInfos && (
+              <View style={styles.createdAtContainer}>
+                <AppText style={styles.detailTitle}>
+                  Cette commande a été passée le{" "}
+                </AppText>
+                <AppText
+                  style={[
+                    styles.detailText,
+                    { textAlign: "center", width: "100%" },
+                  ]}
+                  numberOfLines={2}
+                >
+                  {new Date(commandInfos.createdAt).toLocaleDateString(
+                    "fr-FR",
+                    {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                      hour: "numeric",
+                      minute: "numeric",
+                    }
+                  )}
+                </AppText>
+              </View>
+            )}
+          </View>
+        )}
       {commandId && eventFinished && (!isCommandPaid || !isCommandServed) && (
         <View style={{ paddingTop: 10 }}>
           {!isCommandPaid && !isCommandServed && (
