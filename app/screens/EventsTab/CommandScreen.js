@@ -691,7 +691,6 @@ function CommandScreen(props) {
           }
         });
     } else {
-      console.log(commandInfos.seller === null);
       const promises = [];
       quantities.forEach((quantity) => {
         if (quantity.quantity > 0 && quantity.eventProductCommandId != null) {

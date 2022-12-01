@@ -187,13 +187,15 @@ function EventDetailsScreen(props) {
       )}
       {role === 2 && (
         <View style={styles.buttonsContainer}>
-          <AppButton
-            title="Statistiques"
-            onPress={() =>
-              navigation.navigate("Statistics", { eventId: eventId })
-            }
-            style={{ marginVertical: 5, marginTop: 10 }}
-          />
+          {today >= eventEndDate && (
+            <AppButton
+              title="Statistiques"
+              onPress={() =>
+                navigation.navigate("Statistics", { eventId: eventId })
+              }
+              style={{ marginVertical: 5, marginTop: 10 }}
+            />
+          )}
           {today < eventEndDate && (
             <AppButton
               title="Changer l'heure de fin"

@@ -71,6 +71,29 @@ function StatisticsScreen(props) {
       });
   };
 
+  const getEventInfos = () => {
+    //Get all the infos of the event such as startDate, endDate, descriptiuon, location, etc...
+  };
+
+  const getNumberOfParticipants = () => {
+    //Get the number of participants to the event and then the number of participants who bought something
+    //Also get the number of sellers and the number of clients
+  };
+
+  const getNumberOfCommands = () => {
+    //Get the number of commands
+    //Get the number of commands that were paid
+    //Get the number of commands that were not paid
+    //Get the number of commands that were canceled
+    //Get the number of commands that were served
+    //Get the number of commands that were not served
+  };
+
+  const getMeanCommand = () => {
+    //Get the mean command price
+    //Get the mean quantity of products per command
+  };
+
   const calculateTotalSales = () => {
     let total = 0;
     commands.forEach((command) => {
@@ -167,30 +190,36 @@ function StatisticsScreen(props) {
       >
         <AppText style={styles.eventName}>Nom de l'évènement</AppText>
         <View style={styles.detailContainer}>
-          <AppText style={styles.title}>1) Achat des produits</AppText>
+          <AppText style={styles.title}>
+            1) Informations sur l'évènement
+          </AppText>
+          <AppText style={styles.detailText}></AppText>
+        </View>
+        <View style={styles.detailContainer}>
+          <AppText style={styles.title}>2) Achat des produits</AppText>
           <AppText style={styles.detailText}>
             En prenant en compte le prix d'achat indiqué à la création de
             l'évènement et uniquement le nombre de produits vendus, le coût
             d'achat estimé des produits est de{" "}
-            {totalBuyings.toString().replace(".", ",")} €. {"\n"}
+            {totalBuyings.toString().replace(".", ",")}€. {"\n"}
             Cependant, si vous souhaitez prendre en compte que vous avez acheté
             l'ensemble du stock initial de chaque produit, le coût d'achat réel
-            est de {buyingAllStock.toString().replace(".", ",")} €.{`\n`}
+            est de {buyingAllStock.toString().replace(".", ",")}€.{`\n`}
             Attention, nous ne prennons pas en compte les produits qui ont été
             endommagés ou perdus pendant l'évènement.
           </AppText>
         </View>
         <View style={styles.detailContainer}>
-          <AppText style={styles.title}>2) Vente des produits</AppText>
+          <AppText style={styles.title}>3) Vente des produits</AppText>
           <AppText style={styles.detailText}>
             En prenant en compte le prix de vente indiqué à la création de
             l'évènement et le nombre de produits vendus, la somme que vous avez
             reçue suite à la vente de ceux-ci est de{" "}
-            {totalSales.toString().replace(".", ",")} €.
+            {totalSales.toString().replace(".", ",")}€.
           </AppText>
         </View>
         <View style={styles.detailContainer}>
-          <AppText style={styles.title}>3) Chiffre d'affaire</AppText>
+          <AppText style={styles.title}>4) Chiffre d'affaire</AppText>
           <AppText style={styles.detailText}>
             Grâce aux données que nous avons enregistrées, nous pouvons vous
             indiquer que vous{" "}
@@ -199,10 +228,10 @@ function StatisticsScreen(props) {
               : totalProfit > 0
               ? "avez réalisé un bénéfice de " +
                 totalProfit.toString().replace(".", ",") +
-                " €"
+                "€ "
               : "avez réalisé un déficit de " +
                 (-totalProfit).toString().replace(".", ",") +
-                " €"}
+                "€ "}
             sur les produits que vous avez vendu. {"\n"}
             Cependant, si vous souhaitez prendre en compte que vous avez acheté
             l'ensemble du stock initial de chaque produit,
@@ -211,22 +240,32 @@ function StatisticsScreen(props) {
               : profitBuyingAllStock > 0
               ? " vous avez réalisé un bénéfice de " +
                 profitBuyingAllStock.toString().replace(".", ",") +
-                " €"
+                "€"
               : " vous avez réalisé un déficit de " +
                 (-profitBuyingAllStock).toString().replace(".", ",") +
-                " €"}{" "}
+                "€"}{" "}
             sur les produits que vous avez vendu.
           </AppText>
         </View>
         <View style={styles.detailContainer}>
-          <AppText style={styles.title}>4) Détail des produits vendus</AppText>
+          <AppText style={styles.title}>5) Détail des produits vendus</AppText>
           {productsSold.map((product) => {
             return (
-              <AppText key={product.id}>
-                {product.name} : {product.sold} produits vendus sur{" "}
-                {product.initialStock} (
-                {calculatePercentageSold(product.sold, product.initialStock)}%).
-              </AppText>
+              <View key={product.productId}>
+                <AppText style={{ paddingHorizontal: 10 }}>
+                  - {product.name} :
+                </AppText>
+                <AppText
+                  style={{
+                    paddingLeft: 22,
+                    marginBottom: 5,
+                  }}
+                >
+                  {product.sold} produits vendus sur {product.initialStock} (
+                  {calculatePercentageSold(product.sold, product.initialStock)}
+                  %)
+                </AppText>
+              </View>
             );
           })}
         </View>
@@ -250,6 +289,7 @@ const styles = StyleSheet.create({
   detailText: {
     fontSize: 18,
     color: colors.black,
+    paddingHorizontal: 10,
     textAlign: "justify",
   },
   eventName: {
