@@ -15,6 +15,7 @@ import CreateProductScreen from "../screens/CreateEventTab/CreateProductScreen";
 import CreateEventProductScreen from "../screens/CreateEventTab/CreateEventProductScreen";
 import EditEventProductScreen from "../screens/CreateEventTab/EditEventProductScreen";
 import CommandScreen from "../screens/EventsTab/CommandScreen";
+import StatisticsScreen from "../screens/EventsTab/StatisticsScreen";
 
 const Stack = createStackNavigator();
 
@@ -230,6 +231,23 @@ function EventsStack(props) {
             },
             headerBackTitleVisible: false,
             headerTintColor: colors.white,
+            headerTitleStyle: {
+              fontWeight: "bold",
+              fontSize: 20,
+            },
+          }}
+        />
+        <Stack.Screen
+          name="Statistics"
+          component={StatisticsScreen}
+          options={{
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: colors.buttonPrimary,
+            },
+            headerBackTitleVisible: false,
+            headerTintColor: colors.white,
+            headerTitle: "Statistiques",
             headerTitleStyle: {
               fontWeight: "bold",
               fontSize: 20,

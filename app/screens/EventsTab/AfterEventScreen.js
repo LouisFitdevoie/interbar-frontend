@@ -24,9 +24,8 @@ function AfterEventScreen({
   role,
   eventId,
 }) {
-  //TODO
   // - ORGANIZER
-  //TODO --- Display a button to redirect to the statistics screen
+  // DONE --- Display a button to redirect to the statistics screen
   // DONE --- Display all the commands of the event
   // DONE --- Display a button to delete the event -> Alert to confirm and say that data won't be accessible for the user anymore
 

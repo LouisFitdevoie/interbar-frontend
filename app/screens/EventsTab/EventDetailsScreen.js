@@ -57,9 +57,8 @@ function EventDetailsScreen(props) {
     });
   }, []);
 
-  //TODO:
   // - ORGANIZER
-  //TODO --- Redirect to stats screen (line 110)
+  // DONE --- Redirect to stats screen (line 110)
 
   const handleDeleteEvent = () => {
     Alert.alert(
@@ -188,11 +187,15 @@ function EventDetailsScreen(props) {
       )}
       {role === 2 && (
         <View style={styles.buttonsContainer}>
-          <AppButton
-            title="Statistiques"
-            onPress={() => console.log("Stats")}
-            style={{ marginVertical: 5, marginTop: 10 }}
-          />
+          {today >= eventEndDate && (
+            <AppButton
+              title="Statistiques"
+              onPress={() =>
+                navigation.navigate("Statistics", { eventId: eventId })
+              }
+              style={{ marginVertical: 5, marginTop: 10 }}
+            />
+          )}
           {today < eventEndDate && (
             <AppButton
               title="Changer l'heure de fin"
