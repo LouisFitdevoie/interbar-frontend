@@ -11,7 +11,6 @@ import * as Sharing from "expo-sharing";
 import * as FileSystem from "expo-file-system";
 import * as Print from "expo-print";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import QRCode from "react-native-qrcode-svg";
 
 import Screen from "../../components/Screen";
 import eventProductAPI from "../../api/eventProduct.api";
@@ -28,7 +27,7 @@ function TarifScreen(props) {
   const { isLoading, setIsLoading, updateAccessToken, userAccessToken } =
     useContext(AuthContext);
   const isFocused = useIsFocused();
-  const { eventId } = props.route.params;
+  const { eventId, qrCodeData } = props.route.params;
   const { navigation } = props;
 
   const [error, setError] = useState(null);
@@ -131,6 +130,25 @@ function TarifScreen(props) {
               justify-content: flex-start;
               padding: 10px;
             }
+            #qrCode {
+              width: 125px;
+              height: 125px;
+              object-fit: contain;
+              padding: 10px;
+              border: 5px solid #214951;
+              border-radius: 20px;
+              margin-bottom: 25px;
+            }
+            #qrCodeContainer {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              margin-top: 20px;
+              margin-bottom: 20px;
+              max-width: 800px;
+              text-align: center;
+            }
           </style>
         </head>
         <body>
@@ -144,6 +162,10 @@ function TarifScreen(props) {
                 </div>`;
               })
               .join("")}
+          </div>
+          <div id="qrCodeContainer">
+            <img id="qrCode" src="data:image/jpeg;base64,${qrCodeData}"/>
+            <p>Si vous avez l'application interbar, scannez ce QR code pour rejoindre l'évènement !</p>
           </div>
         </body>
       </html>
@@ -185,7 +207,7 @@ function TarifScreen(props) {
   }, [isFocused]);
 
   useEffect(() => {
-    if (eventName === null) {
+    if (eventName === null && tarifItems.length === 0) {
       navigation.setOptions({
         headerRight: () => (
           <MaterialCommunityIcons
@@ -210,7 +232,7 @@ function TarifScreen(props) {
         ),
       });
     }
-  }, [eventName]);
+  }, [eventName, tarifItems]);
 
   return (
     <Screen style={styles.container}>

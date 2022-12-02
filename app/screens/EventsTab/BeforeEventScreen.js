@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { View, StyleSheet, Alert } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 
@@ -26,6 +26,19 @@ function BeforeEventScreen({
     useContext(AuthContext);
 
   const [error, setError] = useState(null);
+  const [qrcodeRef, setQrcodeRef] = useState(null);
+  const [qrcodeURL, setQrcodeURL] = useState(null);
+  const getDataURL = () => {
+    if (qrcodeRef) {
+      qrcodeRef.toDataURL((dataURL) => {
+        setQrcodeURL(dataURL);
+      });
+    }
+  };
+
+  useEffect(() => {
+    getDataURL();
+  }, [qrcodeRef, qrcodeURL]);
 
   const handleLeaveEvent = () => {
     setError(null);
@@ -168,14 +181,23 @@ function BeforeEventScreen({
       </View>
       <View style={styles.qrCodeJoinEventContainer}>
         <View style={styles.qrCode}>
-          <QRCode value={eventId.toString()} size={150} />
+          <QRCode
+            value={eventId.toString()}
+            size={150}
+            getRef={(ref) => setQrcodeRef(ref)}
+          />
         </View>
       </View>
       {role != 2 && (
         <View style={styles.buttonsContainer}>
           <AppButton
             title="Voir le tarif"
-            onPress={() => navigation.navigate("Tarif", { eventId })}
+            onPress={() =>
+              navigation.navigate("Tarif", {
+                eventId,
+                qrCodeData: qrcodeURL,
+              })
+            }
             style={{ marginVertical: 5 }}
           />
           {role === 1 && (
