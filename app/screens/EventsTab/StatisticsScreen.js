@@ -388,7 +388,7 @@ function StatisticsScreen(props) {
           </style>
         </head>
         <body>
-          <h1>Titre de l'évènement : Statistiques</h1>
+          <h1>${eventInfos.name} : Statistiques</h1>
           <ol>
             <li>
               <h2>Informations sur l'évènement</h2>
@@ -691,6 +691,7 @@ function StatisticsScreen(props) {
       await Sharing.shareAsync(pdfName, {
         UTI: ".pdf",
         mimeType: "application/pdf",
+        dialogTitle: "Partager les statistiques",
       });
     }
   };
