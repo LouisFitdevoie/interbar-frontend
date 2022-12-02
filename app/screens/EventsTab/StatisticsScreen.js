@@ -1,6 +1,15 @@
 import React, { useState, useEffect, useContext, useLayoutEffect } from "react";
-import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import * as Print from "expo-print";
+import * as Sharing from "expo-sharing";
+import * as FileSystem from "expo-file-system";
 
 import Screen from "../../components/Screen";
 import AppText from "../../components/AppText";
@@ -308,10 +317,52 @@ function StatisticsScreen(props) {
 
   //TODO -> add ability to generate a PDF with the data
 
+  const html = `
+    <html>
+      <head></head>
+      <body>
+        <h1>Statistiques</h1>
+        </body>
+    </html>
+    `;
+
+  const printToFile = async () => {
+    if (!(await Sharing.isAvailableAsync())) {
+      Alert.alert(`Une erreur est survenue au moment de partager le fichier`);
+    } else {
+      const response = await Print.printToFileAsync({ html });
+
+      const eventNameFormatted = eventInfos.name
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/ /g, "-");
+
+      console.log(eventNameFormatted);
+
+      const pdfName = `${response.uri.slice(
+        0,
+        response.uri.lastIndexOf("/") + 1
+      )}${eventNameFormatted}_STATISTICS.pdf`;
+      console.log(response.uri);
+      console.log(pdfName);
+
+      await FileSystem.moveAsync({
+        from: response.uri,
+        to: pdfName,
+      });
+
+      await Sharing.shareAsync(pdfName, {
+        UTI: ".pdf",
+        mimeType: "application/pdf",
+      });
+    }
+  };
+
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <TouchableOpacity onPress={() => console.log("test")}>
+        <TouchableOpacity onPress={() => printToFile()}>
           <MaterialCommunityIcons
             name="file-download-outline"
             size={30}

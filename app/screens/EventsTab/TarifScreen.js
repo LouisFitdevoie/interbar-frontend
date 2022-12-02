@@ -22,6 +22,8 @@ function TarifScreen(props) {
   const [error, setError] = useState(null);
   const [tarifItems, setTarifItems] = useState([]);
 
+  //TODO: add the ability to generate a PDF with the tarif
+
   const getTarif = () => {
     setIsLoading(true);
     setError(null);
