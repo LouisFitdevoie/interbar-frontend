@@ -25,7 +25,7 @@ import tabBarDisplayManager from "../../config/tabBarDisplayManager";
 function StatisticsScreen(props) {
   const { navigation } = props;
   const { eventId } = props.route.params;
-  const { userAccessToken, updateAccessToken, isLoading, setIsLoading } =
+  const { userAccessToken, updateAccessToken, isLoading, setIsLoading, user } =
     useContext(AuthContext);
 
   const [commands, setCommands] = useState([]);
@@ -315,22 +315,362 @@ function StatisticsScreen(props) {
   const meanCommand = getMeanCommand();
   const debts = calculateDebts();
 
-  //TODO -> add ability to generate a PDF with the data
+  useEffect(() => {
+    getAllCommands();
+    getEventInfos();
+    getNumberOfParticipants();
+  }, []);
 
-  const html = `
-    <html>
-      <head></head>
-      <body>
-        <h1>Statistiques</h1>
-        </body>
-    </html>
-    `;
+  useEffect(() => {
+    if (
+      eventInfos != null &&
+      commands != null &&
+      productsAtEvent != null &&
+      usersAtEvent != null
+    ) {
+      navigation.setOptions({
+        headerRight: () => (
+          <TouchableOpacity onPress={() => printToFile()}>
+            <MaterialCommunityIcons
+              name="file-download-outline"
+              size={30}
+              color={colors.white}
+              style={{ marginRight: 10 }}
+            />
+          </TouchableOpacity>
+        ),
+      });
+    } else {
+      navigation.setOptions({
+        headerRight: () => (
+          <MaterialCommunityIcons
+            name="file-download-outline"
+            size={30}
+            color={colors.light}
+            style={{ marginRight: 10 }}
+          />
+        ),
+      });
+    }
+  }, [eventInfos, commands, productsAtEvent, usersAtEvent]);
 
   const printToFile = async () => {
     if (!(await Sharing.isAvailableAsync())) {
       Alert.alert(`Une erreur est survenue au moment de partager le fichier`);
     } else {
-      const response = await Print.printToFileAsync({ html });
+      const html = `
+        <html style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;">
+        <head>
+          <style>
+            body {
+              width: auto;
+            }
+            h1 {
+              color: #214951;
+              text-align: center;
+            }
+            h2 {
+              font-size: 1.5rem;
+              margin-bottom: 0px;
+            }
+            ol {
+              color: #497179;
+              font-size: 1.4rem;
+              font-weight: 500;
+            }
+            p {
+              color: black;
+              font-size: 1rem;
+              font-weight: 400;
+              margin-top: 5px;
+              margin-bottom: 5px;
+            }
+          </style>
+        </head>
+        <body>
+          <h1>Titre de l'évènement : Statistiques</h1>
+          <ol>
+            <li>
+              <h2>Informations sur l'évènement</h2>
+              <p>L'évènement a lieu du ${new Date(
+                eventInfos.startdate
+              ).toLocaleDateString("fr-BE", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              })} jusqu'au ${new Date(eventInfos.enddate).toLocaleDateString(
+        "fr-BE",
+        {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        }
+      )} à l'endroit suivant : ${eventInfos.location}.</p>
+              ${
+                eventInfos.description
+                  ? "<p>La description que vous avez fournie est la suivante : " +
+                    eventInfos.description +
+                    ".</p>"
+                  : ""
+              }
+              <p>Il y a eu ${
+                usersAtEvent.length
+              } participant(s) lors de cet évènement, avec ${
+        usersAtEvent.filter((user) => user.role === 0).length
+      } clients et ${
+        usersAtEvent.filter((user) => user.role !== 0).length
+      } vendeurs. ${
+        usersAtEvent.filter((user) => user.id != null).length
+      } d'entre eux (${calculatePercentage(
+        usersAtEvent.filter((user) => user.id != null).length,
+        usersAtEvent.length
+      )}%) sont inscrits sur l'application.</p>
+            </li>
+            <li>
+              <h2>Commandes</h2>
+              <p>Vous avez reçu ${
+                numberOfCommands.numberOfCommands
+              } commandes. ${
+        numberOfCommands.numberOfNotPaidCommands === 0 &&
+        numberOfCommands.numberOfNotServedCommands === 0
+          ? "Toutes les commandes ont été payées et servies.\n"
+          : ""
+      }
+                ${
+                  numberOfCommands.numberOfNotPaidCommands > 0 &&
+                  numberOfCommands.numberOfNotServedCommands === 0
+                    ? "Toutes les commandes ont été servies, mais " +
+                      numberOfCommands.numberOfNotPaidCommands +
+                      (numberOfCommands.numberOfNotPaidCommands > 1
+                        ? " n'ont"
+                        : " n'a") +
+                      " pas été payée" +
+                      (numberOfCommands.numberOfNotPaidCommands > 1
+                        ? "s ("
+                        : " (") +
+                      calculatePercentage(
+                        numberOfCommands.numberOfNotPaidCommands,
+                        numberOfCommands.numberOfCommands
+                      ) +
+                      "%).\n"
+                    : ""
+                }
+                ${
+                  numberOfCommands.numberOfNotPaidCommands === 0 &&
+                  numberOfCommands.numberOfNotServedCommands > 0
+                    ? "Toutes les commandes ont été payées, mais " +
+                      numberOfCommands.numberOfNotServedCommands +
+                      (numberOfCommands.numberOfNotServedCommands > 1
+                        ? " n'ont"
+                        : " n'a") +
+                      " pas été servie" +
+                      (numberOfCommands.numberOfNotServedCommands > 1
+                        ? "s ("
+                        : " (") +
+                      calculatePercentage(
+                        numberOfCommands.numberOfNotServedCommands,
+                        numberOfCommands.numberOfCommands
+                      ) +
+                      "%).\n"
+                    : ""
+                }
+                ${
+                  numberOfCommands.numberOfNotPaidCommands > 0 &&
+                  numberOfCommands.numberOfNotServedCommands > 0
+                    ? "Parmi toutes ces commandes, " +
+                      numberOfCommands.numberOfNotPaidCommands +
+                      (numberOfCommands.numberOfNotPaidCommands > 1
+                        ? " n'ont"
+                        : " n'a") +
+                      " pas été payée" +
+                      (numberOfCommands.numberOfNotPaidCommands > 1
+                        ? "s ("
+                        : " (") +
+                      calculatePercentage(
+                        numberOfCommands.numberOfNotPaidCommands,
+                        numberOfCommands.numberOfCommands
+                      ) +
+                      "%) et " +
+                      numberOfCommands.numberOfNotServedCommands +
+                      (numberOfCommands.numberOfNotServedCommands > 1
+                        ? " n'ont"
+                        : " n'a") +
+                      " pas été servie" +
+                      (numberOfCommands.numberOfNotServedCommands > 1
+                        ? "s ("
+                        : " (") +
+                      calculatePercentage(
+                        numberOfCommands.numberOfNotServedCommands,
+                        numberOfCommands.numberOfCommands
+                      ) +
+                      "%).\n"
+                    : ""
+                }</p>
+              <p>Le prix moyen d'une commande était de ${meanCommand.meanCommandPrice
+                .toString()
+                .replace(
+                  ".",
+                  ","
+                )}€ et contenait ${meanCommand.meanQuantityOfProductsPerCommand
+        .toString()
+        .replace(".", ",")} produits.</p>
+              <p>La commande moyenne, lors de cet évènement, contenait ${meanCommand.meanQuantityOfProductsPerCommandByProduct
+                .map((product) => {
+                  return (
+                    product.quantity.toString().replace(".", ",") +
+                    " " +
+                    (productsAtEvent.length > 0
+                      ? productsAtEvent.find(
+                          (productAtEvent) =>
+                            productAtEvent.events_products_id === product.id
+                        ).name
+                      : "") +
+                    (product ===
+                    meanCommand.meanQuantityOfProductsPerCommandByProduct[
+                      meanCommand.meanQuantityOfProductsPerCommandByProduct
+                        .length - 1
+                    ]
+                      ? "."
+                      : product ===
+                        meanCommand.meanQuantityOfProductsPerCommandByProduct[
+                          meanCommand.meanQuantityOfProductsPerCommandByProduct
+                            .length - 2
+                        ]
+                      ? " et "
+                      : ", ")
+                  );
+                })
+                .join("")}</p>
+            </li>
+            <li>
+              <h2>Achat des produits</h2>
+              <p>
+                En prenant en compte le prix d'achat indiqué à la création de l'évènement et uniquement le nombre de produits vendus, le coût d'achat estimé des produits est de ${totalBuyings
+                  .toString()
+                  .replace(".", ",")}€.
+              </p>
+              <p> 
+                Cependant, si vous souhaitez prendre en compte que vous avez acheté l'ensemble du stock initial de chaque produit, le coût d'achat réel est de ${buyingAllStock
+                  .toString()
+                  .replace(".", ",")}€.
+              </p>
+              <p>
+                Attention, nous ne prennons pas en compte les produits qui ont été endommagés ou perdus pendant l'évènement.
+              </p>
+            </li>
+            <li>
+              <h2>Vente des produits</h2>
+              <p>
+                En prenant en compte le prix de vente indiqué à la création de l'évènement et le nombre de produits vendus, la somme que vous avez reçue suite à la vente de ceux-ci est de ${totalSales
+                  .toString()
+                  .replace(".", ",")}€.
+              </p>
+            </li>
+            <li>
+              <h2>Chiffre d'affaires</h2>
+              <p>
+                Grâce aux données que nous avons enregistrées, nous pouvons vous indiquer que vous ${
+                  totalProfit === 0
+                    ? "n'avez ni perdu, ni gagné d'argent parce que vous avez vendu le même nombre de produits que vous n'en avez acheté"
+                    : totalProfit > 0
+                    ? "avez réalisé un bénéfice de " +
+                      totalProfit.toString().replace(".", ",") +
+                      "€ "
+                    : "avez réalisé un déficit de " +
+                      (-totalProfit).toString().replace(".", ",") +
+                      "€ "
+                } sur les produits que vous avez vendus.
+              </p>
+              <p>
+                Cependant, si vous souhaitez prendre en compte que vous avez acheté l'ensemble du stock initial de chaque produit, ${
+                  profitBuyingAllStock === 0
+                    ? " vous n'avez ni perdu, ni gagné d'argent parce que vous avez vendu le même nombre de produits que vous n'en avez acheté"
+                    : profitBuyingAllStock > 0
+                    ? " vous avez réalisé un bénéfice de " +
+                      profitBuyingAllStock.toString().replace(".", ",") +
+                      "€"
+                    : " vous avez réalisé un déficit de " +
+                      (-profitBuyingAllStock).toString().replace(".", ",") +
+                      "€"
+                } sur les produits que vous avez vendu. 
+              </p>
+              <p>
+                Attention, nous ne prennons pas en compte les produits qui ont été endommagés ou perdus pendant l'évènement.
+              </p>
+            </li>
+            <li>
+              <h2>Détail des produits vendus</h2>
+              <ul style="list-style-type: circle;">
+                ${productsSold
+                  .map((product) => {
+                    return `
+                    <li>
+                      <div>
+                        <p>
+                          ${product.name} :
+                        </p>
+                        <p>
+                          ${product.sold} produits vendus sur ${
+                      product.initialStock
+                    } (${calculatePercentage(product.sold, product.initialStock)
+                      .toString()
+                      .replace(".", ",")}%)
+                        </p>
+                      </div>
+                    </li>
+                  `;
+                  })
+                  .join("")}
+              </ul>
+            </li>
+            ${
+              debts.length > 0
+                ? `<li>
+              <h2>Dettes des clients</h2>
+              <p></p>
+            </li>`
+                : ""
+            }
+            ${debts.length > 0 ? `<ul style="list-style-type: circle;">` : ""}
+            ${
+              debts.length > 0
+                ? debts
+                    .map((debt) => {
+                      return `
+                    <p>
+                      - ${debt.name} : ${debt.totalDue}€
+                    </p>
+                  `;
+                    })
+                    .join("")
+                : ""
+            }
+            ${debts.length > 0 ? `</ul>` : ""}
+          </ol>
+        </body>
+        <footer>
+          <p>Ce document a été généré le ${new Date().toLocaleDateString(
+            "fr-BE",
+            {
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+            }
+          )} à ${new Date().toLocaleTimeString("fr-BE", {
+        hour: "2-digit",
+        minute: "2-digit",
+      })} par ${user.firstName} ${user.lastName}</p>
+        </footer>
+      </html>
+      `;
+      const response = await Print.printToFileAsync({
+        html,
+        margins: { top: 20, bottom: 20, left: 20, right: 20 },
+      });
 
       const eventNameFormatted = eventInfos.name
         .toLowerCase()
@@ -338,14 +678,10 @@ function StatisticsScreen(props) {
         .replace(/[\u0300-\u036f]/g, "")
         .replace(/ /g, "-");
 
-      console.log(eventNameFormatted);
-
       const pdfName = `${response.uri.slice(
         0,
         response.uri.lastIndexOf("/") + 1
       )}${eventNameFormatted}_STATISTICS.pdf`;
-      console.log(response.uri);
-      console.log(pdfName);
 
       await FileSystem.moveAsync({
         from: response.uri,
@@ -358,24 +694,6 @@ function StatisticsScreen(props) {
       });
     }
   };
-
-  useEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <TouchableOpacity onPress={() => printToFile()}>
-          <MaterialCommunityIcons
-            name="file-download-outline"
-            size={30}
-            color="white"
-            style={{ marginRight: 10 }}
-          />
-        </TouchableOpacity>
-      ),
-    });
-    getAllCommands();
-    getEventInfos();
-    getNumberOfParticipants();
-  }, []);
 
   return (
     <Screen style={styles.container} version="scroll">
@@ -418,9 +736,9 @@ function StatisticsScreen(props) {
                   : ""}
                 Il y a eu {usersAtEvent.length} participant(s) lors de cet
                 évènement, avec{" "}
-                {usersAtEvent.filter((user) => user.role === 0).length} clients,{" "}
-                {usersAtEvent.filter((user) => user.role === 1).length} vendeurs
-                et vous en tant qu'organisateur de l'évènement.{" "}
+                {usersAtEvent.filter((user) => user.role === 0).length} clients
+                et {usersAtEvent.filter((user) => user.role !== 0).length}{" "}
+                vendeurs.{" "}
                 {usersAtEvent.filter((user) => user.id != null).length}{" "}
                 d'entre-eux (
                 {calculatePercentage(
@@ -503,7 +821,7 @@ function StatisticsScreen(props) {
                     ) +
                     "%).\n"
                   : ""}
-                Le prix moyen d'une commande est de{" "}
+                Le prix moyen d'une commande était de{" "}
                 {meanCommand.meanCommandPrice.toString().replace(".", ",")}€ et
                 contenait{" "}
                 {meanCommand.meanQuantityOfProductsPerCommand
@@ -511,7 +829,7 @@ function StatisticsScreen(props) {
                   .replace(".", ",")}{" "}
                 produits.
                 {"\n"}
-                La commande moyenne de cet évènement contient{" "}
+                La commande moyenne, lors de cet évènement, contenait{" "}
                 {meanCommand.meanQuantityOfProductsPerCommandByProduct.map(
                   (product) => {
                     return (
@@ -553,9 +871,7 @@ function StatisticsScreen(props) {
                 acheté l'ensemble du stock initial de chaque produit, le coût
                 d'achat réel est de{" "}
                 {buyingAllStock.toString().replace(".", ",")}
-                €.{`\n`}
-                Attention, nous ne prennons pas en compte les produits qui ont
-                été endommagés ou perdus pendant l'évènement.
+                €.
               </AppText>
             </View>
             <View style={styles.detailContainer}>
@@ -568,7 +884,7 @@ function StatisticsScreen(props) {
               </AppText>
             </View>
             <View style={styles.detailContainer}>
-              <AppText style={styles.title}>5) Chiffre d'affaire</AppText>
+              <AppText style={styles.title}>5) Chiffre d'affaires</AppText>
               <AppText style={styles.detailText}>
                 Grâce aux données que nous avons enregistrées, nous pouvons vous
                 indiquer que vous{" "}
@@ -593,7 +909,9 @@ function StatisticsScreen(props) {
                   : " vous avez réalisé un déficit de " +
                     (-profitBuyingAllStock).toString().replace(".", ",") +
                     "€"}{" "}
-                sur les produits que vous avez vendu.
+                sur les produits que vous avez vendu.{`\n`}
+                Attention, nous ne prennons pas en compte les produits qui ont
+                été endommagés ou perdus pendant l'évènement.
               </AppText>
             </View>
             <View style={styles.detailContainer}>
