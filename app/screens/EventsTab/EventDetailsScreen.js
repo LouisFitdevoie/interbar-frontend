@@ -57,9 +57,6 @@ function EventDetailsScreen(props) {
     });
   }, []);
 
-  // - ORGANIZER
-  // DONE --- Redirect to stats screen (line 110)
-
   const handleDeleteEvent = () => {
     Alert.alert(
       "Supprimer l'évènement",

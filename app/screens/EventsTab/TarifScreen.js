@@ -34,8 +34,6 @@ function TarifScreen(props) {
   const [tarifItems, setTarifItems] = useState([]);
   const [eventName, setEventName] = useState(null);
 
-  //TODO: add the ability to generate a PDF with the tarif and add a qrcode to join the event and another one to connect to the wifi network of the raspi
-
   const getTarif = () => {
     setIsLoading(true);
     setError(null);
@@ -236,27 +234,25 @@ function TarifScreen(props) {
 
   return (
     <Screen style={styles.container}>
-      {tarifItems.length > 0 && (
-        <FlatList
-          data={tarifItems}
-          keyExtractor={(item) => item.events_products_id.toString()}
-          renderItem={({ item }) => (
-            <TarifDisplayItem
-              name={item.name}
-              sellingPrice={item.sellingPrice}
-              stock={item.stock}
-            />
-          )}
-          ItemSeparatorComponent={() => <View style={styles.separator} />}
-        />
-      )}
-      {tarifItems.length === 0 && (
-        <View style={styles.noTarifContainer}>
-          <AppText style={styles.noTarifText}>
-            Aucun tarif n'a été défini pour cet évènement
-          </AppText>
-        </View>
-      )}
+      <FlatList
+        data={tarifItems}
+        keyExtractor={(item) => item.events_products_id.toString()}
+        renderItem={({ item }) => (
+          <TarifDisplayItem
+            name={item.name}
+            sellingPrice={item.sellingPrice}
+            stock={item.stock}
+          />
+        )}
+        ItemSeparatorComponent={() => <View style={styles.separator} />}
+        ListEmptyComponent={() => (
+          <View style={styles.noTarifContainer}>
+            <AppText style={styles.noTarifText}>
+              Aucun tarif n'a été défini pour cet évènement
+            </AppText>
+          </View>
+        )}
+      />
       {error != null && (
         <View style={styles.errorContainer}>
           <AppText style={styles.errorMessage}>{error}</AppText>

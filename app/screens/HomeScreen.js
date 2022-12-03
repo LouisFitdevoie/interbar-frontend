@@ -244,15 +244,7 @@ function HomeScreen(props) {
         </ScrollView>
       </View>
       <View style={styles.eventsContainer}>
-        {displayedItems.length === 0 && (
-          <View style={styles.noEvent}>
-            <AppText style={{ textAlign: "center" }}>
-              Aucun évènement ne correspond aux critères sélectionnés
-            </AppText>
-            <AppButton title="Actualiser" onPress={getEventsJoined} />
-          </View>
-        )}
-        {errorMessage === null && displayedItems != 0 && (
+        {errorMessage === null && (
           <FlatList
             data={displayedItems}
             keyExtractor={(event) => event.id.toString()}
@@ -269,6 +261,14 @@ function HomeScreen(props) {
                 eventOrganizer={item.role === 2 ? null : item.organizer}
               />
             )}
+            ListEmptyComponent={
+              <View style={styles.noEvent}>
+                <AppText style={{ textAlign: "center" }}>
+                  Aucun évènement ne correspond aux critères sélectionnés
+                </AppText>
+                <AppButton title="Actualiser" onPress={getEventsJoined} />
+              </View>
+            }
             refreshing={refreshing}
             onRefresh={() => {
               getEventsJoined();
