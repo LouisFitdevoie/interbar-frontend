@@ -22,14 +22,8 @@ import colors from "../config/colors";
 import { AuthContext } from "../auth/AuthContext";
 import loginValidator from "../validators/login.validator";
 
-const backgroundImage =
-  colors.colorScheme === "light"
-    ? require("../assets/splashscreen/splashscreen-light.png")
-    : require("../assets/splashscreen/splashscreen-dark.png");
-const logo =
-  colors.colorScheme === "light"
-    ? require("../assets/splashscreen/logo-light.png")
-    : require("../assets/splashscreen/logo-dark.png");
+const backgroundImage = require("../assets/splashscreen/splashscreen-light.png");
+const logo = require("../assets/splashscreen/logo-light.png");
 
 function LoginScreen({ navigation }) {
   const { login, isLoading, error } = useContext(AuthContext);
