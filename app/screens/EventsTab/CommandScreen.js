@@ -557,7 +557,9 @@ function CommandScreen(props) {
               if (!users.find((user) => user.clientName === client.client_name))
                 users.push({ clientName: client.client_name, id: null });
             });
-            setUsersAtEvent(users);
+            setUsersAtEvent(
+              users.filter((user) => !user.clientName.includes("Anonymous"))
+            );
             setIsLoading(false);
           })
           .catch((err) => {
@@ -894,7 +896,7 @@ function CommandScreen(props) {
 
   return (
     <Screen style={styles.container}>
-      {clientSelected === null && (
+      {clientSelected === null && !eventFinished && (
         <View style={{ flex: 1, width: "100%" }}>
           <AppText
             style={{
@@ -920,7 +922,7 @@ function CommandScreen(props) {
                   }
                   style={{ paddingHorizontal: 5, paddingVertical: 10 }}
                 >
-                  <AppText>{item.clientName}</AppText>
+                  <AppText numberOfLines={1}>{item.clientName}</AppText>
                 </TouchableOpacity>
               )}
               ItemSeparatorComponent={() => <View style={styles.separator} />}
@@ -1094,14 +1096,17 @@ function CommandScreen(props) {
         </View>
       )}
       {commandId &&
-        !eventFinished != null &&
+        eventFinished != null &&
         isCommandPaid &&
         isCommandServed && (
           <View style={styles.commandPaidServed}>
             {role === 2 && commandInfos && (
               <View style={styles.detailContainer}>
                 <AppText style={styles.detailTitle}>Servie par </AppText>
-                <AppText style={styles.detailText}>
+                <AppText
+                  style={[styles.detailText, { maxWidth: "70%" }]}
+                  numberOfLines={1}
+                >
                   {commandInfos.seller.firstname +
                     " " +
                     commandInfos.seller.lastname}

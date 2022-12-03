@@ -6,7 +6,6 @@ import DataUsageScreen from "../screens/DataUsageScreen";
 import AppTabNavigator from "./AppTabNavigator.navigation";
 import EditPersonalDataScreen from "../screens/SettingsTab/EditPersonalDataScreen";
 import EditPasswordScreen from "../screens/SettingsTab/EditPasswordScreen";
-import ColorModeScreen from "../screens/SettingsTab/ColorModeScreen";
 
 const Stack = createStackNavigator();
 
@@ -40,22 +39,6 @@ function AppStack(props) {
           component={EditPersonalDataScreen}
           options={{
             headerTitle: "Modifier mes données personnelles",
-            headerTitleStyle: {
-              fontSize: 22,
-            },
-            headerStyle: {
-              backgroundColor: colors.buttonPrimary,
-            },
-            headerTintColor: colors.white,
-            headerTransparent: false,
-            headerBackTitleVisible: false,
-          }}
-        />
-        <Stack.Screen
-          name="ColorMode"
-          component={ColorModeScreen}
-          options={{
-            headerTitle: "Mode de couleur",
             headerTitleStyle: {
               fontSize: 22,
             },

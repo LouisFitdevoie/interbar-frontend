@@ -1,5 +1,4 @@
 import React, { useContext } from "react";
-import jwtDecode from "jwt-decode";
 import { Alert, FlatList, StyleSheet, View, Dimensions } from "react-native";
 
 import Screen from "../../components/Screen";
@@ -9,10 +8,45 @@ import ListIcon from "../../components/lists/ListIcon";
 import colors from "../../config/colors";
 import ListSeparator from "../../components/lists/ListSeparator";
 import LoadingIndicator from "../../components/LoadingIndicator";
+import userAPI from "../../api/user.api";
 
 function AccountScreen({ navigation }) {
-  const { userAccessToken, logout, isLoading } = useContext(AuthContext);
-  const user = jwtDecode(userAccessToken);
+  const { userAccessToken, logout, isLoading, user, updateAccessToken } =
+    useContext(AuthContext);
+
+  const handleAccountDeletion = () => {
+    Alert.alert(
+      "Êtes-vous sûr de vouloir supprimer votre compte ?",
+      "Cette action est irréversible et vous ne pourrez plus vous reconnecter à l'application à moins de récréer un nouveau compte",
+      [
+        { text: "Annuler", style: "cancel" },
+        {
+          text: "Supprimer",
+          style: "destructive",
+          onPress: () => {
+            userAPI
+              .deleteUserAccount(user.id, userAccessToken)
+              .then((response) => {
+                logout();
+              })
+              .catch((error) => {
+                if (error.response === undefined) {
+                  Alert.alert("Impossible de se connecter au serveur");
+                } else {
+                  if (error.response.status === 403) {
+                    updateAccessToken();
+                    Alert.alert("Une erreur est survenue, veuillez réessayer");
+                  } else {
+                    console.log(error.response.data);
+                    Alert.alert("Une erreur inconnue est survenue");
+                  }
+                }
+              });
+          },
+        },
+      ]
+    );
+  };
 
   const settingsItems = [
     {
@@ -32,23 +66,12 @@ function AccountScreen({ navigation }) {
       onPress: () => navigation.navigate("EditPassword"),
     },
     {
-      title: "Mode de couleur",
-      icon: {
-        name: "palette-outline",
-        backgroundColor: colors.blue,
-      },
-      // onPress: () => navigation.navigate("ColorMode"),
-      onPress: () =>
-        Alert.alert("Mode de couleur", "En cours de développement"),
-    },
-    {
       title: "Supprimer mon compte",
       icon: {
         name: "delete-outline",
         backgroundColor: colors.danger,
       },
-      onPress: () =>
-        Alert.alert("Supprimer mon compte", "En cours de développement"),
+      onPress: () => handleAccountDeletion(),
     },
     {
       title: "Déconnexion",

@@ -43,7 +43,14 @@ function DataUsageScreen(props) {
           <AppText style={styles.text}>
             Vos données seront stockées uniquement sur nos serveurs et ne seront
             pas partagées avec des tiers. Vous pourrez à tout moment supprimer
-            votre compte et toutes vos données seront supprimées.
+            votre compte et toutes vos données seront rendues anonymes.
+          </AppText>
+          <AppText style={styles.text}>
+            Pour cela, nous remplacerons vos nom, prénom, adresse email et mot
+            de passe par des valeurs aléatoires. Attention, si vous supprimez
+            votre compte, vous ne pourrez plus vous y connecter et vous devrez
+            recréer un nouveau compte pour pouvoir utiliserl'application à
+            nouveau.
           </AppText>
         </View>
       </ScrollView>

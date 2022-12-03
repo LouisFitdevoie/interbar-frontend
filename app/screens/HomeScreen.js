@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   ScrollView,
   FlatList,
+  StatusBar,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
@@ -38,7 +39,8 @@ function HomeScreen(props) {
 
   useLayoutEffect(() => {
     tabBarDisplayManager.displayTabBar(navigation, insets);
-  }, []);
+    StatusBar.setBarStyle("dark-content");
+  }, [isFocused]);
 
   const getEventsJoined = () => {
     setIsLoading(true);
@@ -164,7 +166,7 @@ function HomeScreen(props) {
   }, [isFocused]);
 
   return (
-    <Screen style={styles.container}>
+    <Screen style={styles.container} barStyle="dark">
       <AppText style={styles.welcome}>
         Bienvenue{" "}
         {user.firstName.charAt(0).toUpperCase() + user.firstName.slice(1)} !
@@ -244,15 +246,7 @@ function HomeScreen(props) {
         </ScrollView>
       </View>
       <View style={styles.eventsContainer}>
-        {displayedItems.length === 0 && (
-          <View style={styles.noEvent}>
-            <AppText style={{ textAlign: "center" }}>
-              Aucun évènement ne correspond aux critères sélectionnés
-            </AppText>
-            <AppButton title="Actualiser" onPress={getEventsJoined} />
-          </View>
-        )}
-        {errorMessage === null && displayedItems != 0 && (
+        {errorMessage === null && (
           <FlatList
             data={displayedItems}
             keyExtractor={(event) => event.id.toString()}
@@ -269,6 +263,14 @@ function HomeScreen(props) {
                 eventOrganizer={item.role === 2 ? null : item.organizer}
               />
             )}
+            ListEmptyComponent={
+              <View style={styles.noEvent}>
+                <AppText style={{ textAlign: "center" }}>
+                  Aucun évènement ne correspond aux critères sélectionnés
+                </AppText>
+                <AppButton title="Actualiser" onPress={getEventsJoined} />
+              </View>
+            }
             refreshing={refreshing}
             onRefresh={() => {
               getEventsJoined();

@@ -1,6 +1,16 @@
 import React, { useEffect, useContext, useState, useLayoutEffect } from "react";
-import { View, StyleSheet, FlatList, Alert } from "react-native";
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  Alert,
+  TouchableOpacity,
+} from "react-native";
 import { useIsFocused } from "@react-navigation/native";
+import * as Sharing from "expo-sharing";
+import * as FileSystem from "expo-file-system";
+import * as Print from "expo-print";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import Screen from "../../components/Screen";
 import TarifCreationItem from "../../components/lists/TarifCreationItem";
@@ -9,9 +19,9 @@ import colors from "../../config/colors";
 import AppButton from "../../components/AppButton";
 import { AuthContext } from "../../auth/AuthContext";
 import eventProductAPI from "../../api/eventProduct.api";
+import eventAPI from "../../api/event.api";
 import AppText from "../../components/AppText";
 import LoadingIndicator from "../../components/LoadingIndicator";
-import TarifItemDeleteAction from "../../components/lists/TarifItemDeleteAction";
 import ErrorMessage from "../../components/forms/ErrorMessage";
 import tabBarDisplayManager from "../../config/tabBarDisplayManager";
 
@@ -22,12 +32,14 @@ function CreatePriceListScreen(props) {
 
   const eventId = props.route.params.eventId;
   const isEditing = props.route.params.isEditing != null;
+  const qrCodeData = props.route.params.qrCodeData;
   const [eventProducts, setEventProducts] = useState([]);
   const { navigation } = props;
   const [deleteError, setDeleteError] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const [errorGettingEventProducts, setErrorGettingEventProducts] =
     useState(null);
+  const [eventName, setEventName] = useState(null);
 
   useLayoutEffect(() => {
     tabBarDisplayManager.hideTabBar(navigation);
@@ -73,9 +85,178 @@ function CreatePriceListScreen(props) {
       });
   };
 
+  const printToFile = async () => {
+    if (!(await Sharing.isAvailableAsync())) {
+      Alert.alert("Une erreur est survenue au moment de partager le fichier");
+    } else {
+      const html = `
+      <html style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;">
+        <head>
+          <style>
+            body {
+              width: auto;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+            }
+            h1 {
+              color: #214951;
+              text-align: center;
+              font-size: 1.7em;
+            }
+            p {
+              color: black;
+              font-size: 1.5rem;
+              font-weight: 400;
+              margin-top: 5px;
+              margin-bottom: 5px;
+            }
+            .productName {
+              font-size: 1.5rem;
+              font-weight: 600;
+              color: #497179;
+              padding-right: 250px;
+            }
+            .products {
+              display: flex;
+              flex-direction: row;
+              flex-wrap: wrap;
+              justify-content: space-between;
+              width: 100%;
+            }
+            #table {
+              width: fit-content;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: flex-start;
+              padding: 10px;
+            }
+            #qrCode {
+              width: 125px;
+              height: 125px;
+              object-fit: contain;
+              padding: 10px;
+              border: 5px solid #214951;
+              border-radius: 20px;
+              margin-bottom: 25px;
+            }
+            #qrCodeContainer {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              margin-top: 20px;
+              margin-bottom: 20px;
+              max-width: 800px;
+              text-align: center;
+            }
+          </style>
+        </head>
+        <body>
+          <h1>${eventName} : Tarif</h1>
+          <div id="table">
+            ${eventProducts
+              .map((product) => {
+                return `<div class="products">
+                  <p class="productName">${product.name}</p>
+                  <p>${product.sellingPrice.toString().replace(".", ",")}€</p>
+                </div>`;
+              })
+              .join("")}
+          </div>
+          <div id="qrCodeContainer">
+            <img id="qrCode" src="data:image/jpeg;base64,${qrCodeData}"/>
+            <p>Si vous avez l'application interbar, scannez ce QR code pour rejoindre l'évènement !</p>
+          </div>
+        </body>
+      </html>
+      `;
+
+      const response = await Print.printToFileAsync({
+        html,
+        margins: { top: 20, bottom: 20, left: 20, right: 20 },
+      });
+
+      const eventNameFormatted = eventName
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/ /g, "-")
+        .replace(/[’'"]/g, "-");
+
+      const pdfName = `${response.uri.slice(
+        0,
+        response.uri.lastIndexOf("/") + 1
+      )}${eventNameFormatted}_TARIF.pdf`;
+
+      await FileSystem.moveAsync({ from: response.uri, to: pdfName });
+      await Sharing.shareAsync(pdfName, {
+        UTI: ".pdf",
+        mimeType: "application/pdf",
+        dialogTitle: "Partager le tarif",
+      });
+    }
+  };
+
+  const getEventName = () => {
+    setIsLoading(true);
+    setErrorGettingEventProducts(null);
+    eventAPI
+      .getEventById(eventId, userAccessToken)
+      .then((res) => {
+        if (res.data) {
+          setIsLoading(false);
+          const eventData = res.data;
+          setEventName(eventData.name);
+        }
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        if (err.response.status === 403) {
+          updateAccessToken();
+          Alert.alert("Une erreur est survenue, veuillez réessayer");
+          navigation.goBack();
+        } else {
+          navigation.goBack();
+        }
+      });
+  };
+
   useEffect(() => {
     isFocused && getAllEventProducts(eventId);
+    getEventName();
   }, [isFocused]);
+
+  useEffect(() => {
+    if (isEditing) {
+      if (eventName === null && eventProducts.length === 0) {
+        navigation.setOptions({
+          headerRight: () => (
+            <MaterialCommunityIcons
+              name="file-download-outline"
+              size={30}
+              color={colors.light}
+              style={{ marginRight: 10 }}
+            />
+          ),
+        });
+      } else {
+        navigation.setOptions({
+          headerRight: () => (
+            <TouchableOpacity onPress={() => printToFile()}>
+              <MaterialCommunityIcons
+                name="file-download-outline"
+                size={30}
+                color={colors.white}
+                style={{ marginRight: 10 }}
+              />
+            </TouchableOpacity>
+          ),
+        });
+      }
+    }
+  }, [eventName, eventProducts]);
 
   return (
     <Screen style={styles.container}>
