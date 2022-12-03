@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   ScrollView,
   FlatList,
+  StatusBar,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
@@ -38,7 +39,8 @@ function HomeScreen(props) {
 
   useLayoutEffect(() => {
     tabBarDisplayManager.displayTabBar(navigation, insets);
-  }, []);
+    StatusBar.setBarStyle("dark-content");
+  }, [isFocused]);
 
   const getEventsJoined = () => {
     setIsLoading(true);
@@ -164,7 +166,7 @@ function HomeScreen(props) {
   }, [isFocused]);
 
   return (
-    <Screen style={styles.container}>
+    <Screen style={styles.container} barStyle="dark">
       <AppText style={styles.welcome}>
         Bienvenue{" "}
         {user.firstName.charAt(0).toUpperCase() + user.firstName.slice(1)} !

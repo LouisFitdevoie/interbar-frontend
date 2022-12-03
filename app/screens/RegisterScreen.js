@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useLayoutEffect } from "react";
 import {
   ImageBackground,
   View,
@@ -24,10 +24,7 @@ import { AuthContext } from "../auth/AuthContext";
 import LoadingIndicator from "../components/LoadingIndicator";
 import userAPI from "../api/user.api.js";
 
-const backgroundImage =
-  colors.colorScheme === "light"
-    ? require("../assets/splashscreen/splashscreen-light.png")
-    : require("../assets/splashscreen/splashscreen-dark.png");
+const backgroundImage = require("../assets/splashscreen/splashscreen-light.png");
 
 function RegisterScreen({ navigation }) {
   const { login, isLoading, setIsLoading } = useContext(AuthContext);

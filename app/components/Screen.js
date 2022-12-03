@@ -1,17 +1,27 @@
 import Constants from "expo-constants";
-import React from "react";
+import React, { useLayoutEffect } from "react";
 import {
   Keyboard,
   View,
   SafeAreaView,
   StyleSheet,
   TouchableWithoutFeedback,
+  StatusBar,
 } from "react-native";
 
-function Screen({ children, style, version = "default" }) {
+function Screen({ children, style, version = "default", barStyle = "light" }) {
+  useLayoutEffect(() => {
+    if (barStyle === "light") {
+      StatusBar.setBarStyle("light-content");
+    } else {
+      StatusBar.setBarStyle("dark-content");
+    }
+  }, [barStyle]);
+
   if (version === "default") {
     return (
       <SafeAreaView style={[styles.screen, style]}>
+        <StatusBar animated={true} />
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
           <View style={[styles.view, style]}>{children}</View>
         </TouchableWithoutFeedback>
@@ -19,7 +29,10 @@ function Screen({ children, style, version = "default" }) {
     );
   } else if (version === "scroll") {
     return (
-      <SafeAreaView style={[styles.screen, style]}>{children}</SafeAreaView>
+      <>
+        <StatusBar animated={true} />
+        <SafeAreaView style={[styles.screen, style]}>{children}</SafeAreaView>
+      </>
     );
   }
 }
