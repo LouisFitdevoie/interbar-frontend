@@ -66,16 +66,6 @@ function AccountScreen({ navigation }) {
       onPress: () => navigation.navigate("EditPassword"),
     },
     {
-      title: "Mode de couleur",
-      icon: {
-        name: "palette-outline",
-        backgroundColor: colors.blue,
-      },
-      // onPress: () => navigation.navigate("ColorMode"),
-      onPress: () =>
-        Alert.alert("Mode de couleur", "En cours de développement"),
-    },
-    {
       title: "Supprimer mon compte",
       icon: {
         name: "delete-outline",
