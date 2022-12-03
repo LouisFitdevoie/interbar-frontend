@@ -44,11 +44,18 @@ function AddProductTarifScreen(props) {
       })
       .catch((err) => {
         setIsLoading(false);
-        if (err.response.status === 403) {
-          updateAccessToken();
-          setErrorMesssage(
-            "Impossible de récupérer les produits, veuillez réessayer"
-          );
+        if (err.response === undefined) {
+          setErrorMesssage("Impossible de communiquer avec le serveur");
+        } else {
+          if (err.response.status === 403) {
+            updateAccessToken();
+            setErrorMesssage(
+              "Impossible de récupérer les produits, veuillez réessayer"
+            );
+          } else {
+            console.log(err.response.data);
+            setErrorMesssage("Une erreur est survenue");
+          }
         }
       });
   };
@@ -187,6 +194,14 @@ function AddProductTarifScreen(props) {
           keyExtractor={(item) => item.id.toString()}
           refreshing={refreshing}
           onRefresh={() => getExistingProducts()}
+          ListEmptyComponent={
+            <View style={styles.noProductView}>
+              <AppText style={styles.noProductText}>
+                Aucun produit ne correspond à votre recherche
+              </AppText>
+              <AppButton title="Réessayer" onPress={getExistingProducts} />
+            </View>
+          }
           renderItem={({ item }) => (
             <TouchableOpacity
               onPress={() =>
@@ -221,22 +236,6 @@ function AddProductTarifScreen(props) {
           style={styles.list}
         />
       )}
-      {errorMessage ===
-        "Impossible de récupérer les produits, veuillez réessayer" && (
-        <View style={styles.errorView}>
-          <AppText>{errorMessage}</AppText>
-          <AppButton title="Réessayer" onPress={() => getExistingProducts()} />
-        </View>
-      )}
-      {displayedProducts.length === 0 &&
-        errorMessage !=
-          "Impossible de récupérer les produits, veuillez réessayer" && (
-          <View style={styles.noProductView}>
-            <AppText style={styles.noProductText}>
-              Aucun produit ne correspond à votre recherche
-            </AppText>
-          </View>
-        )}
       {errorMessage !=
         "Impossible de récupérer les produits, veuillez réessayer" && (
         <AppButton

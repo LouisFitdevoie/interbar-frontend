@@ -46,8 +46,6 @@ function JoinEventScreen({ navigation }) {
     tabBarDisplayManager.displayTabBar(navigation, insets);
   }, []);
 
-  // Try joining this event e6d388cc-86a1-4d5d-bdcf-5f7cc3c5fd0d
-
   const joinEvent = (eventId) => {
     setIsLoading(true);
     setScanned(false);

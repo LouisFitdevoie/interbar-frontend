@@ -150,26 +150,6 @@ function CurrentEventScreen({
     setIsLoading(false);
   };
 
-  // - USER
-  // --- Get the commands the user has made for this event -> DONE
-  // --- Display them in a flatlist -> DONE
-  // --- Add the ability to sort the items by highest or lowest price (line 60 & 63) -> DONE
-  // --- Verify the ability to sort by newest or oldest (line 56 & 58) -> DONE
-  // --- Add the ability to the user to make a new command by redirecting him to a newCommandScreen (line 101) -> DONE
-  // --- Add the ability to the user to edit a command -> DONE
-  // --- Empêcher le client d’edit sa commande si isPaid et isServed mais afficher les détails quand même (new screen avec les quantités et le cout total de la commande) -> DONE
-  // --- Ajouter un bouton pour annuler la commande -> DONE
-  // --- Mettre isPaid et isServed à 0 si le client modifie sa commande -> DONE
-  // - SELLER & ORGANIZER
-  // --- Get the commands the seller has served for this event -> DONE
-  // --- Display them in a flatlist -> DONE
-  // --- Change the color of the command item if the command is not paid or served -> DONE
-  // --- Verify the ability to filter by paid or unpaid (line 49 to 52) -> DONE
-  // --- Add the ability to the seller/organizer to change the values of isPaid & isServed -> DONE
-  // --- Add the ability to the seller/organizer to click on a command item to redirect him to a commandDetailsScreen -> DONE
-  // --- Add the ability to the seller/organizer to make a new command by redirecting him to a newCommandScreen (line 101) -> DONE
-  // --- Add the ability to the seller/organizer to edit a command -> DONE
-
   return (
     <Screen style={styles.container}>
       <View style={styles.titleContainer}>
