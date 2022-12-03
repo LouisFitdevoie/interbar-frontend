@@ -67,3 +67,13 @@ exports.editPassword = (
     },
   });
 };
+
+exports.deleteUserAccount = (userId, accessToken) => {
+  return axios({
+    method: "put",
+    url: `${BASE_URL}/delete-user/${userId}`,
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};
