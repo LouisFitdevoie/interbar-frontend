@@ -264,7 +264,11 @@ function BeforeEventScreen({
           <AppButton
             title="Modifier le tarif"
             onPress={() =>
-              navigation.navigate("EditPriceList", { eventId, isEditing: true })
+              navigation.navigate("EditPriceList", {
+                eventId,
+                isEditing: true,
+                qrCodeData: qrcodeURL,
+              })
             }
             style={{ marginVertical: 5 }}
           />
