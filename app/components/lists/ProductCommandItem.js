@@ -15,11 +15,16 @@ function ProductCommandItem({
 }) {
   const [error, setError] = useState(null);
 
+  const name = product.name
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+
   return (
     <View style={styles.container}>
       <View style={styles.productContainer}>
         <View style={styles.product}>
-          <AppText style={styles.title}>{product.name}</AppText>
+          <AppText style={styles.title}>{name}</AppText>
           <AppText>{product.sellingPrice} €</AppText>
         </View>
         <View style={styles.addMenu}>
