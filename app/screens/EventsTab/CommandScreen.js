@@ -80,23 +80,18 @@ function CommandScreen(props) {
             .then((res) => {
               setProductsSold(
                 res.data.filter((product) => {
-                  if (product.stock > 0) {
-                    if (product.category === 1 && !alcoholAllowed) {
-                      return false;
-                    } else {
-                      return true;
-                    }
-                  } else {
+                  if (product.category === 1 && !alcoholAllowed) {
                     return false;
+                  } else {
+                    return true;
                   }
                 })
               );
               let quantitiesArray = [];
               res.data.forEach((product) => {
                 if (
-                  ((alcoholAllowed && product.category === 1) ||
-                    product.category !== 1) &&
-                  product.stock > 0
+                  (alcoholAllowed && product.category === 1) ||
+                  product.category !== 1
                 ) {
                   const eventProductCommandId = null;
                   const productId = product.events_products_id;
@@ -122,14 +117,10 @@ function CommandScreen(props) {
               });
               setProductsDisplayed(
                 res.data.filter((product) => {
-                  if (product.stock > 0) {
-                    if (product.category === 1 && !alcoholAllowed) {
-                      return false;
-                    } else {
-                      return true;
-                    }
-                  } else {
+                  if (product.category === 1 && !alcoholAllowed) {
                     return false;
+                  } else {
+                    return true;
                   }
                 })
               );

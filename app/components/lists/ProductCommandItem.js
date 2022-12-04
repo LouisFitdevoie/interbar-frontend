@@ -88,7 +88,7 @@ function ProductCommandItem({
 const styles = StyleSheet.create({
   addMenu: {
     marginLeft: 10,
-    width: 60,
+    minWidth: 60,
     alignItems: "center",
     justifyContent: "center",
   },
