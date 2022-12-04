@@ -13,7 +13,9 @@ const validationSchema = Yup.object().shape({
       }
     ),
   location: Yup.string().required("La localisation est requise"),
-  description: Yup.string().notRequired("La description n'est obligatoire"),
+  description: Yup.string()
+    .notRequired("La description n'est obligatoire")
+    .nullable(),
 });
 
 export default validationSchema;
