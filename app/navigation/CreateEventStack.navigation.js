@@ -43,7 +43,7 @@ export default function CreateEventStack({ navigation }) {
           headerStyle: {
             backgroundColor: colors.buttonPrimary,
           },
-          headerTransparent: true,
+          headerTransparent: false,
           headerTintColor: colors.white,
           headerLeft: () => (
             <HeaderBackButton
@@ -84,7 +84,7 @@ export default function CreateEventStack({ navigation }) {
           headerStyle: {
             backgroundColor: colors.buttonPrimary,
           },
-          headerTransparent: true,
+          headerTransparent: false,
           headerTintColor: colors.white,
           headerLeft: () => (
             <HeaderBackButton
@@ -125,7 +125,7 @@ export default function CreateEventStack({ navigation }) {
           headerStyle: {
             backgroundColor: colors.buttonPrimary,
           },
-          headerTransparent: true,
+          headerTransparent: false,
           headerTintColor: colors.white,
           headerBackTitleVisible: false,
         }}
@@ -143,7 +143,7 @@ export default function CreateEventStack({ navigation }) {
           headerStyle: {
             backgroundColor: colors.buttonPrimary,
           },
-          headerTransparent: true,
+          headerTransparent: false,
           headerTintColor: colors.white,
           headerBackTitleVisible: false,
         }}
@@ -161,7 +161,7 @@ export default function CreateEventStack({ navigation }) {
           headerStyle: {
             backgroundColor: colors.buttonPrimary,
           },
-          headerTransparent: true,
+          headerTransparent: false,
           headerTintColor: colors.white,
           headerBackTitleVisible: false,
         }}
@@ -179,7 +179,7 @@ export default function CreateEventStack({ navigation }) {
           headerStyle: {
             backgroundColor: colors.buttonPrimary,
           },
-          headerTransparent: true,
+          headerTransparent: false,
           headerTintColor: colors.white,
           headerBackTitleVisible: false,
         }}

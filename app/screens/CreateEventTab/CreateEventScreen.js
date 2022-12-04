@@ -110,7 +110,7 @@ function CreateEventScreen({ navigation }) {
   };
 
   return (
-    <Screen style={styles.container}>
+    <Screen style={styles.container} version="scroll">
       <View style={styles.formContainer}>
         <KeyboardAwareScrollView style={styles.scrollView}>
           <AppForm
