@@ -645,55 +645,145 @@ function CommandScreen(props) {
   const handleCommandPaid = () => {
     setIsLoading(true);
     setError(null);
-    commandAPI
-      .setCommandPaid(commandId, userAccessToken)
-      .then((res) => {
-        setIsCommandPaid(true);
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        setIsLoading(false);
-        if (err.response === undefined) {
-          setError("Impossible de communiquer avec le serveur");
-        } else {
-          if (err.response.status === 403) {
-            updateAccessToken();
-            setError(
-              "Impossible de modifier le statut de la commande, veuillez réessayer"
-            );
+    if (!isCommandServed) {
+      commandAPI
+        .setServedById(commandId, user.id, userAccessToken)
+        .then((res) => {
+          commandAPI
+            .setCommandPaid(commandId, userAccessToken)
+            .then((res) => {
+              setIsCommandPaid(true);
+              setIsLoading(false);
+            })
+            .catch((err) => {
+              setIsLoading(false);
+              if (err.response === undefined) {
+                setError("Impossible de communiquer avec le serveur");
+              } else {
+                if (err.response.status === 403) {
+                  updateAccessToken();
+                  setError(
+                    "Impossible de modifier le statut de la commande, veuillez réessayer"
+                  );
+                } else {
+                  console.log(err.response.data);
+                  setError("Une erreur est survenue");
+                }
+              }
+            });
+        })
+        .catch((err) => {
+          setIsLoading(false);
+          if (err.response === undefined) {
+            setError("Impossible de communiquer avec le serveur");
           } else {
-            console.log(err.response.data);
-            setError("Une erreur est survenue");
+            if (err.response.status === 403) {
+              updateAccessToken();
+              setError(
+                "Impossible de marquer la commande comme payée, veuillez réessayer"
+              );
+            } else {
+              console.log(err.response.data);
+              setError("Une erreur est survenue");
+            }
           }
-        }
-      });
+        });
+    } else {
+      commandAPI
+        .setCommandPaid(commandId, userAccessToken)
+        .then((res) => {
+          setIsCommandPaid(true);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          setIsLoading(false);
+          if (err.response === undefined) {
+            setError("Impossible de communiquer avec le serveur");
+          } else {
+            if (err.response.status === 403) {
+              updateAccessToken();
+              setError(
+                "Impossible de modifier le statut de la commande, veuillez réessayer"
+              );
+            } else {
+              console.log(err.response.data);
+              setError("Une erreur est survenue");
+            }
+          }
+        });
+    }
   };
 
   const handleCommandServed = () => {
     setIsLoading(true);
     setError(null);
-    commandAPI
-      .setCommandServed(commandId, userAccessToken)
-      .then((res) => {
-        setIsCommandServed(true);
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        setIsLoading(false);
-        if (err.response === undefined) {
-          setError("Impossible de communiquer avec le serveur");
-        } else {
-          if (err.response.status === 403) {
-            updateAccessToken();
-            setError(
-              "Impossible de modifier le statut de la commande, veuillez réessayer"
-            );
+    if (!isCommandPaid) {
+      commandAPI
+        .setServedById(commandId, user.id, userAccessToken)
+        .then((res) => {
+          commandAPI
+            .setCommandServed(commandId, userAccessToken)
+            .then((res) => {
+              setIsCommandServed(true);
+              setIsLoading(false);
+            })
+            .catch((err) => {
+              setIsLoading(false);
+              if (err.response === undefined) {
+                setError("Impossible de communiquer avec le serveur");
+              } else {
+                if (err.response.status === 403) {
+                  updateAccessToken();
+                  setError(
+                    "Impossible de modifier le statut de la commande, veuillez réessayer"
+                  );
+                } else {
+                  console.log(err.response.data);
+                  setError("Une erreur est survenue");
+                }
+              }
+            });
+        })
+        .catch((err) => {
+          setIsLoading(false);
+          if (err.response === undefined) {
+            setError("Impossible de communiquer avec le serveur");
           } else {
-            console.log(err.response.data);
-            setError("Une erreur est survenue");
+            if (err.response.status === 403) {
+              updateAccessToken();
+              setError(
+                "Impossible de marquer la commande comme payée, veuillez réessayer"
+              );
+            } else {
+              console.log(err.response.data);
+              setError("Une erreur est survenue");
+            }
           }
-        }
-      });
+        });
+    } else {
+      commandAPI
+        .setCommandServed(commandId, userAccessToken)
+        .then((res) => {
+          setIsCommandServed(true);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          setIsLoading(false);
+          if (err.response === undefined) {
+            setError("Impossible de communiquer avec le serveur");
+          } else {
+            if (err.response.status === 403) {
+              updateAccessToken();
+              setError(
+                "Impossible de modifier le statut de la commande, veuillez réessayer"
+              );
+            } else {
+              console.log(err.response.data);
+              setError("Une erreur est survenue");
+            }
+          }
+        });
+    }
   };
 
   const handleSellerCommand = () => {
