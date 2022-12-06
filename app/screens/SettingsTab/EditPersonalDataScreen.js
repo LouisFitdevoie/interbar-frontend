@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -32,6 +32,17 @@ function EditPersonalDataScreen({ navigation }) {
     updateAccessToken,
   } = useContext(AuthContext);
   const [editingError, setEditingError] = useState(null);
+  const [birthday, setBirthday] = useState(
+    new Date(user.birthday.split(" ")[0]).toLocaleDateString("fr-BE", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    })
+  );
+
+  useEffect(() => {
+    setBirthday(user.birthday.split(" ")[0].split("-").reverse().join("/"));
+  }, [birthday]);
 
   const editPersonalData = (firstName, lastName, birthDate) => {
     setIsLoading(true);
@@ -100,11 +111,14 @@ function EditPersonalDataScreen({ navigation }) {
               lastName:
                 user.lastName.slice(0, 1).toUpperCase() +
                 user.lastName.slice(1),
-              birthDate: new Date(user.birthday).toLocaleString("fr-BE", {
-                year: "numeric",
-                month: "2-digit",
-                day: "2-digit",
-              }),
+              birthDate:
+                Platform.OS === "ios"
+                  ? new Date(user.birthday).toLocaleDateString("fr-BE", {
+                      year: "numeric",
+                      month: "2-digit",
+                      day: "2-digit",
+                    })
+                  : birthday,
             }}
             onSubmit={(values) => handleSubmit(values)}
             validationSchema={editPersonalDataValidator}

@@ -15,11 +15,38 @@ function ProductCommandItem({
 }) {
   const [error, setError] = useState(null);
 
+  const name = product.name
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+
+  // console.log("\n\n\n");
+  // console.log(product);
+  // console.log(
+  //   quantities
+  //     .filter((p) => p.productId === product.events_products_id)[0]
+  //     .quantity.toString()
+  // );
+  const quantity =
+    quantities.filter((p) => p.productId === product.events_products_id)
+      .length > 0
+      ? quantities
+          .filter((p) => p.productId === product.events_products_id)[0]
+          .quantity.toString()
+      : null;
+
+  // console.log(
+  //   quantities
+  //     .filter((q) => q.productId === product.events_products_id)[0]
+  //     .quantity.toString()
+  // );
+
+  // if (quantity) {
   return (
     <View style={styles.container}>
       <View style={styles.productContainer}>
         <View style={styles.product}>
-          <AppText style={styles.title}>{product.name}</AppText>
+          <AppText style={styles.title}>{name}</AppText>
           <AppText>{product.sellingPrice} €</AppText>
         </View>
         <View style={styles.addMenu}>
@@ -63,9 +90,7 @@ function ProductCommandItem({
                 })
               );
             }}
-            value={quantities
-              .filter((q) => q.productId === product.events_products_id)[0]
-              .quantity.toString()}
+            value={quantity}
             keyboardType="numeric"
             style={{ textAlign: "center" }}
           />
@@ -78,12 +103,15 @@ function ProductCommandItem({
       )}
     </View>
   );
+  // } else {
+  //   console.log("no quantity");
+  // }
 }
 
 const styles = StyleSheet.create({
   addMenu: {
     marginLeft: 10,
-    width: 60,
+    minWidth: 60,
     alignItems: "center",
     justifyContent: "center",
   },

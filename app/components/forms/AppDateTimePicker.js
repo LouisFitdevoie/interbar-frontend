@@ -106,13 +106,13 @@ function AppDateTimePicker({
           </AppText>
           <View style={{ flexDirection: "row" }}>
             <AppButton
-              title="Choisir une date"
+              title="Choisir la date"
               onPress={openCalendar}
               style={{ width: "50%" }}
             />
             {name != "birthday" && (
               <AppButton
-                title="Choisir une heure"
+                title="Choisir l'heure"
                 onPress={openTimePicker}
                 style={{ marginLeft: 10, width: "50%" }}
               />

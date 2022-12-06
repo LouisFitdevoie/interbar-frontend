@@ -28,12 +28,13 @@ const styles = StyleSheet.create({
     height: 50,
     justifyContent: "center",
     marginVertical: 10,
-    padding: 15,
+    paddingHorizontal: 15,
     width: "100%",
   },
   text: {
     color: colors.white,
     fontSize: 18,
+    paddingVertical: 15,
   },
 });
 
