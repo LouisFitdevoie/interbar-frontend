@@ -432,103 +432,113 @@ function CommandScreen(props) {
     const totalPriceToDisplay = totalPrice();
 
     return (
-      <Screen style={styles.container}>
-        <View
-          style={
-            productsDisplayed.length > 4
-              ? { width: "100%", maxHeight: "60%" }
-              : { width: "100%" }
-          }
-        >
-          <FlatList
-            data={productsDisplayed}
-            keyExtractor={(product) => product.events_products_id.toString()}
-            renderItem={({ item }) => (
-              <ProductCommandItem
-                product={item}
-                role={role}
-                quantities={quantities}
-                setQuantities={setQuantities}
-                disabled={
-                  isPaid || isServed || (commandId != null && !isEditCommand)
+      <Screen style={styles.container} version="scroll">
+        <View style={styles.subContainer}>
+          <View
+            style={
+              productsDisplayed.length > 4
+                ? { width: "100%", maxHeight: "70%", paddingHorizontal: 10 }
+                : { width: "100%", paddingHorizontal: 10 }
+            }
+          >
+            {quantities.length > 0 && (
+              <FlatList
+                data={productsDisplayed}
+                keyExtractor={(product) =>
+                  product.events_products_id.toString()
                 }
+                renderItem={({ item }) => (
+                  <ProductCommandItem
+                    product={item}
+                    role={role}
+                    quantities={quantities}
+                    setQuantities={setQuantities}
+                    disabled={
+                      isPaid ||
+                      isServed ||
+                      (commandId != null && !isEditCommand)
+                    }
+                  />
+                )}
+                ItemSeparatorComponent={() => <View style={styles.separator} />}
+                ListEmptyComponent={() => (
+                  <View
+                    style={{
+                      flex: 1,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <AppText>
+                      Aucun produit n'est disponible pour cette commande
+                    </AppText>
+                  </View>
+                )}
+                style={{ width: "100%" }}
               />
             )}
-            ItemSeparatorComponent={() => <View style={styles.separator} />}
-            ListEmptyComponent={() => (
-              <View
-                style={{
-                  flex: 1,
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <AppText>
-                  Aucun produit n'est disponible pour cette commande
+          </View>
+          <View style={{ paddingHorizontal: 10 }}>
+            <View style={styles.commandPaidServed}>
+              <View style={styles.detailContainer}>
+                <AppText style={styles.detailTitle}>
+                  Prix total de la commande :
+                </AppText>
+                <AppText style={styles.detailText}>
+                  {totalPriceToDisplay.toString().replace(".", ",")} €
                 </AppText>
               </View>
+            </View>
+            {!commandId && !eventFinished && (
+              <AppButton
+                title="Valider la commande"
+                onPress={() => handleClientCommand()}
+                disabled={quantityError}
+              />
             )}
-            style={{ width: "100%" }}
-          />
-        </View>
-        <View style={styles.commandPaidServed}>
-          <View style={styles.detailContainer}>
-            <AppText style={styles.detailTitle}>
-              Prix total de la commande :
-            </AppText>
-            <AppText style={styles.detailText}>
-              {totalPriceToDisplay.toString().replace(".", ",")} €
-            </AppText>
+            {commandId != null &&
+              !eventFinished &&
+              !isEditCommand &&
+              !isPaid &&
+              !isServed && (
+                <AppButton
+                  title="Modifier la commande"
+                  onPress={() => setIsEditCommand(true)}
+                />
+              )}
+            {commandId != null && !eventFinished && isEditCommand && (
+              <View style={{ width: "100%" }}>
+                <AppButton
+                  title="Valider les modifications"
+                  onPress={() => handleClientCommand()}
+                  disabled={quantityError}
+                />
+                <AppButton
+                  title="Annuler les modifications"
+                  onPress={() => {
+                    setIsEditCommand(false);
+                    setQuantities(initialQuantities);
+                  }}
+                  style={{ marginTop: 0 }}
+                />
+              </View>
+            )}
+            {commandId != null &&
+              !eventFinished &&
+              !isPaid &&
+              !isServed &&
+              !isEditCommand && (
+                <AppButton
+                  title="Annuler la commande"
+                  onPress={() => cancelCommand()}
+                  disabled={commandId === null}
+                  style={{ marginTop: 0 }}
+                />
+              )}
+            <ErrorMessage error={error} visible={error != null} />
           </View>
+          {isLoading && <LoadingIndicator />}
         </View>
-        {!commandId && !eventFinished && (
-          <AppButton
-            title="Valider la commande"
-            onPress={() => handleClientCommand()}
-            disabled={quantityError}
-          />
-        )}
-        {commandId != null &&
-          !eventFinished &&
-          !isEditCommand &&
-          !isPaid &&
-          !isServed && (
-            <AppButton
-              title="Modifier la commande"
-              onPress={() => setIsEditCommand(true)}
-            />
-          )}
-        {commandId != null && !eventFinished && isEditCommand && (
-          <View style={{ width: "100%" }}>
-            <AppButton
-              title="Valider les modifications"
-              onPress={() => handleClientCommand()}
-              disabled={quantityError}
-            />
-            <AppButton
-              title="Annuler les modifications"
-              onPress={() => {
-                setIsEditCommand(false);
-                setQuantities(initialQuantities);
-              }}
-              style={{ marginTop: 0 }}
-            />
-          </View>
-        )}
-        {commandId != null &&
-          !eventFinished &&
-          !isPaid &&
-          !isServed &&
-          !isEditCommand && (
-            <AppButton
-              title="Annuler la commande"
-              onPress={() => cancelCommand()}
-              disabled={commandId === null}
-              style={{ marginTop: 0 }}
-            />
-          )}
-        <ErrorMessage error={error} visible={error != null} />
-        {isLoading && <LoadingIndicator />}
       </Screen>
     );
   }
