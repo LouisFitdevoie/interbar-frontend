@@ -80,23 +80,18 @@ function CommandScreen(props) {
             .then((res) => {
               setProductsSold(
                 res.data.filter((product) => {
-                  if (product.stock > 0) {
-                    if (product.category === 1 && !alcoholAllowed) {
-                      return false;
-                    } else {
-                      return true;
-                    }
-                  } else {
+                  if (product.category === 1 && !alcoholAllowed) {
                     return false;
+                  } else {
+                    return true;
                   }
                 })
               );
               let quantitiesArray = [];
               res.data.forEach((product) => {
                 if (
-                  ((alcoholAllowed && product.category === 1) ||
-                    product.category !== 1) &&
-                  product.stock > 0
+                  (alcoholAllowed && product.category === 1) ||
+                  product.category !== 1
                 ) {
                   const eventProductCommandId = null;
                   const productId = product.events_products_id;
@@ -122,14 +117,10 @@ function CommandScreen(props) {
               });
               setProductsDisplayed(
                 res.data.filter((product) => {
-                  if (product.stock > 0) {
-                    if (product.category === 1 && !alcoholAllowed) {
-                      return false;
-                    } else {
-                      return true;
-                    }
-                  } else {
+                  if (product.category === 1 && !alcoholAllowed) {
                     return false;
+                  } else {
+                    return true;
                   }
                 })
               );
@@ -441,99 +432,113 @@ function CommandScreen(props) {
     const totalPriceToDisplay = totalPrice();
 
     return (
-      <Screen style={styles.container}>
-        {quantities.length > 0 && (
-          <View style={{ width: "100%" }}>
-            <FlatList
-              data={productsDisplayed}
-              keyExtractor={(product) => product.events_products_id.toString()}
-              renderItem={({ item }) => (
-                <ProductCommandItem
-                  product={item}
-                  role={role}
-                  quantities={quantities}
-                  setQuantities={setQuantities}
-                  disabled={
-                    isPaid || isServed || (commandId != null && !isEditCommand)
-                  }
+      <Screen style={styles.container} version="scroll">
+        <View style={styles.subContainer}>
+          <View
+            style={
+              productsDisplayed.length <= 4 || (commandId && isPaid && isServed)
+                ? { width: "100%", paddingHorizontal: 10 }
+                : { width: "100%", maxHeight: "70%", paddingHorizontal: 10 }
+            }
+          >
+            {quantities.length > 0 && (
+              <FlatList
+                data={productsDisplayed}
+                keyExtractor={(product) =>
+                  product.events_products_id.toString()
+                }
+                renderItem={({ item }) => (
+                  <ProductCommandItem
+                    product={item}
+                    role={role}
+                    quantities={quantities}
+                    setQuantities={setQuantities}
+                    disabled={
+                      isPaid ||
+                      isServed ||
+                      (commandId != null && !isEditCommand)
+                    }
+                  />
+                )}
+                ItemSeparatorComponent={() => <View style={styles.separator} />}
+                ListEmptyComponent={() => (
+                  <View
+                    style={{
+                      flex: 1,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <AppText>
+                      Aucun produit n'est disponible pour cette commande
+                    </AppText>
+                  </View>
+                )}
+                style={{ width: "100%" }}
+              />
+            )}
+          </View>
+          <View style={{ paddingHorizontal: 10 }}>
+            <View style={styles.commandPaidServed}>
+              <View style={styles.detailContainer}>
+                <AppText style={styles.detailTitle}>
+                  Prix total de la commande :
+                </AppText>
+                <AppText style={styles.detailText}>
+                  {totalPriceToDisplay.toString().replace(".", ",")} €
+                </AppText>
+              </View>
+            </View>
+            {!commandId && !eventFinished && (
+              <AppButton
+                title="Valider la commande"
+                onPress={() => handleClientCommand()}
+                disabled={quantityError}
+              />
+            )}
+            {commandId != null &&
+              !eventFinished &&
+              !isEditCommand &&
+              !isPaid &&
+              !isServed && (
+                <AppButton
+                  title="Modifier la commande"
+                  onPress={() => setIsEditCommand(true)}
                 />
               )}
-              ItemSeparatorComponent={() => <View style={styles.separator} />}
-              ListEmptyComponent={() => (
-                <View
-                  style={{
-                    flex: 1,
-                    alignItems: "center",
-                    justifyContent: "center",
+            {commandId != null && !eventFinished && isEditCommand && (
+              <View style={{ width: "100%" }}>
+                <AppButton
+                  title="Valider les modifications"
+                  onPress={() => handleClientCommand()}
+                  disabled={quantityError}
+                />
+                <AppButton
+                  title="Annuler les modifications"
+                  onPress={() => {
+                    setIsEditCommand(false);
+                    setQuantities(initialQuantities);
                   }}
-                >
-                  <AppText>
-                    Aucun produit n'est disponible pour cette commande
-                  </AppText>
-                </View>
+                  style={{ marginTop: 0 }}
+                />
+              </View>
+            )}
+            {commandId != null &&
+              !eventFinished &&
+              !isPaid &&
+              !isServed &&
+              !isEditCommand && (
+                <AppButton
+                  title="Annuler la commande"
+                  onPress={() => cancelCommand()}
+                  disabled={commandId === null}
+                  style={{ marginTop: 0 }}
+                />
               )}
-              style={{ width: "100%" }}
-            />
+            <ErrorMessage error={error} visible={error != null} />
           </View>
-        )}
-        <View style={styles.commandPaidServed}>
-          <View style={styles.detailContainer}>
-            <AppText style={styles.detailTitle}>
-              Prix total de la commande :
-            </AppText>
-            <AppText style={styles.detailText}>
-              {totalPriceToDisplay.toString().replace(".", ",")} €
-            </AppText>
-          </View>
+          {isLoading && <LoadingIndicator />}
         </View>
-        {!commandId && !eventFinished && (
-          <AppButton
-            title="Valider la commande"
-            onPress={() => handleClientCommand()}
-            disabled={quantityError}
-          />
-        )}
-        {commandId != null &&
-          !eventFinished &&
-          !isEditCommand &&
-          !isPaid &&
-          !isServed && (
-            <AppButton
-              title="Modifier la commande"
-              onPress={() => setIsEditCommand(true)}
-            />
-          )}
-        {commandId != null && !eventFinished && isEditCommand && (
-          <View style={{ width: "100%" }}>
-            <AppButton
-              title="Valider les modifications"
-              onPress={() => handleClientCommand()}
-              disabled={quantityError}
-            />
-            <AppButton
-              title="Annuler les modifications"
-              onPress={() => {
-                setIsEditCommand(false);
-                setQuantities(initialQuantities);
-              }}
-              style={{ marginTop: 0 }}
-            />
-          </View>
-        )}
-        {commandId != null &&
-          !eventFinished &&
-          !isPaid &&
-          !isServed &&
-          !isEditCommand && (
-            <AppButton
-              title="Annuler la commande"
-              onPress={() => cancelCommand()}
-              disabled={commandId === null}
-              style={{ marginTop: 0 }}
-            />
-          )}
-        <ErrorMessage error={error} visible={error != null} />
-        {isLoading && <LoadingIndicator />}
       </Screen>
     );
   }
@@ -640,55 +645,145 @@ function CommandScreen(props) {
   const handleCommandPaid = () => {
     setIsLoading(true);
     setError(null);
-    commandAPI
-      .setCommandPaid(commandId, userAccessToken)
-      .then((res) => {
-        setIsCommandPaid(true);
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        setIsLoading(false);
-        if (err.response === undefined) {
-          setError("Impossible de communiquer avec le serveur");
-        } else {
-          if (err.response.status === 403) {
-            updateAccessToken();
-            setError(
-              "Impossible de modifier le statut de la commande, veuillez réessayer"
-            );
+    if (!isCommandServed) {
+      commandAPI
+        .setServedById(commandId, user.id, userAccessToken)
+        .then((res) => {
+          commandAPI
+            .setCommandPaid(commandId, userAccessToken)
+            .then((res) => {
+              setIsCommandPaid(true);
+              setIsLoading(false);
+            })
+            .catch((err) => {
+              setIsLoading(false);
+              if (err.response === undefined) {
+                setError("Impossible de communiquer avec le serveur");
+              } else {
+                if (err.response.status === 403) {
+                  updateAccessToken();
+                  setError(
+                    "Impossible de modifier le statut de la commande, veuillez réessayer"
+                  );
+                } else {
+                  console.log(err.response.data);
+                  setError("Une erreur est survenue");
+                }
+              }
+            });
+        })
+        .catch((err) => {
+          setIsLoading(false);
+          if (err.response === undefined) {
+            setError("Impossible de communiquer avec le serveur");
           } else {
-            console.log(err.response.data);
-            setError("Une erreur est survenue");
+            if (err.response.status === 403) {
+              updateAccessToken();
+              setError(
+                "Impossible de marquer la commande comme payée, veuillez réessayer"
+              );
+            } else {
+              console.log(err.response.data);
+              setError("Une erreur est survenue");
+            }
           }
-        }
-      });
+        });
+    } else {
+      commandAPI
+        .setCommandPaid(commandId, userAccessToken)
+        .then((res) => {
+          setIsCommandPaid(true);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          setIsLoading(false);
+          if (err.response === undefined) {
+            setError("Impossible de communiquer avec le serveur");
+          } else {
+            if (err.response.status === 403) {
+              updateAccessToken();
+              setError(
+                "Impossible de modifier le statut de la commande, veuillez réessayer"
+              );
+            } else {
+              console.log(err.response.data);
+              setError("Une erreur est survenue");
+            }
+          }
+        });
+    }
   };
 
   const handleCommandServed = () => {
     setIsLoading(true);
     setError(null);
-    commandAPI
-      .setCommandServed(commandId, userAccessToken)
-      .then((res) => {
-        setIsCommandServed(true);
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        setIsLoading(false);
-        if (err.response === undefined) {
-          setError("Impossible de communiquer avec le serveur");
-        } else {
-          if (err.response.status === 403) {
-            updateAccessToken();
-            setError(
-              "Impossible de modifier le statut de la commande, veuillez réessayer"
-            );
+    if (!isCommandPaid) {
+      commandAPI
+        .setServedById(commandId, user.id, userAccessToken)
+        .then((res) => {
+          commandAPI
+            .setCommandServed(commandId, userAccessToken)
+            .then((res) => {
+              setIsCommandServed(true);
+              setIsLoading(false);
+            })
+            .catch((err) => {
+              setIsLoading(false);
+              if (err.response === undefined) {
+                setError("Impossible de communiquer avec le serveur");
+              } else {
+                if (err.response.status === 403) {
+                  updateAccessToken();
+                  setError(
+                    "Impossible de modifier le statut de la commande, veuillez réessayer"
+                  );
+                } else {
+                  console.log(err.response.data);
+                  setError("Une erreur est survenue");
+                }
+              }
+            });
+        })
+        .catch((err) => {
+          setIsLoading(false);
+          if (err.response === undefined) {
+            setError("Impossible de communiquer avec le serveur");
           } else {
-            console.log(err.response.data);
-            setError("Une erreur est survenue");
+            if (err.response.status === 403) {
+              updateAccessToken();
+              setError(
+                "Impossible de marquer la commande comme payée, veuillez réessayer"
+              );
+            } else {
+              console.log(err.response.data);
+              setError("Une erreur est survenue");
+            }
           }
-        }
-      });
+        });
+    } else {
+      commandAPI
+        .setCommandServed(commandId, userAccessToken)
+        .then((res) => {
+          setIsCommandServed(true);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          setIsLoading(false);
+          if (err.response === undefined) {
+            setError("Impossible de communiquer avec le serveur");
+          } else {
+            if (err.response.status === 403) {
+              updateAccessToken();
+              setError(
+                "Impossible de modifier le statut de la commande, veuillez réessayer"
+              );
+            } else {
+              console.log(err.response.data);
+              setError("Une erreur est survenue");
+            }
+          }
+        });
+    }
   };
 
   const handleSellerCommand = () => {
@@ -895,35 +990,116 @@ function CommandScreen(props) {
   };
 
   return (
-    <Screen style={styles.container}>
-      {clientSelected === null && !eventFinished && (
-        <View style={{ flex: 1, width: "100%" }}>
-          <AppText
-            style={{
-              fontSize: 20,
-              fontWeight: "bold",
-              color: colors.buttonPrimary,
-              textAlign: "center",
-            }}
+    <Screen style={styles.container} version="scroll">
+      <View style={styles.subContainer}>
+        {clientSelected === null && !eventFinished && (
+          <View style={{ flex: 1, width: "100%", padding: 10 }}>
+            <AppText
+              style={{
+                fontSize: 20,
+                fontWeight: "bold",
+                color: colors.buttonPrimary,
+                textAlign: "center",
+              }}
+            >
+              Qui est le client ?
+            </AppText>
+            <View>
+              <FlatList
+                data={usersAtEvent}
+                keyExtractor={(user) => user.clientName.toString()}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    onPress={() =>
+                      setClientSelected({
+                        clientId: item.id,
+                        clientName: item.clientName,
+                      })
+                    }
+                    style={{ paddingHorizontal: 5, paddingVertical: 10 }}
+                  >
+                    <AppText numberOfLines={1}>{item.clientName}</AppText>
+                  </TouchableOpacity>
+                )}
+                ItemSeparatorComponent={() => <View style={styles.separator} />}
+                ListEmptyComponent={() => (
+                  <View
+                    style={{
+                      flex: 1,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <AppText>
+                      Aucun utilisateur n'est disponible pour cette commande
+                    </AppText>
+                  </View>
+                )}
+                style={{ width: "100%" }}
+              />
+            </View>
+            <View style={{ padding: 5, paddingTop: 20 }}>
+              <AppText>Le client n'est pas encore dans la liste ? </AppText>
+              <AppForm
+                initialValues={{ clientName: "" }}
+                onSubmit={(values) => {
+                  setClientSelected({
+                    clientId: null,
+                    clientName: values.clientName,
+                  });
+                }}
+                validationSchema={Yup.object().shape({
+                  clientName: Yup.string()
+                    .required("Le nom est requis")
+                    .label("Nom du client"),
+                })}
+              >
+                <AppFormField
+                  name="clientName"
+                  placeholder="Nom du client"
+                  autoCapitalize="words"
+                  autoCorrect={false}
+                />
+                <SubmitButton title="Valider" />
+              </AppForm>
+            </View>
+          </View>
+        )}
+
+        {clientSelected !== null && (
+          <View style={{ width: "100%", paddingTop: 10 }}>
+            <AppText
+              style={{
+                fontSize: 20,
+                fontWeight: "bold",
+                color: colors.buttonPrimary,
+                textAlign: "center",
+              }}
+            >
+              Pour {clientSelected.clientName}
+            </AppText>
+          </View>
+        )}
+        {quantities.length > 0 && clientSelected != null && (
+          <View
+            style={
+              productsDisplayed.length > 4
+                ? { width: "100%", flex: 1 }
+                : { width: "100%" }
+            }
           >
-            Qui est le client ?
-          </AppText>
-          <View>
             <FlatList
-              data={usersAtEvent}
-              keyExtractor={(user) => user.clientName.toString()}
+              data={productsDisplayed}
+              keyExtractor={(product) => product.events_products_id.toString()}
+              persistentScrollbar={true}
               renderItem={({ item }) => (
-                <TouchableOpacity
-                  onPress={() =>
-                    setClientSelected({
-                      clientId: item.id,
-                      clientName: item.clientName,
-                    })
-                  }
-                  style={{ paddingHorizontal: 5, paddingVertical: 10 }}
-                >
-                  <AppText numberOfLines={1}>{item.clientName}</AppText>
-                </TouchableOpacity>
+                <ProductCommandItem
+                  product={item}
+                  role={role}
+                  quantities={quantities}
+                  setQuantities={setQuantities}
+                  disabled={commandId && !isEditCommand}
+                />
               )}
               ItemSeparatorComponent={() => <View style={styles.separator} />}
               ListEmptyComponent={() => (
@@ -935,226 +1111,158 @@ function CommandScreen(props) {
                   }}
                 >
                   <AppText>
-                    Aucun utilisateur n'est disponible pour cette commande
+                    Aucun produit n'est disponible pour cette commande
                   </AppText>
                 </View>
               )}
-              style={{ width: "100%" }}
+              style={{ width: "100%", paddingHorizontal: 10 }}
             />
-          </View>
-          <View style={{ padding: 5, paddingTop: 20 }}>
-            <AppText>Le client n'est pas encore dans la liste ? </AppText>
-            <AppForm
-              initialValues={{ clientName: "" }}
-              onSubmit={(values) => {
-                setClientSelected({
-                  clientId: null,
-                  clientName: values.clientName,
-                });
-              }}
-              validationSchema={Yup.object().shape({
-                clientName: Yup.string()
-                  .required("Le nom est requis")
-                  .label("Nom du client"),
-              })}
-            >
-              <AppFormField
-                name="clientName"
-                placeholder="Nom du client"
-                autoCapitalize="words"
-                autoCorrect={false}
-              />
-              <SubmitButton title="Valider" />
-            </AppForm>
-          </View>
-        </View>
-      )}
-
-      {clientSelected !== null && (
-        <View style={{ width: "100%" }}>
-          <AppText
-            style={{
-              fontSize: 20,
-              fontWeight: "bold",
-              color: colors.buttonPrimary,
-              textAlign: "center",
-            }}
-          >
-            Pour {clientSelected.clientName}
-          </AppText>
-        </View>
-      )}
-      {quantities.length > 0 && clientSelected != null && (
-        <View style={{ width: "100%" }}>
-          <FlatList
-            data={productsDisplayed}
-            keyExtractor={(product) => product.events_products_id.toString()}
-            renderItem={({ item }) => (
-              <ProductCommandItem
-                product={item}
-                role={role}
-                quantities={quantities}
-                setQuantities={setQuantities}
-                disabled={commandId && !isEditCommand}
-              />
-            )}
-            ItemSeparatorComponent={() => <View style={styles.separator} />}
-            ListEmptyComponent={() => (
-              <View
-                style={{
-                  flex: 1,
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <AppText>
-                  Aucun produit n'est disponible pour cette commande
+            <View>
+              <View style={styles.detailContainer}>
+                <AppText style={styles.detailTitle}>
+                  Prix total de la commande :
+                </AppText>
+                <AppText style={styles.detailText}>
+                  {totalPriceToDisplay.toString().replace(".", ",")} €
                 </AppText>
               </View>
-            )}
-            style={{ width: "100%" }}
-          />
-          <View>
-            <View style={styles.detailContainer}>
-              <AppText style={styles.detailTitle}>
-                Prix total de la commande :
-              </AppText>
-              <AppText style={styles.detailText}>
-                {totalPriceToDisplay.toString().replace(".", ",")} €
-              </AppText>
+              {!isCommandPaid && !eventFinished && (
+                <MoneyBackInput totalPrice={totalPriceToDisplay} />
+              )}
             </View>
-            {!isCommandPaid && !eventFinished && (
-              <MoneyBackInput totalPrice={totalPriceToDisplay} />
-            )}
-          </View>
-          {!commandId && !eventFinished && (
-            <AppButton
-              title="Valider la commande"
-              onPress={() => handleSellerCommand()}
-              disabled={quantityError}
-            />
-          )}
-          {commandId && !eventFinished && !isEditCommand && (
-            <View>
-              {!isCommandPaid && !isCommandServed && (
+            {!commandId && !eventFinished && (
+              <View style={{ paddingHorizontal: 10 }}>
                 <AppButton
-                  title="Modifier la commande"
-                  onPress={() => setIsEditCommand(true)}
+                  title="Valider la commande"
+                  onPress={() => handleSellerCommand()}
+                  disabled={quantityError}
+                />
+              </View>
+            )}
+            {commandId && !eventFinished && !isEditCommand && (
+              <View style={{ paddingHorizontal: 10 }}>
+                {!isCommandPaid && !isCommandServed && (
+                  <AppButton
+                    title="Modifier la commande"
+                    onPress={() => setIsEditCommand(true)}
+                    style={{ marginBottom: 0 }}
+                  />
+                )}
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  {!isCommandServed && (
+                    <AppButton
+                      title="Servie"
+                      onPress={() => handleCommandServed()}
+                      style={
+                        isCommandPaid ? { width: "100%" } : { width: "49%" }
+                      }
+                    />
+                  )}
+                  {!isCommandPaid && (
+                    <AppButton
+                      title="Payée"
+                      onPress={() => handleCommandPaid()}
+                      style={
+                        isCommandServed ? { width: "100%" } : { width: "49%" }
+                      }
+                    />
+                  )}
+                </View>
+                {!isCommandPaid && !isCommandServed && (
+                  <AppButton
+                    title="Annuler la commande"
+                    onPress={() => handleCommandCancel()}
+                    style={{ marginTop: 0 }}
+                  />
+                )}
+              </View>
+            )}
+            {commandId && !eventFinished && isEditCommand && (
+              <View>
+                <AppButton
+                  title="Valider les modifications"
+                  onPress={() => handleSellerCommand()}
+                  disabled={quantityError}
                   style={{ marginBottom: 0 }}
                 />
-              )}
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                }}
-              >
-                {!isCommandServed && (
-                  <AppButton
-                    title="Servie"
-                    onPress={() => handleCommandServed()}
-                    style={isCommandPaid ? { width: "100%" } : { width: "49%" }}
-                  />
-                )}
-                {!isCommandPaid && (
-                  <AppButton
-                    title="Payée"
-                    onPress={() => handleCommandPaid()}
-                    style={
-                      isCommandServed ? { width: "100%" } : { width: "49%" }
-                    }
-                  />
-                )}
-              </View>
-              {!isCommandPaid && !isCommandServed && (
                 <AppButton
-                  title="Annuler la commande"
-                  onPress={() => handleCommandCancel()}
-                  style={{ marginTop: 0 }}
+                  title="Annuler les modifications"
+                  onPress={() => {
+                    setIsEditCommand(false);
+                    setQuantities(initialQuantities);
+                  }}
                 />
-              )}
-            </View>
-          )}
-          {commandId && !eventFinished && isEditCommand && (
-            <View>
-              <AppButton
-                title="Valider les modifications"
-                onPress={() => handleSellerCommand()}
-                disabled={quantityError}
-                style={{ marginBottom: 0 }}
-              />
-              <AppButton
-                title="Annuler les modifications"
-                onPress={() => {
-                  setIsEditCommand(false);
-                  setQuantities(initialQuantities);
-                }}
-              />
-            </View>
-          )}
-        </View>
-      )}
-      {commandId &&
-        eventFinished != null &&
-        isCommandPaid &&
-        isCommandServed && (
-          <View style={styles.commandPaidServed}>
-            {role === 2 && commandInfos && (
-              <View style={styles.detailContainer}>
-                <AppText style={styles.detailTitle}>Servie par </AppText>
-                <AppText
-                  style={[styles.detailText, { maxWidth: "70%" }]}
-                  numberOfLines={1}
-                >
-                  {commandInfos.seller.firstname +
-                    " " +
-                    commandInfos.seller.lastname}
-                </AppText>
-              </View>
-            )}
-            {commandInfos && (
-              <View style={styles.createdAtContainer}>
-                <AppText style={styles.detailTitle}>
-                  Cette commande a été passée le{" "}
-                </AppText>
-                <AppText
-                  style={[
-                    styles.detailText,
-                    { textAlign: "center", width: "100%" },
-                  ]}
-                  numberOfLines={2}
-                >
-                  {new Date(commandInfos.createdAt).toLocaleDateString(
-                    "fr-FR",
-                    {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                      hour: "numeric",
-                      minute: "numeric",
-                    }
-                  )}
-                </AppText>
               </View>
             )}
           </View>
         )}
-      {commandId && eventFinished && (!isCommandPaid || !isCommandServed) && (
-        <View style={{ paddingTop: 10 }}>
-          {!isCommandPaid && !isCommandServed && (
-            <AppText>La commande n'a ni été payée, ni servie</AppText>
+        {commandId &&
+          eventFinished != null &&
+          isCommandPaid &&
+          isCommandServed && (
+            <View style={styles.commandPaidServed}>
+              {role === 2 && commandInfos && (
+                <View style={styles.detailContainer}>
+                  <AppText style={styles.detailTitle}>Servie par </AppText>
+                  <AppText
+                    style={[styles.detailText, { maxWidth: "70%" }]}
+                    numberOfLines={1}
+                  >
+                    {commandInfos.seller.firstname +
+                      " " +
+                      commandInfos.seller.lastname}
+                  </AppText>
+                </View>
+              )}
+              {commandInfos && (
+                <View style={styles.createdAtContainer}>
+                  <AppText style={styles.detailTitle}>
+                    Cette commande a été passée le{" "}
+                  </AppText>
+                  <AppText
+                    style={[
+                      styles.detailText,
+                      { textAlign: "center", width: "100%" },
+                    ]}
+                    numberOfLines={2}
+                  >
+                    {new Date(commandInfos.createdAt).toLocaleDateString(
+                      "fr-FR",
+                      {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                        hour: "numeric",
+                        minute: "numeric",
+                      }
+                    )}
+                  </AppText>
+                </View>
+              )}
+            </View>
           )}
-          {isCommandServed && !isCommandPaid && (
-            <AppText>La commande n'a pas été payée</AppText>
-          )}
-          {!isCommandServed && isCommandPaid && (
-            <AppText>La commande n'a pas été servie</AppText>
-          )}
-        </View>
-      )}
-      <ErrorMessage error={error} visible={error != null} />
-      {isLoading && <LoadingIndicator />}
+        {commandId && eventFinished && (!isCommandPaid || !isCommandServed) && (
+          <View style={{ paddingTop: 10 }}>
+            {!isCommandPaid && !isCommandServed && (
+              <AppText>La commande n'a ni été payée, ni servie</AppText>
+            )}
+            {isCommandServed && !isCommandPaid && (
+              <AppText>La commande n'a pas été payée</AppText>
+            )}
+            {!isCommandServed && isCommandPaid && (
+              <AppText>La commande n'a pas été servie</AppText>
+            )}
+          </View>
+        )}
+        <ErrorMessage error={error} visible={error != null} />
+        {isLoading && <LoadingIndicator />}
+      </View>
     </Screen>
   );
 }
@@ -1168,6 +1276,11 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: colors.white,
   },
+  subContainer: {
+    width: "100%",
+    height: "100%",
+    backgroundColor: colors.white,
+  },
   separator: {
     width: "100%",
     height: 1,
@@ -1176,6 +1289,7 @@ const styles = StyleSheet.create({
   commandPaidServed: {
     width: "100%",
     alignItems: "flex-start",
+    paddingBottom: 10,
   },
   createdAtContainer: {
     width: "100%",

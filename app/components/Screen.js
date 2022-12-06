@@ -7,11 +7,14 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
   StatusBar,
+  Platform,
 } from "react-native";
+
+import colors from "../config/colors";
 
 function Screen({ children, style, version = "default", barStyle = "light" }) {
   useLayoutEffect(() => {
-    if (barStyle === "light") {
+    if (barStyle === "light" || Platform.OS === "android") {
       StatusBar.setBarStyle("light-content");
     } else {
       StatusBar.setBarStyle("dark-content");
@@ -21,7 +24,7 @@ function Screen({ children, style, version = "default", barStyle = "light" }) {
   if (version === "default") {
     return (
       <SafeAreaView style={[styles.screen, style]}>
-        <StatusBar animated={true} />
+        <StatusBar backgroundColor={colors.buttonPrimary} animated={true} />
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
           <View style={[styles.view, style]}>{children}</View>
         </TouchableWithoutFeedback>
@@ -40,7 +43,7 @@ function Screen({ children, style, version = "default", barStyle = "light" }) {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    paddingTop: Constants.statusBarHeight,
+    paddingTop: Platform.OS === "ios" ? Constants.statusBarHeight : 0,
   },
   view: {
     flex: 1,
