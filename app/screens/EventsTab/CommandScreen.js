@@ -436,9 +436,9 @@ function CommandScreen(props) {
         <View style={styles.subContainer}>
           <View
             style={
-              productsDisplayed.length > 4
-                ? { width: "100%", maxHeight: "70%", paddingHorizontal: 10 }
-                : { width: "100%", paddingHorizontal: 10 }
+              productsDisplayed.length <= 4 || (commandId && isPaid && isServed)
+                ? { width: "100%", paddingHorizontal: 10 }
+                : { width: "100%", maxHeight: "70%", paddingHorizontal: 10 }
             }
           >
             {quantities.length > 0 && (
