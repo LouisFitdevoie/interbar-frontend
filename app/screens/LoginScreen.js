@@ -49,7 +49,7 @@ function LoginScreen({ navigation }) {
         <KeyboardAvoidingView
           style={{ flex: 1, width: "100%", marginBottom: 80 }}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
-          keyboardVerticalOffset={Platform.OS === "ios" ? -80 : -150}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : -150}
         >
           <View style={styles.formContainer}>
             <AppForm
