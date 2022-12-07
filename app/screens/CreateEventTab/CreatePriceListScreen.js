@@ -167,7 +167,7 @@ function CreatePriceListScreen(props) {
           </div>
           <div id="qrCodeContainer">
             <img id="qrCode" src="data:image/jpeg;base64,${qrCodeData}"/>
-            <p>Si vous avez l'application interbar, scannez ce QR code pour rejoindre l'évènement !</p>
+            <p>Si vous avez l'application interbar, scannez ce QR Code, ou rentrez le code suivant : <i>${eventId}</i>, pour rejoindre l'évènement !</p>
           </div>
         </body>
       </html>
