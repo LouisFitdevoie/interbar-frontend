@@ -47,7 +47,7 @@ function LoginScreen({ navigation }) {
           <Image source={logo} style={styles.logo} resizeMode="contain" />
         </View>
         <KeyboardAvoidingView
-          style={{ flex: 1, width: "100%", marginBottom: 100 }}
+          style={{ flex: 1, width: "100%", marginBottom: 80 }}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           keyboardVerticalOffset={Platform.OS === "ios" ? 0 : -150}
         >
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
   },
   registerContainer: {
     alignItems: "center",
-    flexDirection: "row",
+    flexDirection: "column",
     marginTop: 10,
   },
 });

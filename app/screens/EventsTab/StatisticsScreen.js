@@ -177,8 +177,9 @@ function StatisticsScreen(props) {
 
     commands.forEach((command) => {
       meanCommandPrice += command.totalPrice;
-      meanQuantityOfProductsPerCommand +=
-        command.events_products_commands.length;
+      command.events_products_commands.forEach((product) => {
+        meanQuantityOfProductsPerCommand += product.number;
+      });
       command.events_products_commands.forEach((product) => {
         let productIndex = meanQuantityOfProductsPerCommandByProduct.findIndex(
           (prod) => prod.id === product.event_product_id
