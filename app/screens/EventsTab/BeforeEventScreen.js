@@ -170,7 +170,9 @@ function BeforeEventScreen({
       {description != null && (
         <View style={styles.detailContainer}>
           <AppText style={styles.title}>Description :</AppText>
-          <AppText>{description}</AppText>
+          <AppText numberOfLines={1} style={styles.description}>
+            {description}
+          </AppText>
         </View>
       )}
       <View style={styles.detailContainer}>
@@ -297,6 +299,9 @@ const styles = StyleSheet.create({
     color: colors.buttonPrimary,
     paddingRight: 5,
     paddingVertical: 5,
+  },
+  description: {
+    flex: 1,
   },
   detailContainer: {
     flexDirection: "row",
