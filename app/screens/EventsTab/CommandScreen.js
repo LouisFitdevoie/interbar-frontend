@@ -1083,9 +1083,9 @@ function CommandScreen(props) {
         {quantities.length > 0 && clientSelected != null && (
           <View
             style={
-              productsDisplayed.length > 4
+              productsDisplayed.length <= 4 || (commandId && isPaid && isServed)
                 ? { width: "100%", flex: 1 }
-                : { width: "100%" }
+                : { width: "100%", maxHeight: "70%" }
             }
           >
             <FlatList
