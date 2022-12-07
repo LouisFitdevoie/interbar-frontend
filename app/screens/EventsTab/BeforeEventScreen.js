@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import { View, StyleSheet, Alert } from "react-native";
+import { View, StyleSheet, Alert, ScrollView } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 
 import Screen from "../../components/Screen";
@@ -132,91 +132,121 @@ function BeforeEventScreen({
   };
 
   return (
-    <Screen style={styles.container}>
-      {role != 2 && (
+    <Screen style={styles.container} version="scroll">
+      <ScrollView style={styles.scroll}>
+        {role != 2 && (
+          <View style={styles.detailContainer}>
+            <AppText style={styles.title}>Organisé par :</AppText>
+            <AppText>{organizer}</AppText>
+          </View>
+        )}
         <View style={styles.detailContainer}>
-          <AppText style={styles.title}>Organisé par :</AppText>
-          <AppText>{organizer}</AppText>
-        </View>
-      )}
-      <View style={styles.detailContainer}>
-        <AppText style={styles.title}>Date de début :</AppText>
-        <AppText>
-          {startDate.toLocaleDateString("fr-BE", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-          })}
-        </AppText>
-      </View>
-      <View style={styles.detailContainer}>
-        <AppText style={styles.title}>Date de fin :</AppText>
-        <AppText>
-          {endDate.toLocaleDateString("fr-BE", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-          })}
-        </AppText>
-      </View>
-      <View style={styles.detailContainer}>
-        <AppText style={styles.title}>Lieu :</AppText>
-        <AppText>{location}</AppText>
-      </View>
-      {description != null && (
-        <View style={styles.detailContainer}>
-          <AppText style={styles.title}>Description :</AppText>
-          <AppText numberOfLines={1} style={styles.description}>
-            {description}
+          <AppText style={styles.title}>Date de début :</AppText>
+          <AppText>
+            {startDate.toLocaleDateString("fr-BE", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
           </AppText>
         </View>
-      )}
-      <View style={styles.detailContainer}>
-        <AppText style={styles.title}>Rôle :</AppText>
-        <AppText>
-          {role === 0 ? "Client" : role === 1 ? "Vendeur" : "Organisateur"}
-        </AppText>
-      </View>
-      <View style={styles.qrCodeJoinEventContainer}>
-        <View style={styles.qrCode}>
-          <QRCode
-            value={eventId.toString()}
-            size={150}
-            getRef={(ref) => setQrcodeRef(ref)}
-          />
+        <View style={styles.detailContainer}>
+          <AppText style={styles.title}>Date de fin :</AppText>
+          <AppText>
+            {endDate.toLocaleDateString("fr-BE", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+          </AppText>
         </View>
-      </View>
-      {role != 2 && (
-        <View style={styles.buttonsContainer}>
-          <AppButton
-            title="Voir le tarif"
-            onPress={() =>
-              navigation.navigate("Tarif", {
-                eventId,
-                qrCodeData: qrcodeURL,
-              })
-            }
-            style={{ marginVertical: 5 }}
-          />
-          {role === 1 && (
+        <View style={styles.detailContainer}>
+          <AppText style={styles.title}>Lieu :</AppText>
+          <AppText>{location}</AppText>
+        </View>
+        {description != null && (
+          <View style={styles.detailContainer}>
+            <AppText style={styles.title}>Description :</AppText>
+            <AppText numberOfLines={1} style={styles.description}>
+              {description}
+            </AppText>
+          </View>
+        )}
+        <View style={styles.detailContainer}>
+          <AppText style={styles.title}>Rôle :</AppText>
+          <AppText>
+            {role === 0 ? "Client" : role === 1 ? "Vendeur" : "Organisateur"}
+          </AppText>
+        </View>
+        <View style={styles.qrCodeJoinEventContainer}>
+          <View style={styles.qrCode}>
+            <QRCode
+              value={eventId.toString()}
+              size={150}
+              getRef={(ref) => setQrcodeRef(ref)}
+            />
+          </View>
+        </View>
+        {role != 2 && (
+          <View style={styles.buttonsContainer}>
             <AppButton
-              title="Ne plus être vendeur"
+              title="Voir le tarif"
+              onPress={() =>
+                navigation.navigate("Tarif", {
+                  eventId,
+                  qrCodeData: qrcodeURL,
+                })
+              }
+              style={{ marginVertical: 5 }}
+            />
+            {role === 1 && (
+              <AppButton
+                title="Ne plus être vendeur"
+                onPress={() =>
+                  Alert.alert(
+                    "Ne plus être vendeur",
+                    "Êtes-vous sûr de ne plus vouloir être vendeur ?",
+                    [
+                      {
+                        text: "Annuler",
+                        style: "cancel",
+                      },
+                      {
+                        text: "Confirmer",
+                        onPress: () => fromSellerToUser(),
+                        style: "destructive",
+                      },
+                    ]
+                  )
+                }
+                style={{ marginVertical: 5 }}
+              />
+            )}
+            {role === 0 && (
+              <AppButton
+                title="Devenir vendeur"
+                onPress={() => navigation.navigate("UserToSeller", { eventId })}
+                style={{ marginVertical: 5 }}
+              />
+            )}
+            <AppButton
+              title="Quitter l'évènement"
               onPress={() =>
                 Alert.alert(
-                  "Ne plus être vendeur",
-                  "Êtes-vous sûr de ne plus vouloir être vendeur ?",
+                  "Quitter l'évènement",
+                  "Êtes-vous sûr de vouloir quitter l'évènement ?\nVous pourrez toujours le rejoindre après si vous le souhaitez",
                   [
                     {
                       text: "Annuler",
                       style: "cancel",
                     },
                     {
-                      text: "Confirmer",
-                      onPress: () => fromSellerToUser(),
+                      text: "Quitter",
+                      onPress: () => handleLeaveEvent(),
                       style: "destructive",
                     },
                   ]
@@ -224,65 +254,37 @@ function BeforeEventScreen({
               }
               style={{ marginVertical: 5 }}
             />
-          )}
-          {role === 0 && (
+            <ErrorMessage error={error} visible={error != null} />
+          </View>
+        )}
+        {role === 2 && (
+          <View style={styles.buttonsContainer}>
             <AppButton
-              title="Devenir vendeur"
-              onPress={() => navigation.navigate("UserToSeller", { eventId })}
+              title="Modifier l'évènement"
+              onPress={() => navigation.navigate("EditEvent", { eventId })}
               style={{ marginVertical: 5 }}
             />
-          )}
-          <AppButton
-            title="Quitter l'évènement"
-            onPress={() =>
-              Alert.alert(
-                "Quitter l'évènement",
-                "Êtes-vous sûr de vouloir quitter l'évènement ?\nVous pourrez toujours le rejoindre après si vous le souhaitez",
-                [
-                  {
-                    text: "Annuler",
-                    style: "cancel",
-                  },
-                  {
-                    text: "Quitter",
-                    onPress: () => handleLeaveEvent(),
-                    style: "destructive",
-                  },
-                ]
-              )
-            }
-            style={{ marginVertical: 5 }}
-          />
-          <ErrorMessage error={error} visible={error != null} />
-        </View>
-      )}
-      {role === 2 && (
-        <View style={styles.buttonsContainer}>
-          <AppButton
-            title="Modifier l'évènement"
-            onPress={() => navigation.navigate("EditEvent", { eventId })}
-            style={{ marginVertical: 5 }}
-          />
-          <AppButton
-            title="Modifier le tarif"
-            onPress={() =>
-              navigation.navigate("EditPriceList", {
-                eventId,
-                isEditing: true,
-                qrCodeData: qrcodeURL,
-              })
-            }
-            style={{ marginVertical: 5 }}
-          />
-          <AppButton
-            title="Annuler l'évènement"
-            onPress={() => handleCancelEvent()}
-            style={{ marginVertical: 5 }}
-          />
-          <ErrorMessage error={error} visible={error != null} />
-        </View>
-      )}
-      {isLoading && <LoadingIndicator />}
+            <AppButton
+              title="Modifier le tarif"
+              onPress={() =>
+                navigation.navigate("EditPriceList", {
+                  eventId,
+                  isEditing: true,
+                  qrCodeData: qrcodeURL,
+                })
+              }
+              style={{ marginVertical: 5 }}
+            />
+            <AppButton
+              title="Annuler l'évènement"
+              onPress={() => handleCancelEvent()}
+              style={{ marginVertical: 5 }}
+            />
+            <ErrorMessage error={error} visible={error != null} />
+          </View>
+        )}
+        {isLoading && <LoadingIndicator />}
+      </ScrollView>
     </Screen>
   );
 }
@@ -317,6 +319,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 10,
     borderRadius: 20,
+  },
+  scroll: {
+    flex: 1,
+    paddingHorizontal: 5,
   },
 });
 
