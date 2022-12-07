@@ -85,7 +85,7 @@ function EditEventScreen(props) {
       .then((res) => {
         setIsLoading(false);
         if (res.data.success != null) {
-          Alert.alert("Suucès", "L'événement a bien été modifié");
+          Alert.alert("Succès", "L'événement a bien été modifié");
           navigation.navigate("Home");
         }
       })
