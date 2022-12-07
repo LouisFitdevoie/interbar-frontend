@@ -49,12 +49,12 @@ function CommandScreen(props) {
   const [isEditCommand, setIsEditCommand] = useState(false);
 
   const today = new Date();
-  const birthDate = new Date(user.birthday);
-  const age = today.getFullYear() - birthDate.getFullYear();
-  const alcoholAllowed = role === 0 ? (age >= 18 ? true : false) : true;
 
   useEffect(() => {
-    if (isPaid && isServed) {
+    const birthDate = new Date(user.birthday.split(" ")[0]);
+    const age = today.getFullYear() - birthDate.getFullYear();
+    const alcoholAllowed = role === 0 ? (age >= 18 ? true : false) : true;
+    if ((isPaid && isServed) || eventFinished) {
       navigation.setOptions({ title: "Détails de la commande" });
     } else if (commandId) {
       navigation.setOptions({ title: "Modifier la commande" });
@@ -1083,9 +1083,10 @@ function CommandScreen(props) {
         {quantities.length > 0 && clientSelected != null && (
           <View
             style={
-              productsDisplayed.length > 4
+              (productsDisplayed.length <= 4 && !eventFinished) ||
+              (commandId && isPaid && isServed)
                 ? { width: "100%", flex: 1 }
-                : { width: "100%" }
+                : { width: "100%", maxHeight: "70%" }
             }
           >
             <FlatList
@@ -1248,7 +1249,7 @@ function CommandScreen(props) {
             </View>
           )}
         {commandId && eventFinished && (!isCommandPaid || !isCommandServed) && (
-          <View style={{ paddingTop: 10 }}>
+          <View style={{ paddingTop: 10, paddingHorizontal: 10 }}>
             {!isCommandPaid && !isCommandServed && (
               <AppText>La commande n'a ni été payée, ni servie</AppText>
             )}

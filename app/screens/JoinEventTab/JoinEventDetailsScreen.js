@@ -1,5 +1,11 @@
 import React, { useState, useContext, useLayoutEffect } from "react";
-import { View, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+  Dimensions,
+} from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import AppText from "../../components/AppText";
@@ -24,6 +30,9 @@ function JoinEventDetailsScreen(props) {
   const { isLoading, setIsLoading, userAccessToken, user, updateAccessToken } =
     useContext(AuthContext);
 
+  const screenWidth = Dimensions.get("window").width;
+  console.log(screenWidth);
+
   useLayoutEffect(() => {
     tabBarDisplayManager.hideTabBar(navigation);
   }, []);
@@ -31,14 +40,14 @@ function JoinEventDetailsScreen(props) {
   const eventDetails = {
     name: event.name,
     startDate: new Date(event.startdate).toLocaleString("fr-BE", {
-      year: "numeric",
+      year: screenWidth > 375 ? "numeric" : "2-digit",
       month: "2-digit",
       day: "2-digit",
       hour: "2-digit",
       minute: "2-digit",
     }),
     endDate: new Date(event.enddate).toLocaleString("fr-BE", {
-      year: "numeric",
+      year: screenWidth > 375 ? "numeric" : "2-digit",
       month: "2-digit",
       day: "2-digit",
       hour: "2-digit",
@@ -234,7 +243,6 @@ function JoinEventDetailsScreen(props) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.white,
     flex: 1,
     justifyContent: "flex-start",
     padding: 10,
