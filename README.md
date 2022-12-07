@@ -44,3 +44,7 @@ expo start
 ## Usage
 
 To use this application, you need to have the [_Expo Go_](https://expo.dev/client) application installed on your phone. Then, you can scan the QR code displayed in the terminal or in the browser to run the application on your phone. You also need to be connected to the same network as the computer, the server or the Raspberry Pi running the backend of the project.
+
+## Video demonstration
+
+A video demonstration is available by following [this link](https://youtu.be/iDYv6lYlgEA). The text in the video is in French.
