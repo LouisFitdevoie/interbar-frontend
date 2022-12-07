@@ -1083,10 +1083,10 @@ function CommandScreen(props) {
         {quantities.length > 0 && clientSelected != null && (
           <View
             style={
-              (productsDisplayed.length <= 4 && !eventFinished) ||
-              (commandId && isPaid && isServed)
+              (productsDisplayed.length < 4 && !eventFinished) ||
+              (commandId && isPaid && isServed && productsDisplayed.length < 4)
                 ? { width: "100%", flex: 1 }
-                : { width: "100%", maxHeight: "70%" }
+                : { width: "100%", maxHeight: "80%" }
             }
           >
             <FlatList

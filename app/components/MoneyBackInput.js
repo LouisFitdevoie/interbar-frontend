@@ -9,7 +9,9 @@ function MoneyBackInput({ totalPrice }) {
   const [givenMoney, setGivenMoney] = useState(0);
 
   const moneyToGiveBack =
-    givenMoney - totalPrice >= 0 ? givenMoney - totalPrice : 0;
+    givenMoney - totalPrice >= 0
+      ? Math.round((givenMoney - totalPrice) * 100) / 100
+      : 0;
 
   return (
     <View style={styles.container}>
