@@ -15,7 +15,7 @@ const Tab = createBottomTabNavigator();
 function AppTabNavigator(props) {
   const insets = useSafeAreaInsets();
 
-  const { isLoading, updateAccessToken, userAccessToken } =
+  const { isLoading, user, updateAccessToken, userAccessToken } =
     useContext(AuthContext);
 
   const timeToUpdateAccessToken = 10 * 60 * 1000; // 10 minutes
@@ -40,7 +40,7 @@ function AppTabNavigator(props) {
       screenListeners={{
         //If isLoading -> don't navigate
         tabPress: (e) => {
-          if (isLoading) {
+          if (isLoading || user === null) {
             e.preventDefault();
           }
         },
