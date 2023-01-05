@@ -4,7 +4,7 @@ import LottieView from "lottie-react-native";
 
 const indicator = require("../assets/lottie-animations/loading-indicator.json");
 
-function LoadingIndicator(props) {
+function LoadingIndicator({ version = "default" }) {
   const animationRef = useRef();
 
   useEffect(() => {
@@ -14,21 +14,39 @@ function LoadingIndicator(props) {
       }, 0);
     }
   }, [animationRef.current]);
-  return (
-    <View style={styles.container}>
-      <View style={styles.background}>
-        <LottieView
-          ref={animationRef}
-          autoPlay
-          style={styles.indicator}
-          source={indicator}
-        />
+  if (version === "default") {
+    return (
+      <View style={styles.container}>
+        <View style={styles.background}>
+          <LottieView
+            ref={animationRef}
+            autoPlay
+            style={styles.indicator}
+            source={indicator}
+          />
+        </View>
       </View>
-    </View>
-  );
+    );
+  } else if (version === "notAbsolute") {
+    return (
+      <View style={styles.alternateContainer}>
+        <View style={styles.background}>
+          <LottieView
+            ref={animationRef}
+            autoPlay
+            style={styles.indicator}
+            source={indicator}
+          />
+        </View>
+      </View>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
+  alternateContainer: {
+    alignSelf: "center",
+  },
   container: {
     position: "absolute",
     top: 0,

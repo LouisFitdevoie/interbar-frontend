@@ -160,133 +160,148 @@ function HomeScreen(props) {
   };
 
   useEffect(() => {
-    isFocused && getEventsJoined();
-    setSortDateOptionSelected(3);
-    setSortRoleOptionsSelected(0);
-  }, [isFocused]);
+    if (user) {
+      isFocused && getEventsJoined();
+      setSortDateOptionSelected(3);
+      setSortRoleOptionsSelected(0);
+    }
+  }, [isFocused, user]);
 
-  return (
-    <Screen style={styles.container} barStyle="dark">
-      <AppText style={styles.welcome}>
-        Bienvenue{" "}
-        {user.firstName.charAt(0).toUpperCase() + user.firstName.slice(1)} !
-      </AppText>
-      <View style={styles.sortMenuContainer}>
-        <View style={styles.sortView}>
-          <View style={styles.sortTitle}>
-            <AppText style={{ fontSize: 22 }}>
-              {
-                sortDateOptions.find(
-                  (option) => option.option === sortDateOptionSelected
-                ).name
-              }{" "}
-              ({displayedItems.length})
-            </AppText>
-            <TouchableOpacity
-              style={[
-                styles.sortButton,
+  if (user) {
+    return (
+      <Screen style={styles.container} barStyle="dark">
+        <AppText style={styles.welcome}>
+          Bienvenue{" "}
+          {user.firstName.charAt(0).toUpperCase() + user.firstName.slice(1)} !
+        </AppText>
+        <View style={styles.sortMenuContainer}>
+          <View style={styles.sortView}>
+            <View style={styles.sortTitle}>
+              <AppText style={{ fontSize: 22 }}>
                 {
-                  backgroundColor: isSortOptionsVisible
-                    ? colors.buttonPrimary
-                    : colors.white,
-                },
-              ]}
-              onPress={() => setIsSortOptionsVisible(!isSortOptionsVisible)}
-            >
-              <MaterialCommunityIcons
-                name="filter-variant"
-                size={30}
-                color={
-                  isSortOptionsVisible ? colors.white : colors.buttonPrimary
-                }
-              />
-            </TouchableOpacity>
-          </View>
-          <View style={styles.sortOptionsView}>
-            {isSortOptionsVisible && (
-              <View style={styles.sortOptions}>
-                {sortDateOptions.map((sortOption) => (
-                  <View key={sortOption.option}>
-                    <TouchableOpacity
-                      key={sortOption.option}
-                      onPress={() =>
-                        handleSortDateOptionChanged(sortOption.option)
-                      }
-                    >
-                      <AppText
-                        style={
-                          sortDateOptionSelected === sortOption.option
-                            ? styles.optionSelected
-                            : styles.option
+                  sortDateOptions.find(
+                    (option) => option.option === sortDateOptionSelected
+                  ).name
+                }{" "}
+                ({displayedItems.length})
+              </AppText>
+              <TouchableOpacity
+                style={[
+                  styles.sortButton,
+                  {
+                    backgroundColor: isSortOptionsVisible
+                      ? colors.buttonPrimary
+                      : colors.white,
+                  },
+                ]}
+                onPress={() => setIsSortOptionsVisible(!isSortOptionsVisible)}
+              >
+                <MaterialCommunityIcons
+                  name="filter-variant"
+                  size={30}
+                  color={
+                    isSortOptionsVisible ? colors.white : colors.buttonPrimary
+                  }
+                />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.sortOptionsView}>
+              {isSortOptionsVisible && (
+                <View style={styles.sortOptions}>
+                  {sortDateOptions.map((sortOption) => (
+                    <View key={sortOption.option}>
+                      <TouchableOpacity
+                        key={sortOption.option}
+                        onPress={() =>
+                          handleSortDateOptionChanged(sortOption.option)
                         }
                       >
-                        {sortOption.name}
-                      </AppText>
-                    </TouchableOpacity>
-                    {sortOption.option !== sortDateOptions.length - 1 && (
-                      <View style={styles.separator} />
-                    )}
-                  </View>
-                ))}
-              </View>
-            )}
+                        <AppText
+                          style={
+                            sortDateOptionSelected === sortOption.option
+                              ? styles.optionSelected
+                              : styles.option
+                          }
+                        >
+                          {sortOption.name}
+                        </AppText>
+                      </TouchableOpacity>
+                      {sortOption.option !== sortDateOptions.length - 1 && (
+                        <View style={styles.separator} />
+                      )}
+                    </View>
+                  ))}
+                </View>
+              )}
+            </View>
           </View>
-        </View>
-        <ScrollView horizontal>
-          {sortRoleOptions.map((sortOption) => (
-            <RadioButton
-              key={sortOption.option}
-              value={sortOption.option}
-              onPress={() => handleSortRoleOptionChanged(sortOption.option)}
-              label={sortOption.name}
-              stateValue={sortRoleOptionsSelected}
-              style={{ paddingRight: 20 }}
-            />
-          ))}
-        </ScrollView>
-      </View>
-      <View style={styles.eventsContainer}>
-        {errorMessage === null && (
-          <FlatList
-            data={displayedItems}
-            keyExtractor={(event) => event.id.toString()}
-            style={styles.eventList}
-            renderItem={({ item }) => (
-              <EventItem
-                eventName={item.name}
-                eventStartDate={item.startdate}
-                eventEndDate={item.enddate}
-                eventRole={item.role}
-                onPress={() => {
-                  navigation.navigate("EventDefault", { event: item });
-                }}
-                eventOrganizer={item.role === 2 ? null : item.organizer}
+          <ScrollView horizontal>
+            {sortRoleOptions.map((sortOption) => (
+              <RadioButton
+                key={sortOption.option}
+                value={sortOption.option}
+                onPress={() => handleSortRoleOptionChanged(sortOption.option)}
+                label={sortOption.name}
+                stateValue={sortRoleOptionsSelected}
+                style={{ paddingRight: 20 }}
               />
-            )}
-            ListEmptyComponent={
-              <View style={styles.noEvent}>
-                <AppText style={{ textAlign: "center" }}>
-                  Aucun évènement ne correspond aux critères sélectionnés
-                </AppText>
-                <AppButton title="Actualiser" onPress={getEventsJoined} />
-              </View>
-            }
-            refreshing={refreshing}
-            onRefresh={() => {
-              getEventsJoined();
-            }}
-          />
-        )}
-        {errorMessage != null && (
-          <View style={styles.errorMessage}>
-            <AppText style={styles.errorMessage}>{errorMessage}</AppText>
-            <AppButton title="Réessayer" onPress={() => getEventsJoined()} />
-          </View>
-        )}
-      </View>
-      {isLoading && <LoadingIndicator />}
-    </Screen>
-  );
+            ))}
+          </ScrollView>
+        </View>
+        <View style={styles.eventsContainer}>
+          {errorMessage === null && (
+            <FlatList
+              data={displayedItems}
+              keyExtractor={(event) => event.id.toString()}
+              style={styles.eventList}
+              renderItem={({ item }) => (
+                <EventItem
+                  eventName={item.name}
+                  eventStartDate={item.startdate}
+                  eventEndDate={item.enddate}
+                  eventRole={item.role}
+                  onPress={() => {
+                    navigation.navigate("EventDefault", { event: item });
+                  }}
+                  eventOrganizer={item.role === 2 ? null : item.organizer}
+                />
+              )}
+              ListEmptyComponent={
+                <View style={styles.noEvent}>
+                  <AppText style={{ textAlign: "center" }}>
+                    Aucun évènement ne correspond aux critères sélectionnés
+                  </AppText>
+                  <AppButton title="Actualiser" onPress={getEventsJoined} />
+                </View>
+              }
+              refreshing={refreshing}
+              onRefresh={() => {
+                getEventsJoined();
+              }}
+            />
+          )}
+          {errorMessage != null && (
+            <View style={styles.errorMessage}>
+              <AppText style={styles.errorMessage}>{errorMessage}</AppText>
+              <AppButton title="Réessayer" onPress={() => getEventsJoined()} />
+            </View>
+          )}
+        </View>
+        {isLoading && <LoadingIndicator />}
+      </Screen>
+    );
+  } else {
+    return (
+      <Screen style={styles.loadingContainer} barStyle="dark">
+        <View style={styles.waitingView}>
+          <LoadingIndicator version="notAbsolute" />
+          <AppText style={styles.waitingText}>
+            Veuillez patienter pendant que nous récupérons vos informations
+          </AppText>
+        </View>
+      </Screen>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -307,6 +322,13 @@ const styles = StyleSheet.create({
   eventList: {
     flex: 1,
     width: "100%",
+  },
+  loadingContainer: {
+    backgroundColor: colors.white,
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingBottom: 50,
   },
   noEvent: {
     paddingHorizontal: 20,
@@ -360,6 +382,16 @@ const styles = StyleSheet.create({
   },
   sortOptions: {
     padding: 5,
+  },
+  waitingText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: colors.buttonPrimary,
+    textAlign: "center",
+    marginTop: 10,
+  },
+  waitingView: {
+    justifyContent: "flex-end",
   },
   welcome: {
     marginLeft: 10,
