@@ -5,6 +5,7 @@ import {
   FlatList,
   Alert,
   TouchableOpacity,
+  KeyboardAvoidingView,
 } from "react-native";
 import * as Yup from "yup";
 
@@ -27,6 +28,7 @@ import tabBarDisplayManager from "../../config/tabBarDisplayManager";
 import ProductCommandItem from "../../components/lists/ProductCommandItem";
 import colors from "../../config/colors";
 import MoneyBackInput from "../../components/MoneyBackInput";
+import { Platform } from "react-native";
 
 function CommandScreen(props) {
   const { navigation } = props;
@@ -694,6 +696,7 @@ function CommandScreen(props) {
         .then((res) => {
           setIsCommandPaid(true);
           setIsLoading(false);
+          navigation.goBack();
         })
         .catch((err) => {
           setIsLoading(false);
@@ -766,6 +769,7 @@ function CommandScreen(props) {
         .then((res) => {
           setIsCommandServed(true);
           setIsLoading(false);
+          navigation.goBack();
         })
         .catch((err) => {
           setIsLoading(false);
@@ -1038,7 +1042,11 @@ function CommandScreen(props) {
                 style={{ width: "100%" }}
               />
             </View>
-            <View style={{ padding: 5, paddingTop: 20 }}>
+            <KeyboardAvoidingView
+              style={{ padding: 5, paddingTop: 20, marginBottom: 0 }}
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
+              keyboardVerticalOffset={50}
+            >
               <AppText>Le client n'est pas encore dans la liste ? </AppText>
               <AppForm
                 initialValues={{ clientName: "" }}
@@ -1062,7 +1070,7 @@ function CommandScreen(props) {
                 />
                 <SubmitButton title="Valider" />
               </AppForm>
-            </View>
+            </KeyboardAvoidingView>
           </View>
         )}
 
@@ -1076,17 +1084,19 @@ function CommandScreen(props) {
                 textAlign: "center",
               }}
             >
-              Pour {clientSelected.clientName}
+              Pour{" "}
+              {clientSelected.clientName.split(" ")[1] === "undefined"
+                ? clientSelected.clientName.split(" ")[0]
+                : clientSelected.clientName}
             </AppText>
           </View>
         )}
         {quantities.length > 0 && clientSelected != null && (
           <View
             style={
-              (productsDisplayed.length < 4 && !eventFinished) ||
-              (commandId && isPaid && isServed && productsDisplayed.length < 4)
-                ? { width: "100%", flex: 1 }
-                : { width: "100%", maxHeight: "80%" }
+              !(isPaid && isServed)
+                ? { width: "100%", maxHeight: "100%" }
+                : { width: "100%", flex: 1 }
             }
           >
             <FlatList
@@ -1116,7 +1126,10 @@ function CommandScreen(props) {
                   </AppText>
                 </View>
               )}
-              style={{ width: "100%", paddingHorizontal: 10 }}
+              style={{
+                width: "100%",
+                paddingHorizontal: 10,
+              }}
             />
             <View>
               <View style={styles.detailContainer}>
@@ -1132,7 +1145,7 @@ function CommandScreen(props) {
               )}
             </View>
             {!commandId && !eventFinished && (
-              <View style={{ paddingHorizontal: 10 }}>
+              <View style={{ paddingHorizontal: 10, paddingBottom: 20 }}>
                 <AppButton
                   title="Valider la commande"
                   onPress={() => handleSellerCommand()}
@@ -1141,7 +1154,7 @@ function CommandScreen(props) {
               </View>
             )}
             {commandId && !eventFinished && !isEditCommand && (
-              <View style={{ paddingHorizontal: 10 }}>
+              <View style={{ paddingHorizontal: 10, paddingBottom: 20 }}>
                 {!isCommandPaid && !isCommandServed && (
                   <AppButton
                     title="Modifier la commande"
