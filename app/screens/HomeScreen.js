@@ -25,8 +25,14 @@ import tabBarDisplayManager from "../config/tabBarDisplayManager";
 function HomeScreen(props) {
   const isFocused = useIsFocused();
   const insets = useSafeAreaInsets();
-  const { user, setIsLoading, isLoading, userAccessToken, updateAccessToken } =
-    useContext(AuthContext);
+  const {
+    user,
+    setIsLoading,
+    isLoading,
+    userAccessToken,
+    updateAccessToken,
+    logout,
+  } = useContext(AuthContext);
   const { navigation } = props;
   const [sortDateOptionSelected, setSortDateOptionSelected] = useState(3);
   const [sortRoleOptionsSelected, setSortRoleOptionsSelected] = useState(0);
@@ -169,7 +175,10 @@ function HomeScreen(props) {
     <Screen style={styles.container} barStyle="dark">
       <AppText style={styles.welcome}>
         Bienvenue{" "}
-        {user.firstName.charAt(0).toUpperCase() + user.firstName.slice(1)} !
+        {user
+          ? user.firstName.charAt(0).toUpperCase() + user.firstName.slice(1)
+          : ""}{" "}
+        !
       </AppText>
       <View style={styles.sortMenuContainer}>
         <View style={styles.sortView}>

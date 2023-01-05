@@ -31,7 +31,6 @@ function JoinEventDetailsScreen(props) {
     useContext(AuthContext);
 
   const screenWidth = Dimensions.get("window").width;
-  console.log(screenWidth);
 
   useLayoutEffect(() => {
     tabBarDisplayManager.hideTabBar(navigation);

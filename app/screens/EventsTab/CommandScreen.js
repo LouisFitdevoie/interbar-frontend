@@ -1004,7 +1004,7 @@ function CommandScreen(props) {
             >
               Qui est le client ?
             </AppText>
-            <View>
+            <View style={{ flex: 1 }}>
               <FlatList
                 data={usersAtEvent}
                 keyExtractor={(user) => user.clientName.toString()}
