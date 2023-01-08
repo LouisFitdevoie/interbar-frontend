@@ -32,10 +32,6 @@ function LoginScreen({ navigation }) {
     login(email, password);
   };
 
-  if (Platform.OS === "android") {
-    //If keyboard is up -> move content up
-  }
-
   return (
     <ImageBackground
       source={backgroundImage}
