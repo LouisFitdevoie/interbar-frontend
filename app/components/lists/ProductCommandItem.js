@@ -19,14 +19,6 @@ function ProductCommandItem({
     .split(" ")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
-
-  // console.log("\n\n\n");
-  // console.log(product);
-  // console.log(
-  //   quantities
-  //     .filter((p) => p.productId === product.events_products_id)[0]
-  //     .quantity.toString()
-  // );
   const quantity =
     quantities.filter((p) => p.productId === product.events_products_id)
       .length > 0
@@ -35,13 +27,6 @@ function ProductCommandItem({
           .quantity.toString()
       : null;
 
-  // console.log(
-  //   quantities
-  //     .filter((q) => q.productId === product.events_products_id)[0]
-  //     .quantity.toString()
-  // );
-
-  // if (quantity) {
   return (
     <View style={styles.container}>
       <View style={styles.productContainer}>
@@ -103,9 +88,6 @@ function ProductCommandItem({
       )}
     </View>
   );
-  // } else {
-  //   console.log("no quantity");
-  // }
 }
 
 const styles = StyleSheet.create({
