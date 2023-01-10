@@ -32,7 +32,7 @@ npm install
 5. Edit [this file](./app/api/config.api.js) by updating the _BASE_URL_ variable by the URL where the backend is running. If your backend is not running on the same computer, you will need to use the IP address of the backend instead of localhost. If you are using another port than 8000 to access your API, you will need to update the port in the URL. Finally, if you are using another version of the API, you will need to update the version in the URL.
 
 ```JS
-export const BASE_URL = "http://localhost:8000/api/v2.2";
+export const BASE_URL = "http://localhost:8000/api/v3";
 ```
 
 6. Run the project
