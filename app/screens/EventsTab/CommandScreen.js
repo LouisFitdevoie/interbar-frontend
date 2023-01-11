@@ -1094,7 +1094,7 @@ function CommandScreen(props) {
         {quantities.length > 0 && clientSelected != null && (
           <View
             style={
-              !(isPaid && isServed)
+              !(isPaid && isServed) && !eventFinished
                 ? { width: "100%", maxHeight: "100%" }
                 : { width: "100%", flex: 1 }
             }
