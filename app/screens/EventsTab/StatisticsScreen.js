@@ -216,7 +216,7 @@ function StatisticsScreen(props) {
     commands.forEach((command) => {
       total += command.totalPrice;
     });
-    return total;
+    return Math.round(total);
   };
 
   const calculateTotalBuyings = () => {
@@ -226,7 +226,7 @@ function StatisticsScreen(props) {
         total += eventProductCommand.number * eventProductCommand.buyingPrice;
       });
     });
-    return total;
+    return Math.round(total);
   };
 
   const calculateBuyingAllStock = () => {
@@ -234,7 +234,7 @@ function StatisticsScreen(props) {
     productsAtEvent.forEach((product) => {
       total += product.buyingPrice * product.stock;
     });
-    return total + calculateTotalBuyings();
+    return Math.round(total) + calculateTotalBuyings();
   };
 
   const calculateTotalProfit = () => {
