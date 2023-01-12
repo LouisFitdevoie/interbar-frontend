@@ -18,7 +18,8 @@ function AppTabNavigator(props) {
   const { isLoading, user, updateAccessToken, userAccessToken } =
     useContext(AuthContext);
 
-  const timeToUpdateAccessToken = 10 * 60 * 1000; // 10 minutes
+  // Update access token every 1 hour and 50 minutes
+  const timeToUpdateAccessToken = 60 * 60 * 1000 + 50 * 60 * 1000; // 1 hour and 50 minutes
   useEffect(() => {
     const interval = setInterval(() => {
       updateAccessToken();
